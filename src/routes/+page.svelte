@@ -33,7 +33,7 @@
 
         scrollHidden = hide;
         gsap.fromTo(
-            ".scroll",
+            ".scroll-dots",
             {
                 opacity: hide ? 1 : 0,
                 duration: 0.25,
@@ -71,7 +71,7 @@
                 <h2 class="position">Software engineer</h2>
             </div>
 
-            <div class="block scroll">
+            <div class="block scroll-dots">
                 <span class="dot dot3" />
                 <span class="dot dot2" />
                 <span class="dot dot1" />
@@ -142,7 +142,7 @@
         justify-content: center;
     }
 
-    .scroll {
+    .scroll-dots {
         margin-top: auto;
         font-weight: 700;
         font-size: 22px;
