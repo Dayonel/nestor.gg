@@ -1,6 +1,5 @@
 <script lang="ts">
     import Three from "./Three.svelte";
-    import Loading from "$lib/Loading.svelte";
     import { gsap } from "gsap";
     import { onMount } from "svelte";
 
@@ -64,9 +63,7 @@
     on:showScroll={() => toggleScroll(false)}
 />
 
-{#if loading}
-    <Loading />
-{:else}
+{#if !loading}
     <div class="container">
         <section class="hero">
             <div class="block title">

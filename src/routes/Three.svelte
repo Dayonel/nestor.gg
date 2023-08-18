@@ -6,6 +6,7 @@
     import * as THREE from "three";
     // @ts-ignore
     import Stats from "three/addons/libs/stats.module";
+    import Loading from "$lib/Loading.svelte";
     import Rotation from "./Rotation.svelte";
 
     export let scrollPercent = 0;
@@ -23,41 +24,47 @@
     const animationScripts: { start: number; end: number; func: () => void }[] =
         [];
     let rotationEnabled: boolean = true;
+    let loading: boolean = true;
+    let weblAvailable: boolean = false;
 
     onMount(() => {
-        if (!WebGL.isWebGLAvailable()) {
-            const warning = WebGL.getWebGLErrorMessage();
-            console.log(warning);
-            message = warning.innerText;
-            return;
+        try {
+            weblAvailable = WebGL.isWebGLAvailable();
+            if (!weblAvailable) {
+                const warning = WebGL.getWebGLErrorMessage();
+                message = warning.innerText;
+                return;
+            }
+
+            prepareScene();
+            addGeometry();
+            addAnimationScripts();
+
+            window.onscroll = () => {
+                scrollPercent =
+                    ((document.documentElement.scrollTop ||
+                        document.body.scrollTop) /
+                        ((document.documentElement.scrollHeight ||
+                            document.body.scrollHeight) -
+                            document.documentElement.clientHeight)) *
+                    100;
+
+                if (scrollPercent > 1) dispatch("hideScroll");
+                else dispatch("showScroll");
+            };
+
+            window.onresize = () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            };
+
+            loop();
+
+            dispatch("mount");
+        } finally {
+            loading = false;
         }
-
-        prepareScene();
-        addGeometry();
-        addAnimationScripts();
-
-        window.onscroll = () => {
-            scrollPercent =
-                ((document.documentElement.scrollTop ||
-                    document.body.scrollTop) /
-                    ((document.documentElement.scrollHeight ||
-                        document.body.scrollHeight) -
-                        document.documentElement.clientHeight)) *
-                100;
-
-            if (scrollPercent > 1) dispatch("hideScroll");
-            else dispatch("showScroll");
-        };
-
-        window.onresize = () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        };
-
-        loop();
-
-        dispatch("mount");
     });
 
     onDestroy(() => {
@@ -201,12 +208,19 @@
     };
 </script>
 
-<canvas bind:this={canvas} id="three" />
-<Rotation {scene} {rotationEnabled} />
-<span class="scrollProgress">Scroll Progress: {scrollPercent?.toFixed(2)}%</span
->
+<canvas bind:this={canvas} />
+
+{#if loading}
+    <Loading />
+{/if}
 {#if message}
     <p class="message">{message}</p>
+{/if}
+{#if weblAvailable}
+    <span class="scroll">Scroll progress: {scrollPercent?.toFixed(2)}%</span>
+    <div class:hide={loading}>
+        <Rotation {scene} {rotationEnabled} />
+    </div>
 {/if}
 
 <style>
@@ -224,7 +238,7 @@
         font-weight: 300;
     }
 
-    .scrollProgress {
+    .scroll {
         position: fixed;
         bottom: 1rem;
         left: 1rem;

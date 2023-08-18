@@ -43,3 +43,7 @@ h2 {
 ::-webkit-scrollbar-thumb:hover {
     background-color: var(--ui-01);
 }
+
+.hide {
+    display: none;
+}
