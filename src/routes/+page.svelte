@@ -1,25 +1,40 @@
-<script>
+<script lang="ts">
     import Three from "./Three.svelte";
     import Loading from "$lib/Loading.svelte";
 
     let loading = true;
+    let scrollPercent: number = 0;
 </script>
 
 <svelte:head>
     <title>My portfolio</title>
     <meta
-        name="description"
-        content="Nestor Orest Plysyuk Hladunko portfolio"
+        property="og:description"
+        content="Portfolio of Nestor Orest Plysyuk Hladunko - Full stack developer"
     />
 </svelte:head>
 
-<Three on:mount={() => (loading = false)} />
+<Three bind:scrollPercent on:mount={() => (loading = false)} />
 
 {#if loading}
     <Loading />
 {:else}
     <div class="container">
-        <h1>Animate on Scroll</h1>
+        <section class="hero">
+            <div class="block title">
+                <h1>Nestor Orest Plysyuk</h1>
+                <h2>Software engineer</h2>
+            </div>
+
+            {#if scrollPercent < 1}
+                <div class="block scroll">
+                    <span class="dot dot3" />
+                    <span class="dot dot2" />
+                    <span class="dot dot1" />
+                    <span>Scroll down</span>
+                </div>
+            {/if}
+        </section>
         <section>
             <h2>Begin scrolling to see things change</h2>
         </section>
@@ -49,14 +64,87 @@
 <style>
     .container {
         position: absolute;
-        justify-content: center;
         text-align: center;
-        width: 100vw;
+        width: 100%;
+        height: 100%;
     }
 
     section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
         min-height: 100vh;
-        padding: 20px;
-        font-size: 4vh;
+        padding: 3rem;
+        font-size: 4vw;
+    }
+
+    h2 {
+        font-size: 3vw;
+    }
+
+    .block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: auto;
+    }
+
+    .hero {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .scroll {
+        margin-top: auto;
+        font-weight: 700;
+        font-size: 22px;
+    }
+
+    .title {
+        padding-bottom: 3rem;
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+        margin: 3px;
+        background-color: var(--ui-01);
+        border-radius: 50%;
+        opacity: 0;
+    }
+
+    .dot1 {
+        -webkit-animation: dotsAnimation 2s ease-out 0.6s infinite;
+        animation: dotsAnimation 2s ease-out 0.6s infinite;
+    }
+
+    .dot2 {
+        -webkit-animation: dotsAnimation 2s ease-out 0.4s infinite;
+        animation: dotsAnimation 2s ease-out 0.4s infinite;
+    }
+
+    .dot3 {
+        -webkit-animation: dotsAnimation 2s ease-out 0.2s infinite;
+        animation: dotsAnimation 2s ease-out 0.2s infinite;
+    }
+
+    @keyframes dotsAnimation {
+        0% {
+            opacity: 0;
+        }
+        50% {
+            opacity: 1;
+        }
+        80% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 0;
+        }
     }
 </style>

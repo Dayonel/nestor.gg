@@ -6,9 +6,11 @@
     import * as THREE from "three";
     // @ts-ignore
     import Stats from "three/addons/libs/stats.module";
+    import Rotation from "./Rotation.svelte";
+
+    export let scrollPercent = 0;
 
     let message: string;
-    let scrollPercent = 0;
     let dispatch = createEventDispatcher();
     let canvas: HTMLCanvasElement;
     let scene: THREE.Scene = new THREE.Scene();
@@ -20,6 +22,7 @@
     let material: THREE.MeshBasicMaterial;
     const animationScripts: { start: number; end: number; func: () => void }[] =
         [];
+    let rotationEnabled: boolean = true;
 
     onMount(() => {
         if (!WebGL.isWebGLAvailable()) {
@@ -131,7 +134,7 @@
                 camera.lookAt(cube.position);
                 camera.position.set(0, 1, 2);
                 cube.position.z = lerp(-10, 0, scalePercent(0, 40));
-                //console.log(cube.position.z)
+                rotationEnabled = true;
             },
         });
 
@@ -143,7 +146,7 @@
                 camera.lookAt(cube.position);
                 camera.position.set(0, 1, 2);
                 cube.rotation.z = lerp(0, Math.PI, scalePercent(40, 60));
-                //console.log(cube.rotation.z)
+                rotationEnabled = true;
             },
         });
 
@@ -155,7 +158,7 @@
                 camera.position.x = lerp(0, 5, scalePercent(60, 80));
                 camera.position.y = lerp(1, 5, scalePercent(60, 80));
                 camera.lookAt(cube.position);
-                //console.log(camera.position.x + " " + camera.position.y)
+                rotationEnabled = true;
             },
         });
 
@@ -167,6 +170,7 @@
                 //auto rotate
                 cube.rotation.x += 0.01;
                 cube.rotation.y += 0.01;
+                rotationEnabled = false;
             },
         });
     };
@@ -191,6 +195,7 @@
 </script>
 
 <canvas bind:this={canvas} id="three" />
+<Rotation {scene} {rotationEnabled} />
 <span class="scrollProgress">Scroll Progress: {scrollPercent?.toFixed(2)}%</span
 >
 {#if message}
