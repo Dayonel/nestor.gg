@@ -44,6 +44,9 @@
                         document.body.scrollHeight) -
                         document.documentElement.clientHeight)) *
                 100;
+
+            if (scrollPercent > 1) dispatch("hideScroll");
+            else dispatch("showScroll");
         };
 
         window.onresize = () => {
@@ -74,7 +77,11 @@
         scene.add(cameraGroup);
 
         // renderer
-        renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+        renderer = new THREE.WebGLRenderer({
+            canvas: canvas,
+            alpha: true,
+            antialias: false,
+        });
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(window.devicePixelRatio);

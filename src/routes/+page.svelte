@@ -1,20 +1,68 @@
 <script lang="ts">
     import Three from "./Three.svelte";
     import Loading from "$lib/Loading.svelte";
+    import { gsap } from "gsap";
+    import { onMount } from "svelte";
 
     let loading = true;
     let scrollPercent: number = 0;
+    let scrollHidden: boolean = false;
+
+    onMount(() => {
+        animate();
+    });
+
+    const animate = () => {
+        gsap.fromTo(
+            "main",
+            {
+                opacity: 0,
+                duration: 1,
+                ease: "power1.in",
+            },
+            {
+                opacity: 1,
+                duration: 1,
+                ease: "power1.in",
+            }
+        );
+    };
+
+    const toggleScroll = (hide: boolean) => {
+        if (hide && scrollHidden) return;
+        if (!hide && !scrollHidden) return;
+
+        scrollHidden = hide;
+        gsap.fromTo(
+            ".scroll",
+            {
+                opacity: hide ? 1 : 0,
+                duration: 0.25,
+                ease: "power1.in",
+            },
+            {
+                opacity: hide ? 0 : 1,
+                duration: 0.25,
+                ease: "power1.in",
+            }
+        );
+    };
 </script>
 
 <svelte:head>
-    <title>My portfolio</title>
+    <title>Nestor Orest Plysyuk Hladunko - Full stack developer</title>
     <meta
         property="og:description"
         content="Portfolio of Nestor Orest Plysyuk Hladunko - Full stack developer"
     />
 </svelte:head>
 
-<Three bind:scrollPercent on:mount={() => (loading = false)} />
+<Three
+    bind:scrollPercent
+    on:mount={() => (loading = false)}
+    on:hideScroll={() => toggleScroll(true)}
+    on:showScroll={() => toggleScroll(false)}
+/>
 
 {#if loading}
     <Loading />
@@ -22,18 +70,16 @@
     <div class="container">
         <section class="hero">
             <div class="block title">
-                <h1>Nestor Orest Plysyuk</h1>
-                <h2>Software engineer</h2>
+                <h1 class="name">Nestor Orest Plysyuk</h1>
+                <h2 class="position">Software engineer</h2>
             </div>
 
-            {#if scrollPercent < 1}
-                <div class="block scroll">
-                    <span class="dot dot3" />
-                    <span class="dot dot2" />
-                    <span class="dot dot1" />
-                    <span>Scroll down</span>
-                </div>
-            {/if}
+            <div class="block scroll">
+                <span class="dot dot3" />
+                <span class="dot dot2" />
+                <span class="dot dot1" />
+                <span>Scroll down</span>
+            </div>
         </section>
         <section>
             <h2>Begin scrolling to see things change</h2>
