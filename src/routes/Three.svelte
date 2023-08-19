@@ -40,23 +40,11 @@
             addGeometry();
             addAnimationScripts();
 
-            window.onscroll = () => {
-                scrollPercent =
-                    ((document.documentElement.scrollTop ||
-                        document.body.scrollTop) /
-                        ((document.documentElement.scrollHeight ||
-                            document.body.scrollHeight) -
-                            document.documentElement.clientHeight)) *
-                    100;
-
-                if (scrollPercent > 1) dispatch("hideScroll");
-                else dispatch("showScroll");
-            };
-
             window.onresize = () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
+                if (resizeRendererToDisplaySize()) {
+                    camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                    camera.updateProjectionMatrix();
+                }
             };
 
             loop();
@@ -87,11 +75,13 @@
         renderer = new THREE.WebGLRenderer({
             canvas: canvas,
             alpha: true,
-            antialias: false,
+            antialias: true,
         });
 
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
+        if (resizeRendererToDisplaySize()) {
+            camera.aspect = canvas.clientWidth / canvas.clientHeight;
+            camera.updateProjectionMatrix();
+        }
         renderer.setClearColor(0x101010, 1);
         renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.SRGBColorSpace; // optional with post-processing
@@ -197,6 +187,17 @@
         });
     };
 
+    const resizeRendererToDisplaySize = () => {
+        const pixelRatio = window.devicePixelRatio;
+        const width = (canvas.clientWidth * pixelRatio) | 0;
+        const height = (canvas.clientHeight * pixelRatio) | 0;
+        const needResize = canvas.width !== width || canvas.height !== height;
+        if (needResize) {
+            renderer.setSize(width, height, false);
+        }
+        return needResize;
+    };
+
     const loop = () => {
         requestAnimationFrame(loop);
 
@@ -225,6 +226,9 @@
 
 <style>
     canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
         position: fixed;
         top: 0;
         left: 0;

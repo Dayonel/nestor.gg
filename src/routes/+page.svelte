@@ -6,10 +6,24 @@
     let loading = true;
     let scrollPercent: number = 0;
     let scrollHidden: boolean = false;
+    let three: any;
 
     onMount(() => {
         animate();
     });
+
+    const loaded = () => {
+        loading = false;
+
+        three.onscroll = () => {
+            scrollPercent =
+                (three.scrollTop / (three.scrollHeight - three.clientHeight)) *
+                100;
+
+            if (scrollPercent > 1) toggleScroll(true);
+            else toggleScroll(false);
+        };
+    };
 
     const animate = () => {
         gsap.fromTo(
@@ -36,13 +50,13 @@
             ".scroll-dots",
             {
                 opacity: hide ? 1 : 0,
-                duration: 0.25,
-                ease: "power1.in",
+                duration: 0.2,
+                ease: "power1.out",
             },
             {
                 opacity: hide ? 0 : 1,
-                duration: 0.25,
-                ease: "power1.in",
+                duration: 0.2,
+                ease: "power1.out",
             }
         );
     };
@@ -51,23 +65,19 @@
 <svelte:head>
     <title>Nestor Orest Plysyuk Hladunko - Full stack developer</title>
     <meta
+        name="description"
         property="og:description"
         content="Portfolio of Nestor Orest Plysyuk Hladunko - Full stack developer"
     />
 </svelte:head>
 
-<Three
-    bind:scrollPercent
-    on:mount={() => (loading = false)}
-    on:hideScroll={() => toggleScroll(true)}
-    on:showScroll={() => toggleScroll(false)}
-/>
+<Three {scrollPercent} on:mount={() => loaded()} />
 
-{#if !loading}
-    <div class="container">
+<div id="three" class:hide={loading} bind:this={three}>
+    {#if !loading}
         <section class="hero">
             <div class="block title">
-                <h1 class="name">Nestor Orest Plysyuk</h1>
+                <h1 class="name">Nestor Plysyuk</h1>
                 <h2 class="position">Software engineer</h2>
             </div>
 
@@ -101,15 +111,16 @@
             <p>The cube will now be auto rotating</p>
             <p>Now you can scroll back to the top to reverse the animation</p>
         </section>
-    </div>
-{/if}
+    {/if}
+</div>
 
 <style>
-    .container {
+    #three {
         position: absolute;
-        text-align: center;
         width: 100%;
         height: 100%;
+        overflow-y: auto;
+        overscroll-behavior: none;
     }
 
     section {
@@ -119,13 +130,17 @@
         align-items: center;
         width: 100%;
         height: 100%;
-        min-height: 100vh;
+        min-height: 100dvh;
         padding: 3rem;
-        font-size: 4vw;
     }
 
-    h2 {
-        font-size: 3vw;
+    h1 {
+        font-size: calc(100% + 6dvw);
+    }
+
+    h2,
+    p {
+        font-size: calc(100% + 2dvw);
     }
 
     .block {

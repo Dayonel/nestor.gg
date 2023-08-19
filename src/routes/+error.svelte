@@ -18,6 +18,6 @@
     }
 
     .emoji {
-        font-size: calc(6vh + 6vw);
+        font-size: calc(6dvh + 6dvw);
     }
 </style>
