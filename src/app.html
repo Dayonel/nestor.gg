@@ -59,13 +59,9 @@
 		// Calculate noise value using a single call to pn()
 		float n = pn(pScaled * 8.0 + u_time * 0.5);
 
-		// Calculate the two layers using a loop
-		vec3 t;
-		for (int i = 0; i < 1; ++i) {
-			t = sin(pScaled.yzx * 3.14159265) * 0.5 + 0.5;
-			res += dot(t, vec3(0.333)) * (i == 0 ? 1.0 : sinCoeff);
-			pScaled = pScaled * 1.5 + (t - 1.5);
-		}
+		vec3 t = sin(pScaled.yzx * 3.14159265) * 0.5 + 0.5;
+		res += dot(t, vec3(0.333));
+		pScaled = pScaled * 1.5 + (t - 1.5);
 
 		// Combine results
 		return res * 0.85 + n * 0.15;
