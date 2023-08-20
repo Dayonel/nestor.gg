@@ -48,30 +48,28 @@
 	  // Thanks to Shane for this one.
 	  // Basic low quality noise consisting of three layers of rotated, mutated 
 	  // trigonometric functions. Needs work, but sufficient for this example.
-	  float trigNoise3D(in vec3 p){
-	
-	
-		  float res = 0., sum = 0.;
-	
-		  // IQ's cheap, texture-lookup noise function. Very efficient, but still 
-		  // a little too processor intensive for multiple layer usage in a largish 
-		  // "for loop" setup. Therefore, just one layer is being used here.
-		  float n = pn(p*8. + u_time*.5);
-	
-	
-		  // Two sinusoidal layers. I'm pretty sure you could get rid of one of 
-		  // the swizzles (I have a feeling the GPU doesn't like them as much), 
-		  // which I'll try to do later.
-	
-		  vec3 t = sin(p.yzx*3.14159265 + cos(p.zxy*3.14159265+1.57/2.))*0.5 + 0.5;
-		  p = p*1.5 + (t - 1.5); //  + u_time*0.1
-		  res += (dot(t, vec3(0.333)));
-	
-		  t = sin(p.yzx*3.14159265 + cos(p.zxy*3.14159265+1.57/2.))*0.5 + 0.5;
-		  res += (dot(t, vec3(0.333)))*0.7071;    
-	
-		return ((res/1.7071))*0.85 + n*0.15;
-	  }
+	  float trigNoise3D(in vec3 p) {
+		float res = 0.0;
+
+		// Precompute constants
+		vec3 pScaled = p * 1.5;
+		float halfSqrt3 = 0.5 * sqrt(3.0);
+		float sinCoeff = 0.7071 / 1.7071;
+
+		// Calculate noise value using a single call to pn()
+		float n = pn(pScaled * 8.0 + u_time * 0.5);
+
+		// Calculate the two layers using a loop
+		vec3 t;
+		for (int i = 0; i < 1; ++i) {
+			t = sin(pScaled.yzx * 3.14159265) * 0.5 + 0.5;
+			res += dot(t, vec3(0.333)) * (i == 0 ? 1.0 : sinCoeff);
+			pScaled = pScaled * 1.5 + (t - 1.5);
+		}
+
+		// Combine results
+		return res * 0.85 + n * 0.15;
+	}
 	
 	  float world(vec3 p) {
 		float n = trigNoise3D(p*0.2);
@@ -131,42 +129,35 @@
 	
 	
 		// Initializing the scene color to black, and declaring the surface position vector.
-		vec3 col = vec3(0);
+		vec3 col = vec3(0.1); // increased brightness
 		vec3 sp;
 	
 		vec3 sn = normalize(-rd); // surface normal
 	
 		// Raymarching loop.
-		for (int i=0; i<64; i++) {
-	
-		  if((density>1.) || travelled>80.)break;
-	
-		  sp = ro + rd*travelled; // Ray position.
-		  dist = world(sp); // Closest distance to the surface... particle.
-		  
-		  if(dist < .2) dist = .35;
-	
-		  local_density = (distanceThreshold - dist)*step(dist, distanceThreshold);
-		  weighting = (1. - density)*local_density;
-	
-		  density += weighting*(1.-distanceThreshold)*1./dist;
-	
-		  vec3 ld = lp-sp; // Direction vector from the surface to the light position.
-		  float lDist = max(length(ld), .001); // Distance from the surface to the light.
-		  ld/=lDist; // Normalizing the directional light vector.
-	
-		  // Using the light distance to perform some falloff.
-		  float atten = 1./(1. + lDist*.125 + lDist*lDist*.55);
-	
-		  float diff = max(dot( sn, ld ), 0.);
-		  float spec = pow(max( dot( reflect(-ld, sn), -rd ), 0. ), 4.);
-	
-		  // col += weighting*(dist*5. - .1)*(.5 + diff + spec*.5)*atten;
-		  // Much quicker version of the avove
-		  col += weighting*atten*1.25;
-	
-		  travelled +=  max(dist*.4, .02);
-	
+		for (int i = 0; i < 32; i++) {
+			sp = ro + rd * travelled;
+			dist = world(sp);
+
+			if (dist < 0.2) dist = 0.35;
+
+			local_density = max(distanceThreshold - dist, 0.0);
+			weighting = (1.0 - density) * local_density;
+
+			density += weighting * (1.0 - distanceThreshold) / max(dist, 0.001);
+
+			vec3 ld = lp - sp;
+			float lDist = max(length(ld), 0.001);
+			ld /= lDist;
+
+			float atten = 1.0 / (1.0 + lDist * 0.125 + lDist * lDist * 0.55);
+
+			float diff = max(dot(sn, ld), 0.0);
+			float spec = pow(max(dot(reflect(-ld, sn), -rd), 0.0), 4.0);
+
+			col += weighting * atten * 10.25;
+
+			travelled += max(dist * 0.4, 0.02);
 		}
 	
 		col = max(col, 0.);
