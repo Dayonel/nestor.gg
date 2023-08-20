@@ -8,6 +8,7 @@
     import Stats from "three/addons/libs/stats.module";
     import Loading from "$lib/Loading.svelte";
     import Rotation from "./Rotation.svelte";
+    import Cloud from "./Cloud.svelte";
 
     export let scrollPercent = 0;
 
@@ -16,7 +17,6 @@
     let canvas: HTMLCanvasElement;
     let scene: THREE.Scene = new THREE.Scene();
     let camera: THREE.PerspectiveCamera;
-    let cameraGroup: THREE.Group = new THREE.Group();
     let renderer: THREE.WebGLRenderer;
     let stats: any;
     let cube: THREE.Mesh;
@@ -64,12 +64,11 @@
         camera = new THREE.PerspectiveCamera(
             70,
             window.innerWidth / window.innerHeight,
-            0.1,
+            1,
             1000
         );
-        camera.position.set(0, 0, 2);
-        cameraGroup.add(camera);
-        scene.add(cameraGroup);
+        camera.position.z = 2;
+        scene.add(camera);
 
         // renderer
         renderer = new THREE.WebGLRenderer({
@@ -91,8 +90,8 @@
         document.body.appendChild(stats.dom);
 
         // grid helper
-        const gridHelper = new THREE.GridHelper(10, 10, 0xaec6cf, 0xaec6cf);
-        scene.add(gridHelper);
+        // const gridHelper = new THREE.GridHelper(10, 10, 0xaec6cf, 0xaec6cf);
+        // scene.add(gridHelper);
     };
 
     const addGeometry = () => {
@@ -220,7 +219,8 @@
 {#if weblAvailable}
     <span class="scroll">Scroll progress: {scrollPercent?.toFixed(2)}%</span>
     <div class:hide={loading}>
-        <Rotation {scene} {rotationEnabled} />
+        <!-- <Rotation {scene} {rotationEnabled} /> -->
+        <Cloud {renderer} {scene} on:mount />
     </div>
 {/if}
 

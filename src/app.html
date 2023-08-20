@@ -20,6 +20,168 @@
 </head>
 
 <body data-sveltekit-preload-data="hover">
+	<script id="cloud-vs" type="x-shader/x-vertex">
+		// Original work by Liam Egan on CodePen: https://codepen.io/shubniggurath/pen/pVaxML/license
+		void main() {
+			gl_Position = vec4( position, 1.0 );
+		}
+	</script>
+
+	<script id="cloud-fs" type="x-shader/x-fragment">
+	  // Original work by Liam Egan on CodePen: https://codepen.io/shubniggurath/pen/pVaxML/license
+	  uniform vec2 u_resolution;
+	  uniform vec2 u_mouse;
+	  uniform float u_time;
+	  uniform sampler2D u_noise;
+	
+	  vec3 hash33(vec3 p){ 
+		return texture2D(u_noise, p.xy * p.z * 256.).rgb;
+		
+	  }
+	
+	  float pn( in vec3 p ) {
+		vec3 i = floor(p); p -= i; p *= p*(3. - 2.*p);
+		p.xy = texture2D(u_noise, (p.xy + i.xy + vec2(37, 17)*i.z + .5)/256., -100.).yx;
+		return mix(p.x, p.y, p.z);
+	  }
+	  
+	  // Thanks to Shane for this one.
+	  // Basic low quality noise consisting of three layers of rotated, mutated 
+	  // trigonometric functions. Needs work, but sufficient for this example.
+	  float trigNoise3D(in vec3 p){
+	
+	
+		  float res = 0., sum = 0.;
+	
+		  // IQ's cheap, texture-lookup noise function. Very efficient, but still 
+		  // a little too processor intensive for multiple layer usage in a largish 
+		  // "for loop" setup. Therefore, just one layer is being used here.
+		  float n = pn(p*8. + u_time*.5);
+	
+	
+		  // Two sinusoidal layers. I'm pretty sure you could get rid of one of 
+		  // the swizzles (I have a feeling the GPU doesn't like them as much), 
+		  // which I'll try to do later.
+	
+		  vec3 t = sin(p.yzx*3.14159265 + cos(p.zxy*3.14159265+1.57/2.))*0.5 + 0.5;
+		  p = p*1.5 + (t - 1.5); //  + u_time*0.1
+		  res += (dot(t, vec3(0.333)));
+	
+		  t = sin(p.yzx*3.14159265 + cos(p.zxy*3.14159265+1.57/2.))*0.5 + 0.5;
+		  res += (dot(t, vec3(0.333)))*0.7071;    
+	
+		return ((res/1.7071))*0.85 + n*0.15;
+	  }
+	
+	  float world(vec3 p) {
+		float n = trigNoise3D(p*0.2);
+		float t = sin(u_time*.0001)*.5+.5;
+		float c = cos(p.z*.2*t+n);
+		float s = sin(p.z*.05+n*.5);
+		p.xy *= mat2(c, -s, s, c);
+		p -= n*1.5;
+		p.y = mod(p.y, 4.0 + p.y * .5) - 2. - p.y * .25;
+		return abs(p.y) - .1;
+	  }
+	
+	  void main() {
+		  
+		  // Setting up our screen coordinates.
+		  vec2 aspect = vec2(u_resolution.x/u_resolution.y, 1.0); //
+		  vec2 uv = (2.0*gl_FragCoord.xy/u_resolution.xy - 1.0)*aspect;
+		// vec3 rd = normalize(vec3(gl_FragCoord.xy - u_resolution.xy*.5, u_resolution.y*.5)); 
+		
+		float modtime = u_time * .1;
+		
+		  // The sin in here is to make it look like a walk.
+		  vec3 lookAt = vec3(sin(modtime)*2. + u_mouse.x*2., u_mouse.y*2., 2. + u_time*2.);  // This is the point you look towards, or at, if you prefer.
+		  vec3 camera_position = vec3(sin(modtime)*3., 0, u_time*2.); // This is the point you look from, or camera you look at the scene through. Whichever way you wish to look at it.
+		
+		  
+		  vec3 forward = normalize(lookAt-camera_position); // Forward vector.
+		  vec3 right = normalize(vec3(forward.z, 0., -forward.x )); // Right vector... or is it left? Either way, so long as the correct-facing up-vector is produced.
+		  vec3 up = normalize(cross(forward,right)); // Cross product the two vectors above to get the up vector.
+	
+		  // FOV - Field of view.
+		  float FOV = 1.1;
+	
+		  // ro - Ray origin.
+		  vec3 ro = camera_position; 
+		  // rd - Ray direction.
+		  vec3 rd = normalize(forward + FOV*uv.x*right + FOV*uv.y*up);
+		  // rd += hash33(rd)*.002;
+	
+		// Camera
+		// vec3 ro = vec3(sin(modtime)*3., 0, u_time*2.);
+	
+		vec3 lp = vec3( -3, 2, -1.5);
+		lp += ro;
+	
+		ro.x += u_mouse.x;
+		ro.y += u_mouse.y;
+	
+		float local_density = 0.;
+		float density = 0.;
+		float weighting = 0.;
+	
+		float dist = 1.;
+		float travelled = 0.;
+	
+		const float distanceThreshold = .1;
+	
+	
+		// Initializing the scene color to black, and declaring the surface position vector.
+		vec3 col = vec3(0);
+		vec3 sp;
+	
+		vec3 sn = normalize(-rd); // surface normal
+	
+		// Raymarching loop.
+		for (int i=0; i<64; i++) {
+	
+		  if((density>1.) || travelled>80.)break;
+	
+		  sp = ro + rd*travelled; // Ray position.
+		  dist = world(sp); // Closest distance to the surface... particle.
+		  
+		  if(dist < .2) dist = .35;
+	
+		  local_density = (distanceThreshold - dist)*step(dist, distanceThreshold);
+		  weighting = (1. - density)*local_density;
+	
+		  density += weighting*(1.-distanceThreshold)*1./dist;
+	
+		  vec3 ld = lp-sp; // Direction vector from the surface to the light position.
+		  float lDist = max(length(ld), .001); // Distance from the surface to the light.
+		  ld/=lDist; // Normalizing the directional light vector.
+	
+		  // Using the light distance to perform some falloff.
+		  float atten = 1./(1. + lDist*.125 + lDist*lDist*.55);
+	
+		  float diff = max(dot( sn, ld ), 0.);
+		  float spec = pow(max( dot( reflect(-ld, sn), -rd ), 0. ), 4.);
+	
+		  // col += weighting*(dist*5. - .1)*(.5 + diff + spec*.5)*atten;
+		  // Much quicker version of the avove
+		  col += weighting*atten*1.25;
+	
+		  travelled +=  max(dist*.4, .02);
+	
+		}
+	
+		col = max(col, 0.);
+	
+		col = mix(vec3(.0, .1, .3), vec3(2.), col);
+		// col = mix(col, vec3(4.), density*.01);
+		col = mix(col, vec3(2.), travelled*.01);
+	
+		col = mix(col.zyx, col, dot(rd, col.xyz)+.5*travelled*.05);
+		
+		col *= col*col*col*1.15;
+	
+		gl_FragColor = vec4(sqrt(col), 1.0);
+	  }
+	</script>
 	<div style="display: contents">%sveltekit.body%</div>
 </body>
 
