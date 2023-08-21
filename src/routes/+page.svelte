@@ -1,23 +1,28 @@
 <script lang="ts">
     import Three from "./Three.svelte";
-    import { gsap } from "gsap";
     import { onMount } from "svelte";
+    // @ts-ignore
+    import { gsap } from "gsap/dist/gsap.js";
+    // @ts-ignore
+    import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
 
     let loading = true;
     let scrollPercent: number = 0;
     let scrollHidden: boolean = false;
-    let three: any;
+    let scrolling: any;
 
     onMount(() => {
-        animate();
+        intro();
+        animateOnScroll();
     });
 
     const loaded = () => {
         loading = false;
 
-        three.onscroll = () => {
+        scrolling.onscroll = () => {
             scrollPercent =
-                (three.scrollTop / (three.scrollHeight - three.clientHeight)) *
+                (scrolling.scrollTop /
+                    (scrolling.scrollHeight - scrolling.clientHeight)) *
                 100;
 
             if (scrollPercent > 1) toggleScroll(true);
@@ -25,7 +30,33 @@
         };
     };
 
-    const animate = () => {
+    const animateOnScroll = () => {
+        gsap.registerPlugin(ScrollTrigger);
+
+        const scenes = gsap.utils.toArray("#three section");
+
+        let tl = gsap.timeline({
+            scrollTrigger: {
+                scroller: "#scrolling",
+                trigger: "#three",
+                start: "top top",
+                end: "+=10000px",
+                scrub: true,
+                pin: true,
+                pinType: "transform",
+            },
+        });
+
+        gsap.set("#three section:not(:first-child)", { autoAlpha: 0 });
+
+        scenes.forEach((panel: any) => {
+            tl.to(panel, { yPercent: 0, autoAlpha: 1 }).to(panel, {
+                autoAlpha: 0,
+            });
+        });
+    };
+
+    const intro = () => {
         gsap.fromTo(
             "main",
             {
@@ -73,8 +104,8 @@
 
 <Three {scrollPercent} on:mount={() => loaded()} />
 
-<div id="three" class:hide={loading} bind:this={three}>
-    {#if !loading}
+<div bind:this={scrolling} id="scrolling" class:hide={loading}>
+    <div id="three">
         <section class="hero">
             <div class="block title">
                 <h1 class="name">Nestor Plysyuk</h1>
@@ -111,16 +142,25 @@
             <p>The cube will now be auto rotating</p>
             <p>Now you can scroll back to the top to reverse the animation</p>
         </section>
-    {/if}
+    </div>
 </div>
 
 <style>
-    #three {
-        position: absolute;
+    #scrolling {
+        position: fixed;
         width: 100%;
         height: 100%;
+        bottom: 0;
+        top: 0;
+        overflow-x: hidden;
         overflow-y: auto;
         overscroll-behavior: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #three {
+        position: relative;
+        width: 100%;
     }
 
     section {
@@ -128,10 +168,10 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        width: 100%;
-        height: 100%;
-        min-height: 100dvh;
         padding: 3rem;
+        position: fixed;
+        width: 100%;
+        height: 100dvh;
     }
 
     h1 {
