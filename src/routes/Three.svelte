@@ -6,9 +6,15 @@
     import * as THREE from "three";
     // @ts-ignore
     import Stats from "three/addons/libs/stats.module";
+    // @ts-ignore
+    import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+
     import Loading from "$lib/Loading.svelte";
     import Rotation from "./Rotation.svelte";
     import Cloud from "./Cloud.svelte";
+    import Animations from "./Animations.svelte";
+    import Stars from "./Stars.svelte";
+    import Sparkles from "./Sparkles.svelte";
 
     export let scrollPercent = 0;
 
@@ -19,15 +25,16 @@
     let camera: THREE.PerspectiveCamera;
     let renderer: THREE.WebGLRenderer;
     let stats: any;
-    let cube: THREE.Mesh;
-    let material: THREE.MeshBasicMaterial;
-    const animationScripts: { start: number; end: number; func: () => void }[] =
-        [];
-    let rotationEnabled: boolean = true;
     let loading: boolean = true;
     let weblAvailable: boolean = false;
+    let sparklesGeometry: THREE.BufferGeometry;
+    let sparklesMaterial: THREE.ShaderMaterial;
+    let monitor: any;
+    let stars: any;
+    let animations: any;
+    let sparkles1: any;
 
-    onMount(() => {
+    onMount(async () => {
         try {
             weblAvailable = WebGL.isWebGLAvailable();
             if (!weblAvailable) {
@@ -37,17 +44,11 @@
             }
 
             prepareScene();
-            addGeometry();
-            addAnimationScripts();
+            await addGeometry();
 
-            window.onresize = () => {
-                if (resizeRendererToDisplaySize()) {
-                    camera.aspect = canvas.clientWidth / canvas.clientHeight;
-                    camera.updateProjectionMatrix();
-                }
-            };
+            window.onresize = () => onResize();
 
-            loop();
+            loop(0);
 
             dispatch("mount");
         } finally {
@@ -60,14 +61,12 @@
     });
 
     const prepareScene = () => {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
         // camera
-        camera = new THREE.PerspectiveCamera(
-            70,
-            window.innerWidth / window.innerHeight,
-            1,
-            1000
-        );
-        camera.position.z = 2;
+        camera = new THREE.PerspectiveCamera(70, width / height, 0.01, 1000);
+        camera.position.z = 8;
         scene.add(camera);
 
         // renderer
@@ -77,134 +76,71 @@
             antialias: true,
         });
 
-        if (resizeRendererToDisplaySize()) {
-            camera.aspect = canvas.clientWidth / canvas.clientHeight;
-            camera.updateProjectionMatrix();
-        }
         renderer.setClearColor(0x101010, 1);
         renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.SRGBColorSpace; // optional with post-processing
+        onResize();
 
         // stats
         stats = new Stats();
         document.body.appendChild(stats.dom);
-
-        // grid helper
-        // const gridHelper = new THREE.GridHelper(10, 10, 0xaec6cf, 0xaec6cf);
-        // scene.add(gridHelper);
     };
 
-    const addGeometry = () => {
-        const geometry = new THREE.BoxGeometry();
-        material = new THREE.MeshBasicMaterial({
-            color: 0x00ff00,
-            wireframe: true,
-        });
-
-        cube = new THREE.Mesh(geometry, material);
-        cube.position.set(0, 0.5, -10);
-        scene.add(cube);
-    };
-
-    const lerp = (x: number, y: number, a: number): number => {
-        return (1 - a) * x + a * y;
-    };
-
-    const scalePercent = (start: number, end: number) => {
-        return (scrollPercent - start) / (end - start);
-    };
-
-    const addAnimationScripts = () => {
-        //add an animation that flashes the cube through 100 percent of scroll
-        animationScripts.push({
-            start: 0,
-            end: 101,
-            func: () => {
-                let g = material.color.g;
-                g -= 0.05;
-                if (g <= 0) {
-                    g = 1.0;
-                }
-                material.color.g = g;
+    const addGeometry = async () => {
+        const loader = new THREE.TextureLoader();
+        // sparkles
+        sparklesGeometry = new THREE.BufferGeometry();
+        sparklesMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                pointTexture: {
+                    value: await loader.loadAsync("dotTexture.png"),
+                },
             },
+            vertexShader: document.getElementById("sparkles-vs")?.textContent,
+            fragmentShader: document.getElementById("sparkles-fs")?.textContent,
+            blending: THREE.AdditiveBlending,
+            alphaTest: 1.0,
+            transparent: true,
         });
 
-        //add an animation that moves the cube through first 40 percent of scroll
-        animationScripts.push({
-            start: 0,
-            end: 40,
-            func: () => {
-                camera.lookAt(cube.position);
-                camera.position.set(0, 1, 2);
-                cube.position.z = lerp(-10, 0, scalePercent(0, 40));
-                rotationEnabled = true;
-            },
-        });
+        // desk
+        const objLoader = new OBJLoader();
+        const object = await objLoader.loadAsync("models/desk.obj");
+        // object.children[0].geometry.translate(0.5, 0, 0);
+        // object.children[0].geometry.rotateX(THREE.MathUtils.degToRad(15));
+        // object.children[0].geometry.rotateY(THREE.MathUtils.degToRad(-15));
+        // object.children[0].geometry.scale(2, 2, 2);
 
-        //add an animation that rotates the cube between 40-60 percent of scroll
-        animationScripts.push({
-            start: 40,
-            end: 60,
-            func: () => {
-                camera.lookAt(cube.position);
-                camera.position.set(0, 1, 2);
-                cube.rotation.z = lerp(0, Math.PI, scalePercent(40, 60));
-                rotationEnabled = true;
-            },
-        });
+        const children = object.getObjectByName("monitor");
 
-        //add an animation that moves the camera between 60-80 percent of scroll
-        animationScripts.push({
-            start: 60,
-            end: 80,
-            func: () => {
-                camera.position.x = lerp(0, 5, scalePercent(60, 80));
-                camera.position.y = lerp(1, 5, scalePercent(60, 80));
-                camera.lookAt(cube.position);
-                rotationEnabled = true;
-            },
-        });
+        monitor = children;
 
-        //add an animation that auto rotates the cube from 80 percent of scroll
-        animationScripts.push({
-            start: 80,
-            end: 101,
-            func: () => {
-                //auto rotate
-                cube.rotation.x += 0.01;
-                cube.rotation.y += 0.01;
-                rotationEnabled = false;
-            },
-        });
+        scene.add(object);
     };
 
-    const playScrollAnimations = () => {
-        animationScripts.forEach((a) => {
-            if (scrollPercent >= a.start && scrollPercent < a.end) {
-                a.func();
-            }
-        });
-    };
-
-    const resizeRendererToDisplaySize = () => {
+    const onResize = () => {
+        camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        camera.updateProjectionMatrix();
         const pixelRatio = window.devicePixelRatio;
         const width = (canvas.clientWidth * pixelRatio) | 0;
         const height = (canvas.clientHeight * pixelRatio) | 0;
-        const needResize = canvas.width !== width || canvas.height !== height;
-        if (needResize) {
-            renderer.setSize(width, height, false);
-        }
-        return needResize;
+        renderer.setSize(width, height, false);
+
+        // children functions
+        stars?.onResize();
     };
 
-    const loop = () => {
+    const loop = (time: number) => {
         requestAnimationFrame(loop);
-
-        playScrollAnimations();
 
         renderer.render(scene, camera);
 
         stats.update();
+
+        // children functions
+        animations?.loop();
+        stars?.loop();
+        sparkles1?.loop(time);
     };
 </script>
 
@@ -212,16 +148,30 @@
 
 {#if loading}
     <Loading />
-{/if}
-{#if message}
-    <p class="message">{message}</p>
-{/if}
-{#if weblAvailable}
+{:else if weblAvailable}
     <span class="scroll">Scroll progress: {scrollPercent?.toFixed(2)}%</span>
     <div class:hide={loading}>
         <!-- <Rotation {scene} {rotationEnabled} /> -->
-        <Cloud {renderer} {scene} on:mount />
+        <!-- <Cloud {renderer} {scene} on:mount /> -->
+        <!-- <Animations bind:this={animations} {scrollPercent} {camera} {scene} /> -->
+        <Stars
+            bind:this={stars}
+            {renderer}
+            {scene}
+            {camera}
+            {sparklesGeometry}
+            {sparklesMaterial}
+        />
+        <Sparkles
+            bind:this={sparkles1}
+            {sparklesGeometry}
+            {scene}
+            object={monitor}
+        />
     </div>
+{/if}
+{#if message}
+    <p class="message">{message}</p>
 {/if}
 
 <style>

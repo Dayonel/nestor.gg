@@ -109,7 +109,7 @@
         <section class="hero">
             <div class="block title">
                 <h1 class="name">Nestor Plysyuk</h1>
-                <h2 class="position">Software engineer</h2>
+                <h2 class="position">Full stack developer</h2>
             </div>
 
             <div class="block scroll-dots">
@@ -170,8 +170,9 @@
         align-items: center;
         padding: 3rem;
         position: fixed;
-        width: 100%;
+        width: 100dvw;
         height: 100dvh;
+        text-shadow: 0 0 18px var(--background);
     }
 
     h1 {
