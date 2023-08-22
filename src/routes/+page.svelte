@@ -107,7 +107,7 @@
 <div bind:this={scrolling} id="scrolling" class:hide={loading}>
     <div id="three">
         <section class="hero">
-            <div class="block title">
+            <div class="block">
                 <h1 class="name">Nestor Plysyuk</h1>
                 <h2 class="position">Full stack developer</h2>
             </div>
@@ -168,7 +168,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 3rem;
+        padding: 2rem;
         position: fixed;
         width: 100dvw;
         height: 100dvh;
@@ -189,7 +189,6 @@
         flex-direction: column;
         align-items: center;
         gap: 0.5rem;
-        margin-top: auto;
     }
 
     .hero {
@@ -199,13 +198,10 @@
     }
 
     .scroll-dots {
-        margin-top: auto;
+        position: absolute;
+        bottom: 2rem;
         font-weight: 700;
         font-size: 22px;
-    }
-
-    .title {
-        padding-bottom: 3rem;
     }
 
     .dot {

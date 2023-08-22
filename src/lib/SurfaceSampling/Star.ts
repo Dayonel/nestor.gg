@@ -7,13 +7,11 @@ export class Star {
         this.pixelRatio = pixelRatio;
     }
     setup(color) {
-        this.r = Math.random() * 3 + 1;
+        this.r = Math.random() * 12 + 3;
         this.phi = Math.random() * Math.PI * 2;
         this.theta = Math.random() * Math.PI;
-        this.v = new THREE.Vector2()
-            .random()
-            .subScalar(0.5)
-            .multiplyScalar(0.0007);
+        this.v = new THREE.Vector2().random().subScalar(0.5).multiplyScalar(0.0007);
+
 
         this.x = this.r * Math.sin(this.phi) * Math.sin(this.theta);
         this.y = this.r * Math.cos(this.phi);

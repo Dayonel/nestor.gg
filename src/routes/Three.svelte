@@ -65,8 +65,10 @@
         const height = window.innerHeight;
 
         // camera
-        camera = new THREE.PerspectiveCamera(70, width / height, 0.01, 1000);
-        camera.position.z = 8;
+        let fov = 40;
+        camera = new THREE.PerspectiveCamera(fov, width / height, 0.01, 1000);
+        camera.position.set(0, 1.6, 8); // 8
+        camera.rotation.set(THREE.MathUtils.degToRad(-10), 0, 0);
         scene.add(camera);
 
         // renderer
@@ -76,7 +78,7 @@
             antialias: true,
         });
 
-        renderer.setClearColor(0x101010, 1);
+        // renderer.setClearColor(0x101010, 1);
         renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.SRGBColorSpace; // optional with post-processing
         onResize();
@@ -103,19 +105,12 @@
             transparent: true,
         });
 
-        // desk
+        // monitor
         const objLoader = new OBJLoader();
-        const object = await objLoader.loadAsync("models/desk.obj");
-        // object.children[0].geometry.translate(0.5, 0, 0);
-        // object.children[0].geometry.rotateX(THREE.MathUtils.degToRad(15));
-        // object.children[0].geometry.rotateY(THREE.MathUtils.degToRad(-15));
-        // object.children[0].geometry.scale(2, 2, 2);
-
+        const object = await objLoader.loadAsync("models/monitor.obj");
+        object.children[0].geometry.translate(0, 0, 4);
         const children = object.getObjectByName("monitor");
-
         monitor = children;
-
-        scene.add(object);
     };
 
     const onResize = () => {
@@ -194,7 +189,7 @@
 
     .scroll {
         position: fixed;
-        bottom: 1rem;
-        left: 1rem;
+        top: 1rem;
+        right: 1rem;
     }
 </style>
