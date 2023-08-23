@@ -15,6 +15,7 @@
     import Animations from "./Animations.svelte";
     import Stars from "./Stars.svelte";
     import Sparkles from "./Sparkles.svelte";
+    import Lines from "./Lines.svelte";
 
     export let scrollPercent = 0;
 
@@ -83,7 +84,7 @@
             antialias: true,
         });
 
-        renderer.setClearColor(0x221e29, 0.1);
+        // renderer.setClearColor(0x221e29, 0.1);
         renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.SRGBColorSpace; // optional with post-processing
         onResize();
@@ -164,7 +165,8 @@
             {sparklesGeometry}
             {sparklesMaterial}
         />
-        <Sparkles {sparklesGeometry} {scene} object={monitor} />
+        <!-- <Sparkles {sparklesGeometry} {scene} object={monitor} /> -->
+        <Lines {scene} object={monitor} />
     </div>
 {/if}
 {#if message}

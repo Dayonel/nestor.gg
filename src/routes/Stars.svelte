@@ -38,8 +38,8 @@
 
     onMount(() => {
         const renderScene = new RenderPass(scene, camera);
-        const strength = 0.4;
-        const radius = 1;
+        const strength = 2;
+        const radius = 0.8;
         const threshold = 0;
         bloomPass = new UnrealBloomPass(
             new THREE.Vector2(
