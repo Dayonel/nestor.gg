@@ -10,7 +10,7 @@
     import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 
     import Loading from "$lib/Loading.svelte";
-    import Rotation from "./Rotation.svelte";
+    import Parallax from "./Parallax.svelte";
     import Cloud from "./Cloud.svelte";
     import Animations from "./Animations.svelte";
     import Stars from "./Stars.svelte";
@@ -32,7 +32,8 @@
     let monitor: any;
     let stars: any;
     let animations: any;
-    let sparkles1: any;
+    const fovLandscape = 80;
+    const fovPortrait = 110;
 
     onMount(async () => {
         try {
@@ -48,7 +49,7 @@
 
             window.onresize = () => onResize();
 
-            loop(0);
+            requestAnimationFrame(loop);
 
             dispatch("mount");
         } finally {
@@ -65,10 +66,14 @@
         const height = window.innerHeight;
 
         // camera
-        let fov = 40;
-        camera = new THREE.PerspectiveCamera(fov, width / height, 0.01, 1000);
-        camera.position.set(0, 1.6, 8); // 8
-        camera.rotation.set(THREE.MathUtils.degToRad(-10), 0, 0);
+        camera = new THREE.PerspectiveCamera(
+            fovLandscape,
+            width / height,
+            0.01,
+            1000
+        );
+        camera.position.set(0, 0, 8);
+        camera.rotation.set(THREE.MathUtils.degToRad(-7), 0, 0);
         scene.add(camera);
 
         // renderer
@@ -78,7 +83,7 @@
             antialias: true,
         });
 
-        // renderer.setClearColor(0x101010, 1);
+        renderer.setClearColor(0x221e29, 0.1);
         renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.SRGBColorSpace; // optional with post-processing
         onResize();
@@ -108,12 +113,15 @@
         // monitor
         const objLoader = new OBJLoader();
         const object = await objLoader.loadAsync("models/monitor.obj");
-        object.children[0].geometry.translate(0, 0, 4);
         const children = object.getObjectByName("monitor");
         monitor = children;
+        monitor.geometry.translate(0, -1.05, 6);
     };
 
     const onResize = () => {
+        if (canvas.clientHeight > canvas.clientWidth) camera.fov = fovPortrait;
+        else camera.fov = fovLandscape;
+
         camera.aspect = canvas.clientWidth / canvas.clientHeight;
         camera.updateProjectionMatrix();
         const pixelRatio = window.devicePixelRatio;
@@ -135,7 +143,6 @@
         // children functions
         animations?.loop();
         stars?.loop();
-        sparkles1?.loop(time);
     };
 </script>
 
@@ -146,7 +153,7 @@
 {:else if weblAvailable}
     <span class="scroll">Scroll progress: {scrollPercent?.toFixed(2)}%</span>
     <div class:hide={loading}>
-        <!-- <Rotation {scene} {rotationEnabled} /> -->
+        <Parallax {camera} />
         <!-- <Cloud {renderer} {scene} on:mount /> -->
         <!-- <Animations bind:this={animations} {scrollPercent} {camera} {scene} /> -->
         <Stars
@@ -157,12 +164,7 @@
             {sparklesGeometry}
             {sparklesMaterial}
         />
-        <Sparkles
-            bind:this={sparkles1}
-            {sparklesGeometry}
-            {scene}
-            object={monitor}
-        />
+        <Sparkles {sparklesGeometry} {scene} object={monitor} />
     </div>
 {/if}
 {#if message}

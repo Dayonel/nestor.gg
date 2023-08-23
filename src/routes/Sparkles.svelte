@@ -30,6 +30,7 @@
         scene.add(group);
         p1 = new THREE.Vector3();
         loadSampler();
+        requestAnimationFrame(loop);
     });
 
     const loadSampler = () => {
@@ -60,11 +61,9 @@
                 line.coordinates.push(p1.x, p1.y, p1.z);
                 line.previous = p1.clone();
 
-                for (let i = 0; i < 2; i++) {
-                    const spark = new Sparkle(pixelRatio);
-                    spark.setup(p1, line.material.color);
-                    sparkles.push(spark);
-                }
+                const spark = new Sparkle(pixelRatio);
+                spark.setup(p1, line.material.color);
+                sparkles.push(spark);
                 ok = true;
             } else if (!line.previous) {
                 line.previous = p1.clone();
@@ -89,14 +88,16 @@
         );
     }
 
-    export const loop = (time: number) => {
+    const loop = (time: number) => {
+        requestAnimationFrame(loop);
+        if (sparkles.length == sparklesCount) return;
+
         if (time - _prev > 30) {
             lines.forEach((l) => {
-                if (sparkles.length < sparklesCount) {
-                    for (let i = 0; i < 10; i++) {
-                        nextDot(l);
-                    }
+                for (let i = 0; i < 20; i++) {
+                    nextDot(l);
                 }
+
                 const tempVertices = new Float32Array(l.coordinates);
                 l.geometry.setAttribute(
                     "position",
@@ -106,17 +107,17 @@
             });
             updateSparklesGeometry();
             _prev = time;
+
+            let tempSparklesArray: any[] = [];
+            sparkles.forEach((s) => {
+                s.update();
+                tempSparklesArray.push(s.x, s.y, s.z);
+            });
+
+            sparklesGeometry.setAttribute(
+                "position",
+                new THREE.Float32BufferAttribute(tempSparklesArray, 3)
+            );
         }
-
-        let tempSparklesArray: any[] = [];
-        sparkles.forEach((s) => {
-            s.update();
-            tempSparklesArray.push(s.x, s.y, s.z);
-        });
-
-        sparklesGeometry.setAttribute(
-            "position",
-            new THREE.Float32BufferAttribute(tempSparklesArray, 3)
-        );
     };
 </script>

@@ -107,7 +107,7 @@
 <div bind:this={scrolling} id="scrolling" class:hide={loading}>
     <div id="three">
         <section class="hero">
-            <div class="block">
+            <div class="block title">
                 <h1 class="name">Nestor Plysyuk</h1>
                 <h2 class="position">Full stack developer</h2>
             </div>
@@ -176,12 +176,12 @@
     }
 
     h1 {
-        font-size: calc(100% + 6dvw);
+        font-size: calc(100% + 4dvw);
     }
 
     h2,
     p {
-        font-size: calc(100% + 2dvw);
+        font-size: calc(50% + 2dvw);
     }
 
     .block {
@@ -202,6 +202,10 @@
         bottom: 2rem;
         font-weight: 700;
         font-size: 22px;
+    }
+
+    .title {
+        padding-bottom: 3rem;
     }
 
     .dot {

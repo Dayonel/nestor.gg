@@ -17,12 +17,12 @@
     export let sparklesGeometry: THREE.BufferGeometry;
     export let sparklesMaterial: THREE.ShaderMaterial;
 
-    const pixelRatio = 2;
+    let pixelRatio = 2;
     const colors = [
-        new THREE.Color("#CFD6DE").multiplyScalar(0.5),
-        new THREE.Color("#1EE3CF").multiplyScalar(0.5),
-        new THREE.Color("#6B48FF").multiplyScalar(0.5),
-        new THREE.Color("#125D98").multiplyScalar(0.5),
+        new THREE.Color("#b1b7be"),
+        new THREE.Color("#1EE3CF"),
+        new THREE.Color("#6B48FF"),
+        new THREE.Color("#125D98"),
     ];
 
     let group: THREE.Group;
@@ -38,14 +38,18 @@
 
     onMount(() => {
         const renderScene = new RenderPass(scene, camera);
+        const strength = 0.4;
+        const radius = 1;
+        const threshold = 0;
         bloomPass = new UnrealBloomPass(
-            new THREE.Vector2(window.innerWidth, window.innerHeight),
-            1.5,
-            0.4,
-            0.85
+            new THREE.Vector2(
+                window.innerWidth * window.devicePixelRatio,
+                window.innerHeight * window.devicePixelRatio
+            ),
+            strength,
+            radius,
+            threshold
         );
-        bloomPass.threshold = 0;
-        bloomPass.strength = 0.6;
 
         composer = new EffectComposer(renderer);
         composer.setPixelRatio(pixelRatio);
@@ -63,7 +67,10 @@
 
     const createStars = () => {
         for (let i = 0; i < 1500; i++) {
-            const star = new Star(pixelRatio);
+            let starPixelRatio = Math.max(pixelRatio, window.devicePixelRatio);
+            if (starPixelRatio > pixelRatio) starPixelRatio *= 2;
+
+            const star = new Star(starPixelRatio);
             star.setup(colors[Math.floor(Math.random() * colors.length)]);
             // @ts-ignore
             galaxyGeometryVertices.push(star.x, star.y, star.z);
