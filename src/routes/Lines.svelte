@@ -10,28 +10,28 @@
     export let scene: THREE.Scene;
     export let object: any;
 
-    const pathCount = 1000;
+    const pathCount = 700;
     let sampler: any = null;
     let paths: any[] = [];
     let group: THREE.Group;
     const materials = [
         new THREE.LineBasicMaterial({
-            color: 0xfaad80,
+            color: 0xcfd6de,
             transparent: true,
             opacity: 0.5,
         }),
         new THREE.LineBasicMaterial({
-            color: 0xff6767,
+            color: 0x1ee3cf,
             transparent: true,
             opacity: 0.5,
         }),
         new THREE.LineBasicMaterial({
-            color: 0xff3d68,
+            color: 0x6b48ff,
             transparent: true,
             opacity: 0.5,
         }),
         new THREE.LineBasicMaterial({
-            color: 0xa73489,
+            color: 0x125d98,
             transparent: true,
             opacity: 0.5,
         }),

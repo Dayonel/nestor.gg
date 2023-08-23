@@ -205,7 +205,7 @@
     }
 
     .title {
-        padding-bottom: 3rem;
+        padding-bottom: 4rem;
     }
 
     .dot {
