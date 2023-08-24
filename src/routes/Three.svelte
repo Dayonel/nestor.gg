@@ -7,7 +7,7 @@
     // @ts-ignore
     import Stats from "three/addons/libs/stats.module";
     // @ts-ignore
-    import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+    import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
     import Loading from "$lib/Loading.svelte";
     import Parallax from "./Parallax.svelte";
@@ -16,6 +16,7 @@
     import Stars from "./Stars.svelte";
     import Sparkles from "./Sparkles.svelte";
     import Lines from "./Lines.svelte";
+    import GodRays from "./GodRays.svelte";
 
     export let scrollPercent = 0;
 
@@ -33,8 +34,9 @@
     let monitor: any;
     let stars: any;
     let animations: any;
-    const fovLandscape = 80;
+    const fovLandscape = 70;
     const fovPortrait = 110;
+    let godRays: any;
 
     onMount(async () => {
         try {
@@ -46,7 +48,7 @@
             }
 
             prepareScene();
-            await addGeometry();
+            await loadGeometry();
 
             window.onresize = () => onResize();
 
@@ -70,11 +72,10 @@
         camera = new THREE.PerspectiveCamera(
             fovLandscape,
             width / height,
-            0.01,
-            1000
+            1,
+            3000
         );
-        camera.position.set(0, 0, 8);
-        camera.rotation.set(THREE.MathUtils.degToRad(-7), 0, 0);
+        camera.position.set(0, 0, 200);
         scene.add(camera);
 
         // renderer
@@ -84,7 +85,6 @@
             antialias: true,
         });
 
-        // renderer.setClearColor(0x221e29, 0.1);
         renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.SRGBColorSpace; // optional with post-processing
         onResize();
@@ -94,7 +94,7 @@
         document.body.appendChild(stats.dom);
     };
 
-    const addGeometry = async () => {
+    const loadGeometry = async () => {
         const loader = new THREE.TextureLoader();
         // sparkles
         sparklesGeometry = new THREE.BufferGeometry();
@@ -111,12 +111,31 @@
             transparent: true,
         });
 
-        // monitor
-        const objLoader = new OBJLoader();
-        const object = await objLoader.loadAsync("models/monitor.obj");
-        const children = object.getObjectByName("monitor");
-        monitor = children;
-        monitor.geometry.translate(0, -1.05, 6);
+        // amsterdam
+        const gltfLoader = new GLTFLoader();
+        const model1 = (await gltfLoader.loadAsync("models/amsterdam1.gltf"))
+            .scene;
+        model1.position.set(-125, -115, 0);
+        model1.scale.multiplyScalar(15);
+        scene.add(model1);
+
+        const model2 = (await gltfLoader.loadAsync("models/amsterdam2.gltf"))
+            .scene;
+        model2.position.set(-50, -115, 0);
+        model2.scale.multiplyScalar(15);
+        scene.add(model2);
+
+        const model3 = (await gltfLoader.loadAsync("models/amsterdam3.gltf"))
+            .scene;
+        model3.position.set(25, -115, 0);
+        model3.scale.multiplyScalar(15);
+        scene.add(model3);
+
+        const model4 = (await gltfLoader.loadAsync("models/amsterdam4.gltf"))
+            .scene;
+        model4.position.set(100, -115, 0);
+        model4.scale.multiplyScalar(15);
+        scene.add(model4);
     };
 
     const onResize = () => {
@@ -132,12 +151,14 @@
 
         // children functions
         stars?.onResize();
+        godRays?.onResize();
     };
 
-    const loop = (time: number) => {
+    const loop = () => {
         requestAnimationFrame(loop);
 
-        renderer.render(scene, camera);
+        if (godRays) godRays.loop();
+        else renderer.render(scene, camera);
 
         stats.update();
 
@@ -154,19 +175,20 @@
 {:else if weblAvailable}
     <span class="scroll">Scroll progress: {scrollPercent?.toFixed(2)}%</span>
     <div class:hide={loading}>
-        <Parallax {camera} />
+        <!-- <Parallax {camera} /> -->
         <!-- <Cloud {renderer} {scene} on:mount /> -->
         <!-- <Animations bind:this={animations} {scrollPercent} {camera} {scene} /> -->
-        <Stars
+        <!-- <Stars
             bind:this={stars}
             {renderer}
             {scene}
             {camera}
             {sparklesGeometry}
             {sparklesMaterial}
-        />
+        /> -->
         <!-- <Sparkles {sparklesGeometry} {scene} object={monitor} /> -->
-        <Lines {scene} object={monitor} />
+        <!-- <Lines {scene} object={monitor} /> -->
+        <GodRays bind:this={godRays} {camera} {renderer} {scene} />
     </div>
 {/if}
 {#if message}

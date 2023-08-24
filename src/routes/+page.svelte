@@ -108,8 +108,8 @@
     <div id="three">
         <section class="hero">
             <div class="block title">
-                <h1 class="name">Nestor Plysyuk</h1>
-                <h2 class="position">Full stack developer</h2>
+                <h1 class="name">Hi, I'm Nestor</h1>
+                <h2 class="position">I live in Amsterdam</h2>
             </div>
 
             <div class="block scroll-dots">
