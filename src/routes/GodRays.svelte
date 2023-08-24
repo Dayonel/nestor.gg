@@ -15,7 +15,7 @@
     export let bgColor = 0x000511;
     export let sunColor = 0xffee00;
 
-    const sunPosition = new THREE.Vector3(0, 1000, -1000);
+    const sunPosition = new THREE.Vector3(0, 300, -1000);
     const clipPosition = new THREE.Vector4();
     const screenSpacePosition = new THREE.Vector3();
 

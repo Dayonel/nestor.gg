@@ -8,6 +8,10 @@
     import Stats from "three/addons/libs/stats.module";
     // @ts-ignore
     import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+    // @ts-ignore
+    import { RectAreaLightHelper } from "three/addons/helpers/RectAreaLightHelper.js";
+    // @ts-ignore
+    import { RectAreaLightUniformsLib } from "three/addons/lights/RectAreaLightUniformsLib.js";
 
     import Loading from "$lib/Loading.svelte";
     import Parallax from "./Parallax.svelte";
@@ -34,7 +38,7 @@
     let monitor: any;
     let stars: any;
     let animations: any;
-    const fovLandscape = 70;
+    const fovLandscape = 100;
     const fovPortrait = 110;
     let godRays: any;
 
@@ -136,6 +140,52 @@
         model4.position.set(100, -115, 0);
         model4.scale.multiplyScalar(15);
         scene.add(model4);
+
+        // area lights
+        const width = 100;
+        const height = -400;
+        const intensity = 1;
+        RectAreaLightUniformsLib.init();
+        const rectLight1 = new THREE.RectAreaLight(
+            0xff0000,
+            intensity,
+            width,
+            height
+        );
+        rectLight1.position.set(-5, 5, 5);
+        scene.add(rectLight1);
+
+        const rectLight2 = new THREE.RectAreaLight(
+            0x00ff00,
+            intensity,
+            width,
+            height
+        );
+        rectLight2.position.set(0, 5, 5);
+        scene.add(rectLight2);
+
+        const rectLight3 = new THREE.RectAreaLight(
+            0x0000ff,
+            intensity,
+            width,
+            height
+        );
+        rectLight3.position.set(5, 5, 5);
+        scene.add(rectLight3);
+
+        scene.add(new RectAreaLightHelper(rectLight1));
+        scene.add(new RectAreaLightHelper(rectLight2));
+        scene.add(new RectAreaLightHelper(rectLight3));
+
+        const geoFloor = new THREE.BoxGeometry(2000, 0.1, 2000);
+        const matStdFloor = new THREE.MeshStandardMaterial({
+            color: 0xbcbcbc,
+            roughness: 0.1,
+            metalness: 0,
+        });
+        const mshStdFloor = new THREE.Mesh(geoFloor, matStdFloor);
+        mshStdFloor.position.set(0, 30 - 150);
+        scene.add(mshStdFloor);
     };
 
     const onResize = () => {
@@ -188,7 +238,7 @@
         /> -->
         <!-- <Sparkles {sparklesGeometry} {scene} object={monitor} /> -->
         <!-- <Lines {scene} object={monitor} /> -->
-        <GodRays bind:this={godRays} {camera} {renderer} {scene} />
+        <!-- <GodRays bind:this={godRays} {camera} {renderer} {scene} /> -->
     </div>
 {/if}
 {#if message}
