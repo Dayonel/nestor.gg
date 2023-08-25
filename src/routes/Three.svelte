@@ -40,7 +40,7 @@
     let stars: any;
     let animations: any;
     const fovLandscape = 50;
-    const fovPortrait = 60;
+    const fovPortrait = 70;
     let godRays: any;
     let water: any;
 
