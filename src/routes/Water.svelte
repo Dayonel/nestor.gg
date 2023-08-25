@@ -34,7 +34,7 @@
             textureHeight: 1024,
         });
 
-        water.position.z = 7.5;
+        water.position.z = 50;
         water.position.y = -0.25;
         water.rotation.x = THREE.MathUtils.degToRad(-90);
         scene.add(water);
@@ -46,14 +46,5 @@
 
         const light = new THREE.AmbientLight(0x404040, 10); // soft white light
         scene.add(light);
-    };
-
-    export const onResize = () => {
-        groundMirror
-            .getRenderTarget()
-            .setSize(
-                window.innerWidth * window.devicePixelRatio,
-                window.innerHeight * window.devicePixelRatio
-            );
     };
 </script>

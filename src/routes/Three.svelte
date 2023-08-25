@@ -211,6 +211,16 @@
         rectLight4.position.set(7, 0, 0);
         rectLight4.rotation.set(0, THREE.MathUtils.degToRad(180), 0);
         scene.add(rectLight4);
+
+        // sky light
+        const rectLight5 = new THREE.RectAreaLight(0x0e1215, 100, 100, 8);
+        rectLight5.position.set(0, 20, 0);
+        rectLight5.rotation.set(
+            THREE.MathUtils.degToRad(90),
+            THREE.MathUtils.degToRad(180),
+            0
+        );
+        scene.add(rectLight5);
     };
 
     const onResize = () => {
@@ -227,7 +237,6 @@
         // children functions
         stars?.onResize();
         godRays?.onResize();
-        water?.onResize();
     };
 
     const loop = () => {
