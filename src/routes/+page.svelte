@@ -109,7 +109,7 @@
         <section class="hero">
             <div class="block title">
                 <h1 class="name">Hi, I'm Nestor</h1>
-                <h2 class="position">I live in Amsterdam</h2>
+                <h2 class="position">I live in Amsterdam 🧡</h2>
             </div>
 
             <div class="block scroll-dots">

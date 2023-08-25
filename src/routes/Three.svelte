@@ -38,8 +38,8 @@
     let monitor: any;
     let stars: any;
     let animations: any;
-    const fovLandscape = 100;
-    const fovPortrait = 110;
+    const fovLandscape = 50;
+    const fovPortrait = 80;
     let godRays: any;
 
     onMount(async () => {
@@ -76,10 +76,10 @@
         camera = new THREE.PerspectiveCamera(
             fovLandscape,
             width / height,
-            1,
-            3000
+            0.01,
+            200
         );
-        camera.position.set(0, 0, 200);
+        camera.position.set(0, 8, 30);
         scene.add(camera);
 
         // renderer
@@ -91,6 +91,10 @@
 
         renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.SRGBColorSpace; // optional with post-processing
+
+        // shadows
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         onResize();
 
         // stats
@@ -119,73 +123,110 @@
         const gltfLoader = new GLTFLoader();
         const model1 = (await gltfLoader.loadAsync("models/amsterdam1.gltf"))
             .scene;
-        model1.position.set(-125, -115, 0);
-        model1.scale.multiplyScalar(15);
+        model1.position.set(2.5, -0.25, 0);
+        model1.traverse((obj: any) => {
+            if (obj.isMesh) {
+                obj.castShadow = true;
+            }
+        });
         scene.add(model1);
 
         const model2 = (await gltfLoader.loadAsync("models/amsterdam2.gltf"))
             .scene;
-        model2.position.set(-50, -115, 0);
-        model2.scale.multiplyScalar(15);
+        model2.position.set(-2.5, -0.25, 0);
+        model2.traverse((obj: any) => {
+            if (obj.isMesh) {
+                obj.castShadow = true;
+            }
+        });
         scene.add(model2);
 
         const model3 = (await gltfLoader.loadAsync("models/amsterdam3.gltf"))
             .scene;
-        model3.position.set(25, -115, 0);
-        model3.scale.multiplyScalar(15);
+        model3.position.set(-7.5, -0.25, 0);
+        model3.traverse((obj: any) => {
+            if (obj.isMesh) {
+                obj.castShadow = true;
+            }
+        });
         scene.add(model3);
 
         const model4 = (await gltfLoader.loadAsync("models/amsterdam4.gltf"))
             .scene;
-        model4.position.set(100, -115, 0);
-        model4.scale.multiplyScalar(15);
+        model4.position.set(7.5, -0.25, 0);
+        model4.traverse((obj: any) => {
+            if (obj.isMesh) {
+                obj.castShadow = true;
+            }
+        });
         scene.add(model4);
 
         // area lights
-        const width = 100;
-        const height = -400;
-        const intensity = 1;
         RectAreaLightUniformsLib.init();
+
+        const width = 10;
+        const height = 40;
+        const intensity = 1;
+
         const rectLight1 = new THREE.RectAreaLight(
             0xff0000,
             intensity,
             width,
             height
         );
-        rectLight1.position.set(-5, 5, 5);
+        rectLight1.position.set(-10, 0, -15);
+        rectLight1.rotation.set(0, THREE.MathUtils.degToRad(180), 0);
         scene.add(rectLight1);
 
         const rectLight2 = new THREE.RectAreaLight(
-            0x00ff00,
+            0x000000,
             intensity,
             width,
             height
         );
-        rectLight2.position.set(0, 5, 5);
+        rectLight2.position.set(0, 0, -15);
+        rectLight2.rotation.set(0, THREE.MathUtils.degToRad(180), 0);
         scene.add(rectLight2);
 
         const rectLight3 = new THREE.RectAreaLight(
-            0x0000ff,
+            0xff0000,
             intensity,
             width,
             height
         );
-        rectLight3.position.set(5, 5, 5);
+        rectLight3.position.set(10, 0, -15);
+        rectLight3.rotation.set(0, THREE.MathUtils.degToRad(180), 0);
         scene.add(rectLight3);
 
-        scene.add(new RectAreaLightHelper(rectLight1));
-        scene.add(new RectAreaLightHelper(rectLight2));
-        scene.add(new RectAreaLightHelper(rectLight3));
+        // scene.add(new RectAreaLightHelper(rectLight1));
+        // scene.add(new RectAreaLightHelper(rectLight2));
+        // scene.add(new RectAreaLightHelper(rectLight3));
 
-        const geoFloor = new THREE.BoxGeometry(2000, 0.1, 2000);
-        const matStdFloor = new THREE.MeshStandardMaterial({
-            color: 0xbcbcbc,
-            roughness: 0.1,
-            metalness: 0,
-        });
-        const mshStdFloor = new THREE.Mesh(geoFloor, matStdFloor);
-        mshStdFloor.position.set(0, 30 - 150);
-        scene.add(mshStdFloor);
+        // ground
+        const mesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(100, 100),
+            new THREE.MeshStandardMaterial({
+                color: 0xcbcbcb,
+                roughness: 0.1,
+                depthWrite: false,
+            })
+        );
+        mesh.rotation.x = THREE.MathUtils.degToRad(-90);
+        mesh.receiveShadow = true;
+        scene.add(mesh);
+
+        // spot light
+        const spotLight = new THREE.SpotLight(0xffffff, 2000, 0, 0.314, 1, 2);
+        spotLight.position.set(-19.566, 33.137, -24.737);
+        spotLight.shadow.normalBias = 7.22;
+        spotLight.castShadow = true;
+        //Set up shadow properties for the light
+        spotLight.shadow.mapSize.width = 512; // default
+        spotLight.shadow.mapSize.height = 512; // default
+        spotLight.shadow.camera.near = 0.5; // default
+        spotLight.shadow.camera.far = 500; // default
+        spotLight.shadow.focus = 1; // default
+        scene.add(spotLight);
     };
 
     const onResize = () => {
