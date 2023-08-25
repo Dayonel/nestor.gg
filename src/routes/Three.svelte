@@ -40,7 +40,7 @@
     let stars: any;
     let animations: any;
     const fovLandscape = 50;
-    const fovPortrait = 70;
+    const fovPortrait = 60;
     let godRays: any;
     let water: any;
 
@@ -82,12 +82,7 @@
             0.01,
             200
         );
-        camera.position.set(-19.505, 12.662, 33.95);
-        camera.rotation.set(
-            THREE.MathUtils.degToRad(-10),
-            THREE.MathUtils.degToRad(-28),
-            THREE.MathUtils.degToRad(-4)
-        );
+        camera.position.set(0, 4, 30);
         scene.add(camera);
 
         // renderer
