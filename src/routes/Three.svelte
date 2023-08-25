@@ -21,13 +21,14 @@
     import Sparkles from "./Sparkles.svelte";
     import Lines from "./Lines.svelte";
     import GodRays from "./GodRays.svelte";
+    import Water from "./Water.svelte";
 
     export let scrollPercent = 0;
 
     let message: string;
     let dispatch = createEventDispatcher();
     let canvas: HTMLCanvasElement;
-    let scene: THREE.Scene = new THREE.Scene();
+    let scene: THREE.Scene;
     let camera: THREE.PerspectiveCamera;
     let renderer: THREE.WebGLRenderer;
     let stats: any;
@@ -39,8 +40,9 @@
     let stars: any;
     let animations: any;
     const fovLandscape = 50;
-    const fovPortrait = 80;
+    const fovPortrait = 70;
     let godRays: any;
+    let water: any;
 
     onMount(async () => {
         try {
@@ -69,6 +71,7 @@
     });
 
     const prepareScene = () => {
+        scene = new THREE.Scene();
         const width = window.innerWidth;
         const height = window.innerHeight;
 
@@ -79,7 +82,12 @@
             0.01,
             200
         );
-        camera.position.set(0, 8, 30);
+        camera.position.set(-19.505, 12.662, 33.95);
+        camera.rotation.set(
+            THREE.MathUtils.degToRad(-10),
+            THREE.MathUtils.degToRad(-28),
+            THREE.MathUtils.degToRad(-4)
+        );
         scene.add(camera);
 
         // renderer
@@ -91,6 +99,7 @@
 
         renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.SRGBColorSpace; // optional with post-processing
+        renderer.setClearColor(0x0e1215);
 
         // shadows
         renderer.shadowMap.enabled = true;
@@ -123,7 +132,7 @@
         const gltfLoader = new GLTFLoader();
         const model1 = (await gltfLoader.loadAsync("models/amsterdam1.gltf"))
             .scene;
-        model1.position.set(2.5, -0.25, 0);
+        model1.position.set(2.5, -0.5, 0);
         model1.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;
@@ -133,7 +142,7 @@
 
         const model2 = (await gltfLoader.loadAsync("models/amsterdam2.gltf"))
             .scene;
-        model2.position.set(-2.5, -0.25, 0);
+        model2.position.set(-2.5, -0.5, 0);
         model2.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;
@@ -143,7 +152,7 @@
 
         const model3 = (await gltfLoader.loadAsync("models/amsterdam3.gltf"))
             .scene;
-        model3.position.set(-7.5, -0.25, 0);
+        model3.position.set(-7.5, -0.5, 0);
         model3.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;
@@ -153,7 +162,7 @@
 
         const model4 = (await gltfLoader.loadAsync("models/amsterdam4.gltf"))
             .scene;
-        model4.position.set(7.5, -0.25, 0);
+        model4.position.set(7.5, -0.5, 0);
         model4.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;
@@ -164,9 +173,9 @@
         // area lights
         RectAreaLightUniformsLib.init();
 
-        const width = 10;
-        const height = 40;
-        const intensity = 1;
+        const width = 4;
+        const height = 25;
+        const intensity = 2;
 
         const rectLight1 = new THREE.RectAreaLight(
             0xff0000,
@@ -174,59 +183,39 @@
             width,
             height
         );
-        rectLight1.position.set(-10, 0, -15);
+        rectLight1.position.set(-5, 0, 0);
         rectLight1.rotation.set(0, THREE.MathUtils.degToRad(180), 0);
         scene.add(rectLight1);
 
         const rectLight2 = new THREE.RectAreaLight(
-            0x000000,
+            0x00ff00,
             intensity,
             width,
             height
         );
-        rectLight2.position.set(0, 0, -15);
+        rectLight2.position.set(-1, 0, 0);
         rectLight2.rotation.set(0, THREE.MathUtils.degToRad(180), 0);
         scene.add(rectLight2);
 
         const rectLight3 = new THREE.RectAreaLight(
-            0xff0000,
+            0x0000ff,
             intensity,
             width,
             height
         );
-        rectLight3.position.set(10, 0, -15);
+        rectLight3.position.set(3, 0, 0);
         rectLight3.rotation.set(0, THREE.MathUtils.degToRad(180), 0);
         scene.add(rectLight3);
 
-        // scene.add(new RectAreaLightHelper(rectLight1));
-        // scene.add(new RectAreaLightHelper(rectLight2));
-        // scene.add(new RectAreaLightHelper(rectLight3));
-
-        // ground
-        const mesh = new THREE.Mesh(
-            new THREE.PlaneGeometry(100, 100),
-            new THREE.MeshStandardMaterial({
-                color: 0xcbcbcb,
-                roughness: 0.1,
-                depthWrite: false,
-            })
+        const rectLight4 = new THREE.RectAreaLight(
+            0xd77e29,
+            intensity,
+            width,
+            height
         );
-        mesh.rotation.x = THREE.MathUtils.degToRad(-90);
-        mesh.receiveShadow = true;
-        scene.add(mesh);
-
-        // spot light
-        const spotLight = new THREE.SpotLight(0xffffff, 2000, 0, 0.314, 1, 2);
-        spotLight.position.set(-19.566, 33.137, -24.737);
-        spotLight.shadow.normalBias = 7.22;
-        spotLight.castShadow = true;
-        //Set up shadow properties for the light
-        spotLight.shadow.mapSize.width = 512; // default
-        spotLight.shadow.mapSize.height = 512; // default
-        spotLight.shadow.camera.near = 0.5; // default
-        spotLight.shadow.camera.far = 500; // default
-        spotLight.shadow.focus = 1; // default
-        scene.add(spotLight);
+        rectLight4.position.set(7, 0, 0);
+        rectLight4.rotation.set(0, THREE.MathUtils.degToRad(180), 0);
+        scene.add(rectLight4);
     };
 
     const onResize = () => {
@@ -243,6 +232,7 @@
         // children functions
         stars?.onResize();
         godRays?.onResize();
+        water?.onResize();
     };
 
     const loop = () => {
@@ -280,6 +270,7 @@
         <!-- <Sparkles {sparklesGeometry} {scene} object={monitor} /> -->
         <!-- <Lines {scene} object={monitor} /> -->
         <!-- <GodRays bind:this={godRays} {camera} {renderer} {scene} /> -->
+        <Water bind:this={water} {scene} />
     </div>
 {/if}
 {#if message}
