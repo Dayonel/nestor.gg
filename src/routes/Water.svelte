@@ -8,7 +8,6 @@
     export let scene: THREE.Scene;
 
     let water: any;
-    let groundMirror: any;
 
     const params = {
         color: "#ffffff",

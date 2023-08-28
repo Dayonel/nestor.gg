@@ -10,14 +10,20 @@
     let scrollPercent: number = 0;
     let scrollHidden: boolean = false;
     let scrolling: any;
+    let totalHeight: number;
+    let scrollY: number;
+    let sections: any[];
 
     onMount(() => {
-        intro();
-        animateOnScroll();
+        gsap.registerPlugin(ScrollTrigger);
+        sections = gsap.utils.toArray("#three section");
+        totalHeight = sections.length * window.innerHeight;
     });
 
     const loaded = () => {
         loading = false;
+
+        intro();
 
         scrolling.onscroll = () => {
             scrollPercent =
@@ -25,35 +31,11 @@
                     (scrolling.scrollHeight - scrolling.clientHeight)) *
                 100;
 
+            scrollY = scrolling.scrollTop;
+
             if (scrollPercent > 1) toggleScroll(true);
             else toggleScroll(false);
         };
-    };
-
-    const animateOnScroll = () => {
-        gsap.registerPlugin(ScrollTrigger);
-
-        const scenes = gsap.utils.toArray("#three section");
-
-        let tl = gsap.timeline({
-            scrollTrigger: {
-                scroller: "#scrolling",
-                trigger: "#three",
-                start: "top top",
-                end: "+=10000px",
-                scrub: true,
-                pin: true,
-                pinType: "transform",
-            },
-        });
-
-        gsap.set("#three section:not(:first-child)", { autoAlpha: 0 });
-
-        scenes.forEach((panel: any) => {
-            tl.to(panel, { yPercent: 0, autoAlpha: 1 }).to(panel, {
-                autoAlpha: 0,
-            });
-        });
     };
 
     const intro = () => {
@@ -102,7 +84,7 @@
     />
 </svelte:head>
 
-<Three {scrollPercent} on:mount={() => loaded()} />
+<Three {scrollPercent} {scrollY} {totalHeight} on:mount={() => loaded()} />
 
 <div bind:this={scrolling} id="scrolling" class:hide={loading}>
     <div id="three">
@@ -119,8 +101,10 @@
                 <span>Scroll down</span>
             </div>
         </section>
-        <section>
-            <h2>Begin scrolling to see things change</h2>
+        <section class="section2">
+            <h2 class="web-development">
+                I am passionate about web development
+            </h2>
         </section>
         <section>
             <h2>Changing Objects Position</h2>
@@ -169,7 +153,7 @@
         justify-content: center;
         align-items: center;
         padding: 2rem;
-        position: fixed;
+        /* position: fixed; */
         width: 100dvw;
         height: 100dvh;
         text-shadow: 0 0 18px var(--background);
@@ -244,6 +228,17 @@
         }
         100% {
             opacity: 0;
+        }
+    }
+
+    .web-development {
+        width: 100%;
+    }
+
+    @media (min-width: 768px) {
+        .web-development {
+            width: 590px;
+            font-size: 96px;
         }
     }
 </style>
