@@ -84,12 +84,12 @@
     />
 </svelte:head>
 
-<Three {scrollPercent} {scrollY} {totalHeight} on:mount={() => loaded()} />
+<Three {scrollPercent} on:mount={() => loaded()} />
 
 <div bind:this={scrolling} id="scrolling" class:hide={loading}>
     <div id="three">
         <section class="hero">
-            <div class="block title">
+            <div class="block">
                 <h1 class="name">Hi, I'm Nestor</h1>
                 <h2 class="position">I live in Amsterdam 🧡</h2>
             </div>
@@ -186,10 +186,6 @@
         bottom: 2rem;
         font-weight: 700;
         font-size: 22px;
-    }
-
-    .title {
-        padding-bottom: 4rem;
     }
 
     .dot {

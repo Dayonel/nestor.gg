@@ -48,7 +48,6 @@
     };
 
     const initPostprocessing = (renderTargetWidth, renderTargetHeight) => {
-        renderer.setClearColor(0xffffff);
         renderer.autoClear = false;
         materialDepth = new THREE.MeshDepthMaterial();
 
@@ -204,6 +203,7 @@
     };
 
     export const loop = () => {
+        requestAnimationFrame(loop);
         const time = Date.now() / 4000;
 
         sphereMesh.position.x = orbitRadius * Math.cos(time);

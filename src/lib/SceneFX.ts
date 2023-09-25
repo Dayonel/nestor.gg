@@ -1,23 +1,19 @@
 // @ts-ignore
 import * as THREE from "three";
-import { AnimationFX } from "./AnimationFX";
 
-export class SceneFX extends AnimationFX {
+export class SceneFX {
     start: number;
     end: number;
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
     renderTarget: THREE.WebGLRenderTarget;
     cameraInitialPos: THREE.Vector3;
-    fovLandscape = 50;
+    fovLandscape = 40;
     fovPortrait = 70;
 
     constructor(start: number, end: number,
         canvas: HTMLCanvasElement, renderer: THREE.WebGLRenderTarget,
-        width: number, height: number,
-        animationScripts: { start: number; end: number; func: () => void }[] =
-            []) {
-        super(animationScripts);
+        width: number, height: number) {
 
         this.start = start;
         this.end = end;
@@ -30,7 +26,7 @@ export class SceneFX extends AnimationFX {
             0.01,
             200
         );
-        this.camera.position.set(0, 4, 30);
+        this.camera.position.set(0, 0, 0);
         this.scene.add(this.camera);
 
         this.renderTarget = new THREE.WebGLRenderTarget(width, height, { type: THREE.HalfFloatType });
@@ -52,18 +48,9 @@ export class SceneFX extends AnimationFX {
         renderer.setSize(width, height, false);
     };
 
-    render = (renderer: THREE.WebGLRenderer, target: boolean, scrollPercent: number) => {
-        if (target) {
-            renderer.setRenderTarget(this.renderTarget);
-            renderer.clear();
-            renderer.render(this.scene, this.camera);
-        } else {
-            renderer.setRenderTarget(null);
-            renderer.render(this.scene, this.camera);
-        }
-
-        this.animationScripts.forEach((a) => {
-            a.func();
+    render = (funcs: { func: () => void }[]) => {
+        funcs.forEach(f => {
+            f.func();
         });
     };
 }

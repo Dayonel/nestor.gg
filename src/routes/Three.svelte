@@ -19,8 +19,6 @@
     import type { SceneFX } from "$lib/SceneFX";
 
     export let scrollPercent = 0;
-    export let scrollY = 0;
-    export let totalHeight = 1;
 
     let message: string;
     let dispatch = createEventDispatcher();
@@ -60,11 +58,12 @@
             canvas: canvas,
             alpha: true,
             antialias: true,
+            powerPreference: "high-performance",
         });
 
         renderer.toneMapping = THREE.NoToneMapping;
-        renderer.outputColorSpace = THREE.SRGBColorSpace; // optional with post-processing
-        renderer.setClearColor(0x0e1215);
+        // renderer.outputColorSpace = THREE.SRGBColorSpace; // optional with post-processing
+        renderer.setClearColor(0x000000);
 
         // shadows
         renderer.shadowMap.enabled = true;
@@ -90,8 +89,9 @@
         }
 
         scenes?.forEach((f) => {
-            if (scrollPercent >= f.start && scrollPercent < f.end)
-                f.render(renderer, false, scrollPercent);
+            if (scrollPercent >= f.start && scrollPercent <= f.end) {
+                renderer.render(f.scene, f.camera);
+            }
         });
     };
 </script>
@@ -109,16 +109,10 @@
             {canvas}
             {renderer}
             on:mount={(f) => scenes.push(f.detail.sceneFX)}
-            {scrollPercent}
-            {scrollY}
-            {totalHeight}
         />
         <Scene2
             {canvas}
             {renderer}
-            {scrollPercent}
-            {scrollY}
-            {totalHeight}
             on:mount={(f) => scenes.push(f.detail.sceneFX)}
         />
 
@@ -134,7 +128,6 @@
         /> -->
         <!-- <Sparkles {sparklesGeometry} {scene} object={monitor} /> -->
         <!-- <Lines {scene} object={monitor} /> -->
-        <!-- <GodRays bind:this={godRays} {camera} {renderer} {scene} /> -->
     </div>
 {/if}
 {#if message}

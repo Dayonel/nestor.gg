@@ -3,32 +3,35 @@
     import { SceneFX } from "$lib/SceneFX";
     // @ts-ignore
     import * as THREE from "three";
-    import { AnimationFX } from "$lib/AnimationFX";
+    // @ts-ignore
+    import { gsap } from "gsap/dist/gsap.js";
+    // @ts-ignore
+    import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
 
     export let canvas: HTMLCanvasElement;
     export let renderer: THREE.WebGLRenderer;
-    export let scrollPercent: number;
-    export let scrollY: number;
-    export let totalHeight: number;
 
-    const start = 7;
-    const end = 20;
+    const start = 10;
+    const end = 30;
     let sceneFX: SceneFX;
     let plane1: THREE.Mesh;
     let dispatch = createEventDispatcher();
 
     onMount(() => {
-        const animationScripts = defineAnimationScripts();
+        gsap.registerPlugin(ScrollTrigger);
+
         sceneFX = new SceneFX(
             start,
             end,
             canvas,
             renderer,
             window.innerWidth,
-            window.innerHeight,
-            animationScripts
+            window.innerHeight
         );
+
         loadScene();
+
+        animateOnScroll();
 
         dispatch("mount", { sceneFX });
     });
@@ -44,33 +47,36 @@
         sceneFX.scene.add(plane1);
     };
 
-    const defineAnimationScripts = () => {
-        const animationScripts = [];
-        animationScripts.push({
-            start: start,
-            end: end,
-            func: () => {
-                sceneFX.camera.position.y =
-                    -(scrollY / totalHeight) * 64 + sceneFX.cameraInitialPos.y;
-
-                plane1.rotation.z = AnimationFX.lerp(
-                    0,
-                    THREE.MathUtils.degToRad(5),
-                    AnimationFX.scalePercent(start, end, scrollPercent)
-                );
-                plane1.scale.x = AnimationFX.lerp(
-                    1,
-                    5,
-                    AnimationFX.scalePercent(start, end, scrollPercent)
-                );
-                plane1.position.y = AnimationFX.lerp(
-                    plane1.position.y,
-                    -5,
-                    AnimationFX.scalePercent(start, end, scrollPercent)
-                );
+    const animateOnScroll = () => {
+        // camera
+        gsap.timeline({
+            scrollTrigger: {
+                scroller: "#scrolling",
+                trigger: ".hero",
+                start: "top bottom",
+                end: "+=" + window.innerHeight,
+                scrub: true,
             },
-        });
-
-        return animationScripts;
+        })
+            .to(sceneFX.camera.position, {
+                x: sceneFX.camera.position.x,
+                y: -5,
+                z: sceneFX.camera.position.z,
+            })
+            .to(plane1.rotation, {
+                x: plane1.rotation.x,
+                y: THREE.MathUtils.degToRad(5),
+                z: plane1.rotation.z,
+            })
+            .to(plane1.scale, {
+                x: 5,
+                y: plane1.scale.y,
+                z: plane1.scale.z,
+            })
+            .to(plane1.position, {
+                x: plane1.position.x,
+                y: -5,
+                z: plane1.position.z,
+            });
     };
 </script>
