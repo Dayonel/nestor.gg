@@ -23,8 +23,6 @@
     const loaded = () => {
         loading = false;
 
-        intro();
-
         scrolling.onscroll = () => {
             scrollPercent =
                 (scrolling.scrollTop /
@@ -36,22 +34,6 @@
             if (scrollPercent > 1) toggleScroll(true);
             else toggleScroll(false);
         };
-    };
-
-    const intro = () => {
-        gsap.fromTo(
-            "main",
-            {
-                opacity: 0,
-                duration: 1,
-                ease: "power1.in",
-            },
-            {
-                opacity: 1,
-                duration: 1,
-                ease: "power1.in",
-            }
-        );
     };
 
     const toggleScroll = (hide: boolean) => {

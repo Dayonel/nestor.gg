@@ -13,6 +13,9 @@
     // @ts-ignore
     import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
     import GodRays from "./GodRays.svelte";
+    import Sky from "./Sky.svelte";
+
+    import TWEEN from "@tweenjs/tween.js";
 
     export let canvas: HTMLCanvasElement;
     export let renderer: THREE.WebGLRenderer;
@@ -24,6 +27,7 @@
     let dispatch = createEventDispatcher();
     let group: THREE.Group;
     let godRays: any;
+    let introAnimationCompleted: boolean;
 
     onMount(async () => {
         gsap.registerPlugin(ScrollTrigger);
@@ -34,12 +38,19 @@
             canvas,
             renderer,
             window.innerWidth,
-            window.innerHeight
+            window.innerHeight,
+            30000
         );
+
+        sceneFX.camera.position.set(0, 5, 45);
 
         await loadScene();
 
         animateOnScroll();
+
+        introAnimation();
+
+        loop();
 
         // const funcs: { func: () => void }[] = [];
         // funcs.push({ func: godRays.loop });
@@ -88,6 +99,24 @@
             .scene;
         model4.position.set(7.4, -0.5, 0);
         model4.traverse((obj: any) => {
+            if (obj.isMesh) {
+                obj.castShadow = true;
+                obj.receiveShadow = true;
+            }
+        });
+
+        const model5 = model4.clone();
+        model5.position.set(-12.5, -0.5, 0);
+        model5.traverse((obj: any) => {
+            if (obj.isMesh) {
+                obj.castShadow = true;
+                obj.receiveShadow = true;
+            }
+        });
+
+        const model6 = model3.clone();
+        model6.position.set(12.4, -0.5, 0);
+        model6.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;
                 obj.receiveShadow = true;
@@ -155,6 +184,8 @@
         group.add(model2);
         group.add(model3);
         group.add(model4);
+        group.add(model5);
+        group.add(model6);
         // group.add(rectLight1);
         // group.add(rectLight2);
         // group.add(rectLight3);
@@ -163,7 +194,6 @@
         group.add(ambientLight);
         group.add(directionalLight);
 
-        sceneFX.camera.position.set(0, 8, 25);
         // sceneFX.camera.lookAt(0, 3, 0);
 
         // let color = new THREE.Color();
@@ -186,13 +216,6 @@
         // group.add(spotLight);
 
         sceneFX.scene.add(group);
-
-        // scene background color = fog color
-        const color = new THREE.Color("lightblue");
-        sceneFX.scene.background = color;
-        const near = 25;
-        const far = 30;
-        sceneFX.scene.fog = new THREE.Fog(color, near, far);
     };
 
     const animateOnScroll = () => {
@@ -207,7 +230,7 @@
         }).to(sceneFX.camera.position, {
             x: sceneFX.camera.position.x,
             y: sceneFX.camera.position.y,
-            z: 35,
+            z: 45,
         });
         // gsap.timeline({
         //     scrollTrigger: {
@@ -232,10 +255,32 @@
         //     },
         // }).to(sceneFX.scene.fog, { density: 0.3 });
     };
+
+    const introAnimation = () => {
+        new TWEEN.Tween(sceneFX.camera.position)
+            .to(
+                {
+                    // from camera position
+                    x: sceneFX.camera.position.x, //desired x position to go
+                    y: sceneFX.camera.position.y, //desired y position to go
+                    z: 35, //desired z position to go
+                },
+                1000 // 2500
+            ) // time take to animate
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .start() // define delay, easing
+            .onComplete(() => (introAnimationCompleted = true));
+    };
+
+    const loop = () => {
+        requestAnimationFrame(loop);
+        if (!introAnimationCompleted) TWEEN.update(); // update animations
+    };
 </script>
 
 {#if sceneFX}
-    <!-- <Water bind:this={water} scene={sceneFX.scene} /> -->
+    <Sky scene={sceneFX.scene} {renderer} />
+    <Water bind:this={water} scene={sceneFX.scene} />
     <!-- <GodRays
         bind:this={godRays}
         camera={sceneFX.camera}

@@ -26,7 +26,8 @@
             canvas,
             renderer,
             window.innerWidth,
-            window.innerHeight
+            window.innerHeight,
+            200
         );
 
         loadScene();

@@ -13,7 +13,7 @@ export class SceneFX {
 
     constructor(start: number, end: number,
         canvas: HTMLCanvasElement, renderer: THREE.WebGLRenderTarget,
-        width: number, height: number) {
+        width: number, height: number, far: number) {
 
         this.start = start;
         this.end = end;
@@ -24,7 +24,7 @@ export class SceneFX {
             this.fovLandscape,
             width / height,
             0.01,
-            200
+            far
         );
         this.camera.position.set(0, 0, 0);
         this.scene.add(this.camera);
