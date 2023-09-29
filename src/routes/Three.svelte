@@ -6,10 +6,10 @@
     import * as THREE from "three";
     // @ts-ignore
     import Stats from "three/addons/libs/stats.module";
+    import TWEEN from "@tweenjs/tween.js";
 
     import Loading from "$lib/Loading.svelte";
     import Parallax from "./Parallax.svelte";
-    import Cloud from "./Cloud.svelte";
     import Stars from "./Stars.svelte";
     import Sparkles from "./Sparkles.svelte";
     import Lines from "./Lines.svelte";
@@ -27,6 +27,8 @@
     let stats: any;
     let loading: boolean = true;
     let weblAvailable: boolean = false;
+    let introAnimationCompleted: boolean;
+    let animationIntro: any;
 
     const totalScenes = 2;
     let scenes: SceneFX[] = [];
@@ -78,13 +80,32 @@
         scenes?.forEach((f) => f.resize(canvas, renderer));
     };
 
+    const introAnimation = (scene: THREE.Scene) => {
+        animationIntro = new TWEEN.Tween(scene.camera.position)
+            .to(
+                {
+                    x: scene.camera.position.x,
+                    y: scene.camera.position.y,
+                    z: 35,
+                },
+                1000 // 2500
+            ) // time take to animate
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onComplete(() => (introAnimationCompleted = true));
+    };
+
     const loop = () => {
+        if (!weblAvailable) return;
+
         requestAnimationFrame(loop);
 
         stats.update();
 
+        if (!loading && !introAnimationCompleted) TWEEN.update();
+
         if (loading && scenes?.length == totalScenes) {
             dispatch("mount");
+            animationIntro.start();
             loading = false;
         }
 
@@ -108,7 +129,10 @@
         <Scene1
             {canvas}
             {renderer}
-            on:mount={(f) => scenes.push(f.detail.sceneFX)}
+            on:mount={(f) => {
+                scenes.push(f.detail.sceneFX);
+                introAnimation(f.detail.sceneFX);
+            }}
         />
         <Scene2
             {canvas}
@@ -117,7 +141,6 @@
         />
 
         <!-- <Parallax {camera} /> -->
-        <!-- <Cloud {renderer} {scene} on:mount /> -->
         <!-- <Stars
             bind:this={stars}
             {renderer}

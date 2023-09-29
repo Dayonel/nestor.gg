@@ -8,7 +8,7 @@
 
     let loading = true;
     let scrollPercent: number = 0;
-    let scrollHidden: boolean = false;
+    let scrollHidden: boolean = true;
     let scrolling: any;
     let totalHeight: number;
     let scrollY: number;
@@ -30,15 +30,13 @@
                 100;
 
             scrollY = scrolling.scrollTop;
-
             if (scrollPercent > 1) toggleScroll(true);
             else toggleScroll(false);
         };
     };
 
     const toggleScroll = (hide: boolean) => {
-        if (hide && scrollHidden) return;
-        if (!hide && !scrollHidden) return;
+        if (hide == scrollHidden) return;
 
         scrollHidden = hide;
         gsap.fromTo(
@@ -164,7 +162,7 @@
     }
 
     .scroll-dots {
-        position: absolute;
+        position: fixed;
         bottom: 2rem;
         font-weight: 700;
         font-size: 22px;

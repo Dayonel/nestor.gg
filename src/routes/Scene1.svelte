@@ -12,10 +12,14 @@
     import { gsap } from "gsap/dist/gsap.js";
     // @ts-ignore
     import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
+    // @ts-ignore
+    import { EXRLoader } from "three/addons/loaders/EXRLoader.js";
+    // @ts-ignore
+    import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+
     import GodRays from "./GodRays.svelte";
     import Sky from "./Sky.svelte";
-
-    import TWEEN from "@tweenjs/tween.js";
+    import Cloud from "./Cloud.svelte";
 
     export let canvas: HTMLCanvasElement;
     export let renderer: THREE.WebGLRenderer;
@@ -27,7 +31,7 @@
     let dispatch = createEventDispatcher();
     let group: THREE.Group;
     let godRays: any;
-    let introAnimationCompleted: boolean;
+    let cameraZ = 45;
 
     onMount(async () => {
         gsap.registerPlugin(ScrollTrigger);
@@ -42,15 +46,11 @@
             30000
         );
 
-        sceneFX.camera.position.set(0, 5, 45);
+        sceneFX.camera.position.set(0, 5, cameraZ);
 
         await loadScene();
 
         animateOnScroll();
-
-        introAnimation();
-
-        loop();
 
         // const funcs: { func: () => void }[] = [];
         // funcs.push({ func: godRays.loop });
@@ -61,10 +61,15 @@
     });
 
     const loadScene = async () => {
-        group = new THREE.Group();
+        group = new THREE.Group();     
 
         // amsterdam
         const gltfLoader = new GLTFLoader();
+        const draco = new DRACOLoader(); // compression
+        draco.setDecoderConfig({ type: "js" });
+        draco.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
+        gltfLoader.setDRACOLoader(draco);
+
         const model1 = (await gltfLoader.loadAsync("models/amsterdam1.gltf"))
             .scene;
         model1.position.set(2.45, -0.5, 0);
@@ -122,6 +127,10 @@
                 obj.receiveShadow = true;
             }
         });
+
+        // const bridge = (await gltfLoader.loadAsync("models/bridge.glb")).scene;
+        // bridge.position.z = -50;
+        // bridge.scale.multiplyScalar(100);
 
         // area lights
         RectAreaLightUniformsLib.init();
@@ -186,6 +195,7 @@
         group.add(model4);
         group.add(model5);
         group.add(model6);
+        // group.add(bridge);
         // group.add(rectLight1);
         // group.add(rectLight2);
         // group.add(rectLight3);
@@ -230,7 +240,7 @@
         }).to(sceneFX.camera.position, {
             x: sceneFX.camera.position.x,
             y: sceneFX.camera.position.y,
-            z: 45,
+            z: cameraZ,
         });
         // gsap.timeline({
         //     scrollTrigger: {
@@ -255,32 +265,13 @@
         //     },
         // }).to(sceneFX.scene.fog, { density: 0.3 });
     };
-
-    const introAnimation = () => {
-        new TWEEN.Tween(sceneFX.camera.position)
-            .to(
-                {
-                    // from camera position
-                    x: sceneFX.camera.position.x, //desired x position to go
-                    y: sceneFX.camera.position.y, //desired y position to go
-                    z: 35, //desired z position to go
-                },
-                1000 // 2500
-            ) // time take to animate
-            .easing(TWEEN.Easing.Quadratic.InOut)
-            .start() // define delay, easing
-            .onComplete(() => (introAnimationCompleted = true));
-    };
-
-    const loop = () => {
-        requestAnimationFrame(loop);
-        if (!introAnimationCompleted) TWEEN.update(); // update animations
-    };
 </script>
 
 {#if sceneFX}
     <Sky scene={sceneFX.scene} {renderer} />
     <Water bind:this={water} scene={sceneFX.scene} />
+    <!-- <Cloud {renderer} scene={sceneFX.scene} on:mount /> -->
+
     <!-- <GodRays
         bind:this={godRays}
         camera={sceneFX.camera}

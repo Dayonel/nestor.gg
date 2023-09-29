@@ -51,8 +51,8 @@
         const geometry = new THREE.PlaneGeometry(50, 50);
         const ground = new Reflector(geometry, {
             clipBias: 0.003,
-            textureWidth: window.innerWidth * window.devicePixelRatio,
-            textureHeight: window.innerHeight * window.devicePixelRatio,
+            textureWidth: window.innerWidth,
+            textureHeight: window.innerHeight,
             color: 0xb5b5b5,
         });
         ground.position.z = 25;

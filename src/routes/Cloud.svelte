@@ -9,17 +9,15 @@
     let texture: any;
     let uniforms: any;
 
-    onMount(() => {
+    onMount(async () => {
         const loader = new THREE.TextureLoader();
 
-        loader.load("noisev2.png", (tex: any) => {
-            texture = tex;
-            texture.wrapS = THREE.RepeatWrapping;
-            texture.wrapT = THREE.RepeatWrapping;
-            texture.minFilter = THREE.LinearFilter;
-            init();
-            loop(0);
-        });
+        texture = await loader.loadAsync("noisev2.png");
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.minFilter = THREE.LinearFilter;
+        init();
+        loop(0);
     });
 
     const init = () => {
