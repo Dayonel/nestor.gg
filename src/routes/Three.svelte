@@ -63,7 +63,7 @@
         });
 
         renderer.toneMapping = THREE.NoToneMapping;
-        // renderer.outputColorSpace = THREE.SRGBColorSpace; // optional with post-processing
+        renderer.outputColorSpace = THREE.SRGBColorSpace; // optional with post-processing
         renderer.setClearColor(0x000000);
 
         // shadows

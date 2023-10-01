@@ -67,9 +67,7 @@
         group = new THREE.Group();
 
         const loader = new RGBELoader();
-        envMap = await loader.loadAsync(
-            "textures/skybox/kloppenheim_06_puresky_2k.hdr"
-        );
+        envMap = await loader.loadAsync("textures/skybox/amphitheatre_zanzibar_fort_2k.hdr");
 
         // amsterdam
         const gltfLoader = new GLTFLoader();
@@ -78,10 +76,10 @@
         draco.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
         gltfLoader.setDRACOLoader(draco);
 
-        const windowMaterial = new THREE.MeshBasicMaterial({
+        const windowMaterial = new THREE.MeshPhongMaterial({
             color: 0xffffff,
             envMap: envMap,
-            refractionRatio: 1,
+            refractionRatio: 0.98,
         });
 
         const model1 = (await gltfLoader.loadAsync("models/amsterdam1.gltf"))
@@ -206,15 +204,13 @@
         rectLight4.rotation.set(0, THREE.MathUtils.degToRad(180), 0);
 
         // sky light
-        const rectLight5 = new THREE.RectAreaLight(0x0e1215, 200, 100, 8);
+        const rectLight5 = new THREE.RectAreaLight(0x0e1215, 100, 100, 8);
         rectLight5.position.set(0, 20, 0);
         rectLight5.rotation.set(
             THREE.MathUtils.degToRad(90),
             THREE.MathUtils.degToRad(180),
             0
         );
-
-        const ambientLight = new THREE.AmbientLight(0x000000);
 
         const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
         directionalLight.position.set(-0.317, 37.285, 45.0);
@@ -232,7 +228,6 @@
         // group.add(rectLight3);
         // group.add(rectLight4);
         group.add(rectLight5);
-        group.add(ambientLight);
         // group.add(directionalLight);
         // group.add(directionalLight.target);
 
