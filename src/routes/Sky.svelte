@@ -3,33 +3,28 @@
     // @ts-ignore
     import * as THREE from "three";
     // @ts-ignore
-    import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
-    // @ts-ignore
     import { GroundProjectedSkybox } from "three/addons/objects/GroundProjectedSkybox.js";
 
     export let scene: THREE.Scene;
     export let renderer: THREE.WebGLRenderer;
+    export let envMap: any;
 
     onMount(async () => {
         await init();
     });
 
     const init = async () => {
-        const loader = new RGBELoader();
         const params = {
-            height: 0,
-            radius: 500,
+            height: -100,
+            radius: 300,
         };
-        const envMap = await loader.loadAsync(
-            "textures/skybox/kloppenheim_06_puresky_2k.hdr"
-        );
-        envMap.mapping = THREE.EquirectangularReflectionMapping;
-        // renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        // renderer.toneMappingExposure = 1;
+        envMap.mapping = THREE.EquirectangularRefractionMapping;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1;
 
         const skybox = new GroundProjectedSkybox(envMap);
         skybox.position.z = 50;
-        // skybox.position.y = -50;
+        skybox.position.y = -25;
         skybox.scale.setScalar(100);
         scene.add(skybox);
 

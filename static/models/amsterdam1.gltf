@@ -5,13 +5,11 @@
 	},
 	"extensionsUsed":[
 		"KHR_draco_mesh_compression",
-		"KHR_texture_transform",
 		"KHR_materials_specular",
 		"KHR_materials_ior"
 	],
 	"extensionsRequired":[
-		"KHR_draco_mesh_compression",
-		"KHR_texture_transform"
+		"KHR_draco_mesh_compression"
 	],
 	"scene":0,
 	"scenes":[
@@ -25,7 +23,8 @@
 				4,
 				5,
 				6,
-				7
+				7,
+				8
 			]
 		}
 	],
@@ -149,66 +148,24 @@
 				0,
 				0
 			]
+		},
+		{
+			"mesh":8,
+			"name":"Head",
+			"rotation":[
+				0.7071068286895752,
+				0,
+				0,
+				0.7071068286895752
+			],
+			"translation":[
+				-2.700000047683716,
+				0,
+				0
+			]
 		}
 	],
 	"materials":[
-		{
-			"doubleSided":true,
-			"name":"House",
-			"normalTexture":{
-				"extensions":{
-					"KHR_texture_transform":{
-						"offset":[
-							0,
-							-4
-						],
-						"scale":[
-							5,
-							5
-						]
-					}
-				},
-				"index":0
-			},
-			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					0.003035265253856778,
-					0.003676503896713257,
-					0.003676507156342268,
-					1
-				],
-				"metallicFactor":0,
-				"metallicRoughnessTexture":{
-					"extensions":{
-						"KHR_texture_transform":{
-							"offset":[
-								0,
-								-4
-							],
-							"scale":[
-								5,
-								5
-							]
-						}
-					},
-					"index":1
-				}
-			}
-		},
-		{
-			"doubleSided":true,
-			"name":"Roof",
-			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					0.03104284219443798,
-					0.044446833431720734,
-					0.05221778154373169,
-					1
-				],
-				"metallicFactor":0,
-				"roughnessFactor":0.5
-			}
-		},
 		{
 			"doubleSided":true,
 			"extensions":{
@@ -226,49 +183,13 @@
 			"name":"Windows",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.014843842945992947,
-					0.02008306235074997,
-					0.03106326423585415,
+					0.01520848460495472,
+					0.020288536325097084,
+					0.03071345016360283,
 					0.0999998152256012
 				],
 				"metallicFactor":0,
 				"roughnessFactor":0
-			}
-		},
-		{
-			"doubleSided":true,
-			"name":"Frames",
-			"pbrMetallicRoughness":{
-				"metallicFactor":0,
-				"roughnessFactor":0.5
-			}
-		},
-		{
-			"doubleSided":true,
-			"name":"Door",
-			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					0.003035265253856778,
-					0.003676503896713257,
-					0.003676507156342268,
-					1
-				],
-				"metallicFactor":0,
-				"roughnessFactor":0.5
-			}
-		},
-		{
-			"doubleSided":true,
-			"name":"Stairs",
-			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					0.003035265253856778,
-					0.003676503896713257,
-					0.003676507156342268,
-					1
-				],
-				"metallicFactor":0,
-				"roughnessFactor":0.5
 			}
 		}
 	],
@@ -293,7 +214,6 @@
 						}
 					},
 					"indices":3,
-					"material":0,
 					"mode":4
 				}
 			]
@@ -316,7 +236,6 @@
 						}
 					},
 					"indices":6,
-					"material":0,
 					"mode":4
 				}
 			]
@@ -339,7 +258,6 @@
 						}
 					},
 					"indices":9,
-					"material":1,
 					"mode":4
 				}
 			]
@@ -362,7 +280,7 @@
 						}
 					},
 					"indices":12,
-					"material":2,
+					"material":0,
 					"mode":4
 				}
 			]
@@ -387,7 +305,6 @@
 						}
 					},
 					"indices":16,
-					"material":3,
 					"mode":4
 				}
 			]
@@ -412,7 +329,6 @@
 						}
 					},
 					"indices":20,
-					"material":4,
 					"mode":4
 				}
 			]
@@ -437,7 +353,6 @@
 						}
 					},
 					"indices":24,
-					"material":0,
 					"mode":4
 				}
 			]
@@ -462,41 +377,49 @@
 						}
 					},
 					"indices":28,
-					"material":5,
 					"mode":4
 				}
 			]
-		}
-	],
-	"textures":[
-		{
-			"sampler":0,
-			"source":0
 		},
 		{
-			"sampler":0,
-			"source":1
-		}
-	],
-	"images":[
-		{
-			"mimeType":"image/jpeg",
-			"name":"brick_wall_001_nor_gl_1k.exr",
-			"uri":"brick_wall_001_nor_gl_1k_exr.jpg"
-		},
-		{
-			"mimeType":"image/jpeg",
-			"name":"brick_wall_001_rough_1k",
-			"uri":"brick_wall_001_rough_1k.jpg"
+			"name":"Bell_Gable.006",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":29,
+						"NORMAL":30,
+						"TEXCOORD_0":31
+					},
+					"extensions":{
+						"KHR_draco_mesh_compression":{
+							"bufferView":8,
+							"attributes":{
+								"POSITION":0,
+								"NORMAL":1,
+								"TEXCOORD_0":2
+							}
+						}
+					},
+					"indices":32,
+					"mode":4
+				},
+				{
+					"attributes":{
+						"POSITION":33
+					},
+					"indices":34,
+					"mode":1
+				}
+			]
 		}
 	],
 	"accessors":[
 		{
 			"componentType":5126,
-			"count":8989,
+			"count":5010,
 			"max":[
 				5.2900004386901855,
-				1.7140001058578491,
+				1.5700000524520874,
 				-0.3140000104904175
 			],
 			"min":[
@@ -508,17 +431,17 @@
 		},
 		{
 			"componentType":5126,
-			"count":8989,
+			"count":5010,
 			"type":"VEC3"
 		},
 		{
 			"componentType":5126,
-			"count":8989,
+			"count":5010,
 			"type":"VEC2"
 		},
 		{
 			"componentType":5123,
-			"count":14928,
+			"count":8802,
 			"type":"SCALAR"
 		},
 		{
@@ -715,59 +638,122 @@
 			"componentType":5123,
 			"count":36,
 			"type":"SCALAR"
+		},
+		{
+			"componentType":5126,
+			"count":3996,
+			"max":[
+				5.2900004386901855,
+				1.7140001058578491,
+				-11.230000495910645
+			],
+			"min":[
+				0.2900000214576721,
+				0,
+				-14.684000968933105
+			],
+			"type":"VEC3"
+		},
+		{
+			"componentType":5126,
+			"count":3996,
+			"type":"VEC3"
+		},
+		{
+			"componentType":5126,
+			"count":3996,
+			"type":"VEC2"
+		},
+		{
+			"componentType":5123,
+			"count":6165,
+			"type":"SCALAR"
+		},
+		{
+			"bufferView":9,
+			"componentType":5126,
+			"count":8,
+			"max":[
+				4.196000099182129,
+				1.2060000896453857,
+				-13.998001098632812
+			],
+			"min":[
+				4.194000244140625,
+				0,
+				-14.00200080871582
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":10,
+			"componentType":5123,
+			"count":8,
+			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":51653,
+			"byteLength":27192,
 			"byteOffset":0
 		},
 		{
 			"buffer":0,
 			"byteLength":815,
-			"byteOffset":51656
+			"byteOffset":27192
 		},
 		{
 			"buffer":0,
 			"byteLength":206554,
-			"byteOffset":52472
+			"byteOffset":28008
 		},
 		{
 			"buffer":0,
 			"byteLength":1322,
-			"byteOffset":259028
+			"byteOffset":234564
 		},
 		{
 			"buffer":0,
 			"byteLength":5686,
-			"byteOffset":260352
+			"byteOffset":235888
 		},
 		{
 			"buffer":0,
 			"byteLength":11033,
-			"byteOffset":266040
+			"byteOffset":241576
 		},
 		{
 			"buffer":0,
 			"byteLength":458,
-			"byteOffset":277076
+			"byteOffset":252612
 		},
 		{
 			"buffer":0,
 			"byteLength":313,
-			"byteOffset":277536
-		}
-	],
-	"samplers":[
+			"byteOffset":253072
+		},
 		{
-			"magFilter":9729,
-			"minFilter":9987
+			"buffer":0,
+			"byteLength":23076,
+			"byteOffset":253388
+		},
+		{
+			"buffer":0,
+			"byteLength":96,
+			"byteOffset":276464,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":16,
+			"byteOffset":276560,
+			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":277852,
+			"byteLength":276576,
 			"uri":"amsterdam1.bin"
 		}
 	]

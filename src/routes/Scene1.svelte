@@ -16,6 +16,8 @@
     import { EXRLoader } from "three/addons/loaders/EXRLoader.js";
     // @ts-ignore
     import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+    // @ts-ignore
+    import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 
     import GodRays from "./GodRays.svelte";
     import Sky from "./Sky.svelte";
@@ -31,7 +33,8 @@
     let dispatch = createEventDispatcher();
     let group: THREE.Group;
     let godRays: any;
-    let cameraZ = 45;
+    let cameraZ = 45; // 45
+    let envMap: any;
 
     onMount(async () => {
         gsap.registerPlugin(ScrollTrigger);
@@ -61,7 +64,12 @@
     });
 
     const loadScene = async () => {
-        group = new THREE.Group();     
+        group = new THREE.Group();
+
+        const loader = new RGBELoader();
+        envMap = await loader.loadAsync(
+            "textures/skybox/kloppenheim_06_puresky_2k.hdr"
+        );
 
         // amsterdam
         const gltfLoader = new GLTFLoader();
@@ -70,6 +78,12 @@
         draco.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
         gltfLoader.setDRACOLoader(draco);
 
+        const windowMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            envMap: envMap,
+            refractionRatio: 1,
+        });
+
         const model1 = (await gltfLoader.loadAsync("models/amsterdam1.gltf"))
             .scene;
         model1.position.set(2.45, -0.5, 0);
@@ -77,16 +91,24 @@
             if (obj.isMesh) {
                 obj.castShadow = true;
                 obj.receiveShadow = true;
+
+                if (obj.name == "Windows") {
+                    obj.material = windowMaterial;
+                }
             }
         });
 
         const model2 = (await gltfLoader.loadAsync("models/amsterdam2.gltf"))
             .scene;
-        model2.position.set(-2.5, -0.5, 0);
+        model2.position.set(-2.6, -0.5, 0);
         model2.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;
                 obj.receiveShadow = true;
+
+                if (obj.name == "Windows") {
+                    obj.material = windowMaterial;
+                }
             }
         });
 
@@ -97,6 +119,10 @@
             if (obj.isMesh) {
                 obj.castShadow = true;
                 obj.receiveShadow = true;
+
+                if (obj.name == "Windows") {
+                    obj.material = windowMaterial;
+                }
             }
         });
 
@@ -107,6 +133,10 @@
             if (obj.isMesh) {
                 obj.castShadow = true;
                 obj.receiveShadow = true;
+
+                if (obj.name == "Windows") {
+                    obj.material = windowMaterial;
+                }
             }
         });
 
@@ -176,7 +206,7 @@
         rectLight4.rotation.set(0, THREE.MathUtils.degToRad(180), 0);
 
         // sky light
-        const rectLight5 = new THREE.RectAreaLight(0x0e1215, 100, 100, 8);
+        const rectLight5 = new THREE.RectAreaLight(0x0e1215, 200, 100, 8);
         rectLight5.position.set(0, 20, 0);
         rectLight5.rotation.set(
             THREE.MathUtils.degToRad(90),
@@ -184,10 +214,11 @@
             0
         );
 
-        const ambientLight = new THREE.AmbientLight(0xffffff);
+        const ambientLight = new THREE.AmbientLight(0x000000);
 
         const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight.position.set(-42.659, 35.419, 3.461);
+        directionalLight.position.set(-0.317, 37.285, 45.0);
+        directionalLight.target.position.set(0, 0, 0);
 
         group.add(model1);
         group.add(model2);
@@ -200,22 +231,20 @@
         // group.add(rectLight2);
         // group.add(rectLight3);
         // group.add(rectLight4);
-        // group.add(rectLight5);
+        group.add(rectLight5);
         group.add(ambientLight);
-        group.add(directionalLight);
+        // group.add(directionalLight);
+        // group.add(directionalLight.target);
 
         // sceneFX.camera.lookAt(0, 3, 0);
 
         // let color = new THREE.Color();
         // renderer.getClearColor(color);
 
-        const light = new THREE.HemisphereLight(0xffffff, 0xffaa00, 1);
-        group.add(light);
-
         // spot light
-        const spotLight = new THREE.SpotLight(0xffffff, 1, 0, 0.314, 1, 2);
-        spotLight.position.set(-19.566, 33.137, -24.737);
-        spotLight.shadow.normalBias = 7.22;
+        const spotLight = new THREE.SpotLight(0xffffff, 2000, 0, 0.314, 1, 2);
+        spotLight.position.set(-30.254, 63.726, -24.101);
+        // spotLight.shadow.normalBias = 7.22;
         spotLight.castShadow = true;
         //Set up shadow properties for the light
         spotLight.shadow.mapSize.width = 512; // default
@@ -223,7 +252,7 @@
         spotLight.shadow.camera.near = 0.5; // default
         spotLight.shadow.camera.far = 500; // default
         spotLight.shadow.focus = 1; // default
-        // group.add(spotLight);
+        // sceneFX.scene.add(spotLight);
 
         sceneFX.scene.add(group);
     };
@@ -268,7 +297,9 @@
 </script>
 
 {#if sceneFX}
-    <Sky scene={sceneFX.scene} {renderer} />
+    {#if envMap}
+        <Sky {envMap} scene={sceneFX.scene} {renderer} />
+    {/if}
     <Water bind:this={water} scene={sceneFX.scene} />
     <!-- <Cloud {renderer} scene={sceneFX.scene} on:mount /> -->
 

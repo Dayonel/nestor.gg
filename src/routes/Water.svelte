@@ -39,15 +39,6 @@
         water.rotation.x = THREE.MathUtils.degToRad(-90);
         scene.add(water);
 
-        // lights
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.2);
-        directionalLight.position.set(0, 10, 0);
-        scene.add(directionalLight);
-
-        const light = new THREE.AmbientLight(0x404040, 10); // soft white light
-        scene.add(light);
-
-        // ground
         const geometry = new THREE.PlaneGeometry(50, 50);
         const ground = new Reflector(geometry, {
             clipBias: 0.003,
@@ -57,7 +48,7 @@
         });
         ground.position.z = 25;
         ground.position.y = -0.1;
-        ground.rotateX(-Math.PI / 2);
+        ground.rotation.x = THREE.MathUtils.degToRad(-90);
         scene.add(ground);
     };
 </script>

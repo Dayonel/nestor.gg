@@ -58,7 +58,6 @@
         // renderer
         renderer = new THREE.WebGLRenderer({
             canvas: canvas,
-            alpha: true,
             antialias: true,
             powerPreference: "high-performance",
         });
@@ -86,7 +85,7 @@
                 {
                     x: scene.camera.position.x,
                     y: scene.camera.position.y,
-                    z: 35,
+                    z: 35, // 35
                 },
                 1000 // 2500
             ) // time take to animate
