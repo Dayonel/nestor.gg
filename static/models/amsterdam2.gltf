@@ -4,10 +4,12 @@
 		"version":"2.0"
 	},
 	"extensionsUsed":[
-		"KHR_draco_mesh_compression"
+		"KHR_draco_mesh_compression",
+		"KHR_texture_transform"
 	],
 	"extensionsRequired":[
-		"KHR_draco_mesh_compression"
+		"KHR_draco_mesh_compression",
+		"KHR_texture_transform"
 	],
 	"scene":0,
 	"scenes":[
@@ -198,8 +200,79 @@
 	"materials":[
 		{
 			"doubleSided":true,
+			"name":"Secondary",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0.11193244159221649,
+					0.005181485787034035,
+					0.005605395883321762,
+					1
+				],
+				"metallicFactor":0,
+				"roughnessFactor":0.5
+			}
+		},
+		{
+			"doubleSided":true,
+			"name":"Building",
+			"normalTexture":{
+				"extensions":{
+					"KHR_texture_transform":{
+						"offset":[
+							0,
+							-4
+						],
+						"scale":[
+							5,
+							5
+						]
+					}
+				},
+				"index":0
+			},
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0.11193244159221649,
+					0.005181485787034035,
+					0.005605395883321762,
+					1
+				],
+				"metallicFactor":0,
+				"metallicRoughnessTexture":{
+					"extensions":{
+						"KHR_texture_transform":{
+							"offset":[
+								0,
+								-4
+							],
+							"scale":[
+								5,
+								5
+							]
+						}
+					},
+					"index":1
+				}
+			}
+		},
+		{
+			"doubleSided":true,
 			"name":"Windows",
 			"pbrMetallicRoughness":{}
+		},
+		{
+			"doubleSided":true,
+			"name":"Frames",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0,
+					0,
+					0,
+					1
+				],
+				"metallicFactor":0,
+				"roughnessFactor":0.5
+			}
 		}
 	],
 	"meshes":[
@@ -221,6 +294,7 @@
 						}
 					},
 					"indices":2,
+					"material":0,
 					"mode":4
 				}
 			]
@@ -243,6 +317,7 @@
 						}
 					},
 					"indices":5,
+					"material":0,
 					"mode":4
 				}
 			]
@@ -267,6 +342,7 @@
 						}
 					},
 					"indices":9,
+					"material":1,
 					"mode":4
 				}
 			]
@@ -289,7 +365,7 @@
 						}
 					},
 					"indices":12,
-					"material":0,
+					"material":2,
 					"mode":4
 				}
 			]
@@ -312,6 +388,7 @@
 						}
 					},
 					"indices":15,
+					"material":0,
 					"mode":4
 				},
 				{
@@ -319,6 +396,7 @@
 						"POSITION":16
 					},
 					"indices":17,
+					"material":0,
 					"mode":1
 				}
 			]
@@ -341,6 +419,7 @@
 						}
 					},
 					"indices":20,
+					"material":3,
 					"mode":4
 				}
 			]
@@ -363,6 +442,7 @@
 						}
 					},
 					"indices":23,
+					"material":3,
 					"mode":4
 				}
 			]
@@ -387,6 +467,7 @@
 						}
 					},
 					"indices":27,
+					"material":0,
 					"mode":4
 				}
 			]
@@ -411,6 +492,7 @@
 						}
 					},
 					"indices":31,
+					"material":0,
 					"mode":4
 				}
 			]
@@ -433,6 +515,7 @@
 						}
 					},
 					"indices":34,
+					"material":3,
 					"mode":4
 				}
 			]
@@ -455,9 +538,32 @@
 						}
 					},
 					"indices":37,
+					"material":3,
 					"mode":4
 				}
 			]
+		}
+	],
+	"textures":[
+		{
+			"sampler":0,
+			"source":0
+		},
+		{
+			"sampler":0,
+			"source":1
+		}
+	],
+	"images":[
+		{
+			"mimeType":"image/jpeg",
+			"name":"brick_wall_001_nor_gl_1k",
+			"uri":"brick_wall_001_nor_gl_1k.jpg"
+		},
+		{
+			"mimeType":"image/jpeg",
+			"name":"brick_wall_001_rough_1k",
+			"uri":"brick_wall_001_rough_1k.jpg"
 		}
 	],
 	"accessors":[
@@ -841,6 +947,12 @@
 			"buffer":0,
 			"byteLength":638,
 			"byteOffset":373976
+		}
+	],
+	"samplers":[
+		{
+			"magFilter":9729,
+			"minFilter":9987
 		}
 	],
 	"buffers":[

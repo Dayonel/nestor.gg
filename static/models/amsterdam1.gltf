@@ -5,11 +5,11 @@
 	},
 	"extensionsUsed":[
 		"KHR_draco_mesh_compression",
-		"KHR_materials_specular",
-		"KHR_materials_ior"
+		"KHR_texture_transform"
 	],
 	"extensionsRequired":[
-		"KHR_draco_mesh_compression"
+		"KHR_draco_mesh_compression",
+		"KHR_texture_transform"
 	],
 	"scene":0,
 	"scenes":[
@@ -168,28 +168,92 @@
 	"materials":[
 		{
 			"doubleSided":true,
-			"extensions":{
-				"KHR_materials_specular":{
-					"specularColorFactor":[
-						2.371357614441398,
-						2.371357614441398,
-						2.371357614441398
-					]
+			"name":"Building",
+			"normalTexture":{
+				"extensions":{
+					"KHR_texture_transform":{
+						"offset":[
+							0,
+							-4
+						],
+						"scale":[
+							5,
+							5
+						]
+					}
 				},
-				"KHR_materials_ior":{
-					"ior":1.4500000476837158
-				}
+				"index":0
 			},
-			"name":"Windows",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.01520848460495472,
-					0.020288536325097084,
-					0.03071345016360283,
-					0.0999998152256012
+					0.0027317358180880547,
+					0.002731737680733204,
+					0.00856812484562397,
+					1
 				],
 				"metallicFactor":0,
-				"roughnessFactor":0
+				"metallicRoughnessTexture":{
+					"extensions":{
+						"KHR_texture_transform":{
+							"offset":[
+								0,
+								-4
+							],
+							"scale":[
+								5,
+								5
+							]
+						}
+					},
+					"index":1
+				}
+			}
+		},
+		{
+			"doubleSided":true,
+			"name":"Secondary",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0.0027317358180880547,
+					0.002731737680733204,
+					0.00856812484562397,
+					1
+				],
+				"metallicFactor":0,
+				"roughnessFactor":0.5
+			}
+		},
+		{
+			"doubleSided":true,
+			"name":"Windows",
+			"pbrMetallicRoughness":{}
+		},
+		{
+			"doubleSided":true,
+			"name":"Frames",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0,
+					0,
+					0,
+					1
+				],
+				"metallicFactor":0,
+				"roughnessFactor":0.5
+			}
+		},
+		{
+			"doubleSided":true,
+			"name":"White",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0.800000011920929,
+					0.800000011920929,
+					0.800000011920929,
+					1
+				],
+				"metallicFactor":0,
+				"roughnessFactor":0.5
 			}
 		}
 	],
@@ -214,6 +278,7 @@
 						}
 					},
 					"indices":3,
+					"material":0,
 					"mode":4
 				}
 			]
@@ -236,6 +301,7 @@
 						}
 					},
 					"indices":6,
+					"material":1,
 					"mode":4
 				}
 			]
@@ -258,6 +324,7 @@
 						}
 					},
 					"indices":9,
+					"material":1,
 					"mode":4
 				}
 			]
@@ -280,7 +347,7 @@
 						}
 					},
 					"indices":12,
-					"material":0,
+					"material":2,
 					"mode":4
 				}
 			]
@@ -305,6 +372,7 @@
 						}
 					},
 					"indices":16,
+					"material":3,
 					"mode":4
 				}
 			]
@@ -329,6 +397,7 @@
 						}
 					},
 					"indices":20,
+					"material":1,
 					"mode":4
 				}
 			]
@@ -353,6 +422,7 @@
 						}
 					},
 					"indices":24,
+					"material":0,
 					"mode":4
 				}
 			]
@@ -377,6 +447,7 @@
 						}
 					},
 					"indices":28,
+					"material":1,
 					"mode":4
 				}
 			]
@@ -401,6 +472,7 @@
 						}
 					},
 					"indices":32,
+					"material":4,
 					"mode":4
 				},
 				{
@@ -408,9 +480,32 @@
 						"POSITION":33
 					},
 					"indices":34,
+					"material":4,
 					"mode":1
 				}
 			]
+		}
+	],
+	"textures":[
+		{
+			"sampler":0,
+			"source":0
+		},
+		{
+			"sampler":0,
+			"source":1
+		}
+	],
+	"images":[
+		{
+			"mimeType":"image/jpeg",
+			"name":"brick_wall_001_nor_gl_1k",
+			"uri":"brick_wall_001_nor_gl_1k.jpg"
+		},
+		{
+			"mimeType":"image/jpeg",
+			"name":"brick_wall_001_rough_1k",
+			"uri":"brick_wall_001_rough_1k.jpg"
 		}
 	],
 	"accessors":[
@@ -749,6 +844,12 @@
 			"byteLength":16,
 			"byteOffset":276560,
 			"target":34963
+		}
+	],
+	"samplers":[
+		{
+			"magFilter":9729,
+			"minFilter":9987
 		}
 	],
 	"buffers":[

@@ -67,7 +67,12 @@
         group = new THREE.Group();
 
         const loader = new RGBELoader();
-        envMap = await loader.loadAsync("textures/skybox/amphitheatre_zanzibar_fort_2k.hdr");
+        envMap = await loader.loadAsync("textures/skybox/venice_sunset_2k.hdr");
+        const bkg = await loader.loadAsync(
+            "textures/skybox/kloppenheim_06_puresky_2k.hdr"
+        );
+        sceneFX.scene.background = bkg;
+
 
         // amsterdam
         const gltfLoader = new GLTFLoader();
@@ -77,7 +82,8 @@
         gltfLoader.setDRACOLoader(draco);
 
         const windowMaterial = new THREE.MeshPhongMaterial({
-            color: 0xffffff,
+            side: THREE.DoubleSide,
+            color: 0x767e82,
             envMap: envMap,
             refractionRatio: 0.98,
         });
@@ -227,7 +233,7 @@
         // group.add(rectLight2);
         // group.add(rectLight3);
         // group.add(rectLight4);
-        group.add(rectLight5);
+        // group.add(rectLight5);
         // group.add(directionalLight);
         // group.add(directionalLight.target);
 
