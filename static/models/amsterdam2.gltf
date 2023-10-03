@@ -26,7 +26,8 @@
 				7,
 				8,
 				9,
-				10
+				10,
+				11
 			]
 		}
 	],
@@ -195,6 +196,21 @@
 				0,
 				0
 			]
+		},
+		{
+			"mesh":11,
+			"name":"Stairs",
+			"rotation":[
+				0.7071068286895752,
+				0,
+				0,
+				0.7071068286895752
+			],
+			"translation":[
+				-2.700000047683716,
+				0,
+				0
+			]
 		}
 	],
 	"materials":[
@@ -263,6 +279,20 @@
 		{
 			"doubleSided":true,
 			"name":"Frames",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0,
+					0,
+					0,
+					1
+				],
+				"metallicFactor":0,
+				"roughnessFactor":0.5
+			}
+		},
+		{
+			"doubleSided":true,
+			"name":"FramesExtra",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
 					0,
@@ -442,7 +472,7 @@
 						}
 					},
 					"indices":23,
-					"material":3,
+					"material":4,
 					"mode":4
 				}
 			]
@@ -515,7 +545,7 @@
 						}
 					},
 					"indices":34,
-					"material":3,
+					"material":4,
 					"mode":4
 				}
 			]
@@ -538,7 +568,32 @@
 						}
 					},
 					"indices":37,
-					"material":3,
+					"material":4,
+					"mode":4
+				}
+			]
+		},
+		{
+			"name":"Neck_Gable.004",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":38,
+						"NORMAL":39,
+						"TEXCOORD_0":40
+					},
+					"extensions":{
+						"KHR_draco_mesh_compression":{
+							"bufferView":13,
+							"attributes":{
+								"POSITION":0,
+								"NORMAL":1,
+								"TEXCOORD_0":2
+							}
+						}
+					},
+					"indices":41,
+					"material":1,
 					"mode":4
 				}
 			]
@@ -619,7 +674,7 @@
 		},
 		{
 			"componentType":5126,
-			"count":16747,
+			"count":16590,
 			"max":[
 				5.3560004234313965,
 				1.8360000848770142,
@@ -634,17 +689,17 @@
 		},
 		{
 			"componentType":5126,
-			"count":16747,
+			"count":16590,
 			"type":"VEC3"
 		},
 		{
 			"componentType":5126,
-			"count":16747,
+			"count":16590,
 			"type":"VEC2"
 		},
 		{
 			"componentType":5123,
-			"count":26880,
+			"count":26475,
 			"type":"SCALAR"
 		},
 		{
@@ -721,11 +776,11 @@
 		},
 		{
 			"componentType":5126,
-			"count":2472,
+			"count":2464,
 			"max":[
 				4.970000267028809,
-				1.4900001287460327,
-				-0.656000018119812
+				0.9580000638961792,
+				-0.7040000557899475
 			],
 			"min":[
 				0.7440000176429749,
@@ -736,12 +791,12 @@
 		},
 		{
 			"componentType":5126,
-			"count":2472,
+			"count":2464,
 			"type":"VEC3"
 		},
 		{
 			"componentType":5123,
-			"count":5136,
+			"count":5124,
 			"type":"SCALAR"
 		},
 		{
@@ -831,7 +886,7 @@
 		},
 		{
 			"componentType":5126,
-			"count":170,
+			"count":178,
 			"max":[
 				2.2820000648498535,
 				1.6680001020431519,
@@ -839,19 +894,19 @@
 			],
 			"min":[
 				0.35600000619888306,
-				1.6180000305175781,
+				1.4440001249313354,
 				-2.128000020980835
 			],
 			"type":"VEC3"
 		},
 		{
 			"componentType":5126,
-			"count":170,
+			"count":178,
 			"type":"VEC3"
 		},
 		{
 			"componentType":5123,
-			"count":360,
+			"count":372,
 			"type":"SCALAR"
 		},
 		{
@@ -878,6 +933,36 @@
 			"componentType":5123,
 			"count":228,
 			"type":"SCALAR"
+		},
+		{
+			"componentType":5126,
+			"count":157,
+			"max":[
+				5.072000026702881,
+				1.8360000848770142,
+				-0.4660000205039978
+			],
+			"min":[
+				0.35600000619888306,
+				0.9120000600814819,
+				-2.366000175476074
+			],
+			"type":"VEC3"
+		},
+		{
+			"componentType":5126,
+			"count":157,
+			"type":"VEC3"
+		},
+		{
+			"componentType":5126,
+			"count":157,
+			"type":"VEC2"
+		},
+		{
+			"componentType":5123,
+			"count":405,
+			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
@@ -893,60 +978,65 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":91425,
+			"byteLength":90582,
 			"byteOffset":205584
 		},
 		{
 			"buffer":0,
 			"byteLength":1702,
-			"byteOffset":297012
+			"byteOffset":296168
 		},
 		{
 			"buffer":0,
 			"byteLength":57230,
-			"byteOffset":298716
+			"byteOffset":297872
 		},
 		{
 			"buffer":0,
 			"byteLength":72,
-			"byteOffset":355948,
+			"byteOffset":355104,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":16,
-			"byteOffset":356020,
+			"byteOffset":355176,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":5761,
-			"byteOffset":356036
+			"byteLength":5437,
+			"byteOffset":355192
 		},
 		{
 			"buffer":0,
 			"byteLength":149,
-			"byteOffset":361800
+			"byteOffset":360632
 		},
 		{
 			"buffer":0,
 			"byteLength":4499,
-			"byteOffset":361952
+			"byteOffset":360784
 		},
 		{
 			"buffer":0,
 			"byteLength":6792,
-			"byteOffset":366452
+			"byteOffset":365284
 		},
 		{
 			"buffer":0,
-			"byteLength":732,
-			"byteOffset":373244
+			"byteLength":764,
+			"byteOffset":372076
 		},
 		{
 			"buffer":0,
 			"byteLength":638,
-			"byteOffset":373976
+			"byteOffset":372840
+		},
+		{
+			"buffer":0,
+			"byteLength":1214,
+			"byteOffset":373480
 		}
 	],
 	"samplers":[
@@ -957,7 +1047,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":374616,
+			"byteLength":374696,
 			"uri":"amsterdam2.bin"
 		}
 	]

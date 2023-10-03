@@ -150,6 +150,10 @@
             if (obj.isMesh) {
                 obj.castShadow = true;
                 obj.receiveShadow = true;
+
+                if (obj.name == "Windows") {
+                    obj.material = windowMaterial;
+                }
             }
         });
 
@@ -159,6 +163,10 @@
             if (obj.isMesh) {
                 obj.castShadow = true;
                 obj.receiveShadow = true;
+
+                if (obj.name == "Windows") {
+                    obj.material = windowMaterial;
+                }
             }
         });
 
