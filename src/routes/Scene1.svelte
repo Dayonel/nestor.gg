@@ -73,7 +73,6 @@
         );
         sceneFX.scene.background = bkg;
 
-
         // amsterdam
         const gltfLoader = new GLTFLoader();
         const draco = new DRACOLoader(); // compression
@@ -88,9 +87,9 @@
             refractionRatio: 0.98,
         });
 
-        const model1 = (await gltfLoader.loadAsync("models/amsterdam1.gltf"))
+        const model1 = (await gltfLoader.loadAsync("models/amsterdam6.gltf"))
             .scene;
-        model1.position.set(2.45, -0.5, 0);
+        model1.position.set(2.4, -0.5, 0);
         model1.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;
@@ -144,8 +143,9 @@
             }
         });
 
-        const model5 = model4.clone();
-        model5.position.set(-12.5, -0.5, 0);
+        const model5 = (await gltfLoader.loadAsync("models/amsterdam5.gltf"))
+            .scene;
+        model5.position.set(-12.3, -0.5, 0);
         model5.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;
@@ -157,8 +157,9 @@
             }
         });
 
-        const model6 = model3.clone();
-        model6.position.set(12.4, -0.5, 0);
+        const model6 = (await gltfLoader.loadAsync("models/amsterdam1.gltf"))
+            .scene;
+        model6.position.set(12.5, -0.5, 0);
         model6.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;

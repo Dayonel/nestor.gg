@@ -5,6 +5,9 @@
 	},
 	"extensionsUsed":[
 		"KHR_draco_mesh_compression",
+		"KHR_materials_clearcoat",
+		"KHR_materials_specular",
+		"KHR_materials_ior",
 		"KHR_texture_transform"
 	],
 	"extensionsRequired":[
@@ -22,7 +25,8 @@
 				3,
 				4,
 				5,
-				6
+				6,
+				7
 			]
 		}
 	],
@@ -131,36 +135,83 @@
 				0,
 				0
 			]
+		},
+		{
+			"mesh":7,
+			"name":"Stairs",
+			"rotation":[
+				0.7071068286895752,
+				0,
+				0,
+				0.7071068286895752
+			],
+			"translation":[
+				-2.700000047683716,
+				0,
+				0
+			]
 		}
 	],
 	"materials":[
 		{
 			"doubleSided":true,
+			"extensions":{
+				"KHR_materials_clearcoat":{
+					"clearcoatFactor":0.007300000172108412,
+					"clearcoatRoughnessFactor":0.029999999329447746
+				},
+				"KHR_materials_specular":{
+					"specularColorFactor":[
+						0,
+						0,
+						0
+					]
+				},
+				"KHR_materials_ior":{
+					"ior":1.4500000476837158
+				}
+			},
 			"name":"Secondary",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.006995398551225662,
-					0.005181506741791964,
-					0.015996292233467102,
+					0.0122864730656147,
+					0.009721207432448864,
+					0.016807373613119125,
 					1
 				],
-				"metallicFactor":0,
+				"metallicFactor":0.3140000104904175,
 				"roughnessFactor":0.5
 			}
 		},
 		{
 			"doubleSided":true,
+			"extensions":{
+				"KHR_materials_clearcoat":{
+					"clearcoatFactor":0.007300000172108412,
+					"clearcoatRoughnessFactor":0.029999999329447746
+				},
+				"KHR_materials_specular":{
+					"specularColorFactor":[
+						0,
+						0,
+						0
+					]
+				},
+				"KHR_materials_ior":{
+					"ior":1.4500000476837158
+				}
+			},
 			"name":"Building",
 			"normalTexture":{
 				"extensions":{
 					"KHR_texture_transform":{
 						"offset":[
 							0,
-							-4
+							-2
 						],
 						"scale":[
-							5,
-							5
+							3,
+							3
 						]
 					}
 				},
@@ -168,22 +219,22 @@
 			},
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.006995398551225662,
-					0.005181506741791964,
-					0.015996292233467102,
+					0.0122864730656147,
+					0.009721207432448864,
+					0.016807373613119125,
 					1
 				],
-				"metallicFactor":0,
+				"metallicFactor":0.5640000104904175,
 				"metallicRoughnessTexture":{
 					"extensions":{
 						"KHR_texture_transform":{
 							"offset":[
 								0,
-								-4
+								-2
 							],
 							"scale":[
-								5,
-								5
+								3,
+								3
 							]
 						}
 					},
@@ -374,6 +425,29 @@
 					"mode":4
 				}
 			]
+		},
+		{
+			"name":"Step_Gable.005",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":22,
+						"NORMAL":23
+					},
+					"extensions":{
+						"KHR_draco_mesh_compression":{
+							"bufferView":7,
+							"attributes":{
+								"POSITION":0,
+								"NORMAL":1
+							}
+						}
+					},
+					"indices":24,
+					"material":0,
+					"mode":4
+				}
+			]
 		}
 	],
 	"textures":[
@@ -389,13 +463,13 @@
 	"images":[
 		{
 			"mimeType":"image/jpeg",
-			"name":"brick_wall_001_nor_gl_1k",
-			"uri":"brick_wall_001_nor_gl_1k.jpg"
+			"name":"brushed_concrete_03_nor_gl_1k",
+			"uri":"brushed_concrete_03_nor_gl_1k.jpg"
 		},
 		{
 			"mimeType":"image/jpeg",
-			"name":"brick_wall_001_rough_1k",
-			"uri":"brick_wall_001_rough_1k.jpg"
+			"name":"brushed_concrete_03_rough_1k",
+			"uri":"brushed_concrete_03_rough_1k.jpg"
 		}
 	],
 	"accessors":[
@@ -531,14 +605,14 @@
 		},
 		{
 			"componentType":5126,
-			"count":3225,
+			"count":3143,
 			"max":[
 				4.788000583648682,
-				1.784000039100647,
-				-0.4660000801086426
+				1.0980000495910645,
+				-1.3940000534057617
 			],
 			"min":[
-				0.738000214099884,
+				0.9220002293586731,
 				0.6740000247955322,
 				-13.230000495910645
 			],
@@ -546,12 +620,12 @@
 		},
 		{
 			"componentType":5126,
-			"count":3225,
+			"count":3143,
 			"type":"VEC3"
 		},
 		{
 			"componentType":5123,
-			"count":5250,
+			"count":5100,
 			"type":"SCALAR"
 		},
 		{
@@ -577,6 +651,31 @@
 		{
 			"componentType":5123,
 			"count":201,
+			"type":"SCALAR"
+		},
+		{
+			"componentType":5126,
+			"count":82,
+			"max":[
+				2.814000368118286,
+				1.784000039100647,
+				-0.4660000801086426
+			],
+			"min":[
+				0.738000214099884,
+				0.7480000257492065,
+				-1.3940000534057617
+			],
+			"type":"VEC3"
+		},
+		{
+			"componentType":5126,
+			"count":82,
+			"type":"VEC3"
+		},
+		{
+			"componentType":5123,
+			"count":150,
 			"type":"SCALAR"
 		}
 	],
@@ -608,13 +707,18 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":15171,
+			"byteLength":14836,
 			"byteOffset":249208
 		},
 		{
 			"buffer":0,
 			"byteLength":731,
-			"byteOffset":264380
+			"byteOffset":264044
+		},
+		{
+			"buffer":0,
+			"byteLength":515,
+			"byteOffset":264776
 		}
 	],
 	"samplers":[
@@ -625,7 +729,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":265112,
+			"byteLength":265292,
 			"uri":"amsterdam4.bin"
 		}
 	]
