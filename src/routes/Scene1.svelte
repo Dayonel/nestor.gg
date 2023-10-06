@@ -25,6 +25,7 @@
 
     export let canvas: HTMLCanvasElement;
     export let renderer: THREE.WebGLRenderer;
+    export let cameraZ = 40;
 
     const start = 0;
     const end = 20;
@@ -33,7 +34,6 @@
     let dispatch = createEventDispatcher();
     let group: THREE.Group;
     let godRays: any;
-    let cameraZ = 45; // 45
     let envMap: any;
 
     onMount(async () => {
@@ -49,7 +49,7 @@
             30000
         );
 
-        sceneFX.camera.position.set(0, 5, cameraZ);
+        sceneFX.camera.position.set(0, 8, cameraZ);
 
         await loadScene();
 
@@ -66,6 +66,23 @@
     const loadScene = async () => {
         group = new THREE.Group();
 
+        const textureLoader = new THREE.TextureLoader();
+
+        // const envMap = textureLoader.load(
+        //     "textures/skybox/2294472375_24a3b8ef46_o.jpg"
+        // );
+
+        const cubeLoader = new THREE.CubeTextureLoader();
+
+        // const envMap = cubeLoader.load([
+        //     "textures/skybox/posx.jpg",
+        //     "textures/skybox/negx.jpg",
+        //     "textures/skybox/posy.jpg",
+        //     "textures/skybox/negy.jpg",
+        //     "textures/skybox/posz.jpg",
+        //     "textures/skybox/negz.jpg",
+        // ]);
+
         const loader = new RGBELoader();
         envMap = await loader.loadAsync("textures/skybox/venice_sunset_2k.hdr");
         const bkg = await loader.loadAsync(
@@ -80,6 +97,13 @@
         draco.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
         gltfLoader.setDRACOLoader(draco);
 
+        // const windowMaterial = new THREE.MeshBasicMaterial({
+        //     // side: THREE.DoubleSide,
+        //     // color: 0x767e82,
+        //     // envMap: envMap,
+        //     refractionRatio: 0.5,
+        // });
+
         const windowMaterial = new THREE.MeshPhongMaterial({
             side: THREE.DoubleSide,
             color: 0x767e82,
@@ -89,7 +113,8 @@
 
         const model1 = (await gltfLoader.loadAsync("models/amsterdam6.gltf"))
             .scene;
-        model1.position.set(2.4, -0.5, 0);
+        model1.position.set(3.1, -1.5, 0);
+        model1.scale.multiplyScalar(1.5);
         model1.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;
@@ -103,7 +128,8 @@
 
         const model2 = (await gltfLoader.loadAsync("models/amsterdam2.gltf"))
             .scene;
-        model2.position.set(-2.6, -0.5, 0);
+        model2.position.set(-4.4, -1.0, 0);
+        model2.scale.multiplyScalar(1.5);
         model2.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;
@@ -117,7 +143,8 @@
 
         const model3 = (await gltfLoader.loadAsync("models/amsterdam3.gltf"))
             .scene;
-        model3.position.set(-7.5, -0.5, 0);
+        model3.position.set(-11.9, -1.5, 0);
+        model3.scale.multiplyScalar(1.5);
         model3.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;
@@ -131,7 +158,8 @@
 
         const model4 = (await gltfLoader.loadAsync("models/amsterdam4.gltf"))
             .scene;
-        model4.position.set(7.4, -0.5, 0);
+        model4.position.set(10.6, -1.5, 0);
+        model4.scale.multiplyScalar(1.5);
         model4.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;
@@ -145,7 +173,8 @@
 
         const model5 = (await gltfLoader.loadAsync("models/amsterdam5.gltf"))
             .scene;
-        model5.position.set(-12.3, -0.5, 0);
+        model5.position.set(-19.3, -1.0, 0);
+        model5.scale.multiplyScalar(1.5);
         model5.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;
@@ -159,7 +188,8 @@
 
         const model6 = (await gltfLoader.loadAsync("models/amsterdam1.gltf"))
             .scene;
-        model6.position.set(12.5, -0.5, 0);
+        model6.position.set(18.2, -1.0, 0);
+        model6.scale.multiplyScalar(1.5);
         model6.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;
@@ -303,13 +333,18 @@
         //         scrub: true,
         //     },
         // }).to(sceneFX.scene.fog, { density: 0.3 });
+
+        // scene background color = fog color
+        // const color = new THREE.Color("black");
+        // sceneFX.scene.background = color;
+        // const near = 35;
+        // const far = cameraZ;
+        // sceneFX.scene.fog = new THREE.Fog(color, near, far);
     };
 </script>
 
 {#if sceneFX}
-    {#if envMap}
-        <Sky {envMap} scene={sceneFX.scene} {renderer} />
-    {/if}
+    <Sky scene={sceneFX.scene} {renderer} />
     <Water bind:this={water} scene={sceneFX.scene} />
     <!-- <Cloud {renderer} scene={sceneFX.scene} on:mount /> -->
 

@@ -8,8 +8,8 @@ export class SceneFX {
     camera: THREE.PerspectiveCamera;
     renderTarget: THREE.WebGLRenderTarget;
     cameraInitialPos: THREE.Vector3;
-    fovLandscape = 40;
-    fovPortrait = 70;
+    fovLandscape = 70;
+    fovPortrait = 105;
 
     constructor(start: number, end: number,
         canvas: HTMLCanvasElement, renderer: THREE.WebGLRenderTarget,

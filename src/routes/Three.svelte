@@ -29,6 +29,7 @@
     let weblAvailable: boolean = false;
     let introAnimationCompleted: boolean;
     let animationIntro: any;
+    let cameraZ: number;
 
     const totalScenes = 2;
     let scenes: SceneFX[] = [];
@@ -63,8 +64,9 @@
         });
 
         renderer.toneMapping = THREE.NoToneMapping;
-        renderer.outputColorSpace = THREE.SRGBColorSpace; // optional with post-processing
-        renderer.setClearColor(0x000000);
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.setClearColor(0xeeeeee, 1);
+        // renderer.useLegacyLights = true;
 
         // shadows
         renderer.shadowMap.enabled = true;
@@ -85,7 +87,7 @@
                 {
                     x: scene.camera.position.x,
                     y: scene.camera.position.y,
-                    z: 35, // 35
+                    z: cameraZ - 10,
                 },
                 1000 // 2500
             ) // time take to animate
@@ -132,6 +134,7 @@
                 scenes.push(f.detail.sceneFX);
                 introAnimation(f.detail.sceneFX);
             }}
+            bind:cameraZ
         />
         <Scene2
             {canvas}

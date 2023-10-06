@@ -5,7 +5,6 @@
 
     export let scene: THREE.Scene;
     export let renderer: THREE.WebGLRenderer;
-    export let envMap: any;
 
     let sky: any;
     onMount(async () => {
@@ -54,8 +53,29 @@
     };
 
     const skybox = () => {
-        envMap.mapping = THREE.EquirectangularRefractionMapping;
-        renderer.outputColorSpace = THREE.SRGBColorSpace;
-        // renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        // const geometry = new THREE.PlaneGeometry(1, 1, 1, 1);
+        // const ig = new THREE.InstancedBufferGeometry();
+        // ig.attributes = geometry.attributes;
+        // ig.index = geometry.index;
+
+        // const material = new THREE.ShaderMaterial({
+        //     extensions: {
+        //         derivatives: "#extension GL_OES_standard_derivatives : enable",
+        //     },
+        //     side: THREE.DoubleSide,
+        //     uniforms: {
+        //         time: { type: "f", value: 0 },
+        //         resolution: { type: "v4", value: new THREE.Vector4() },
+        //         uvRate1: {
+        //             value: new THREE.Vector2(1, 1),
+        //         },
+        //     },
+        //     vertexShader: document.getElementById("sky-vs")?.textContent,
+        //     fragmentShader: document.getElementById("sky-fs")?.textContent,
+        // });
+
+        // const plane = new THREE.Mesh(ig, material);
+
+        // scene.add(plane);
     };
 </script>
