@@ -65,7 +65,8 @@
 
         renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.SRGBColorSpace;
-        renderer.setClearColor(0xeeeeee, 1);
+        // renderer.setClearColor(0xeeeeee, 1);
+        renderer.setClearColor(0x000000, 1);
         // renderer.useLegacyLights = true;
 
         // shadows

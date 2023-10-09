@@ -5,8 +5,13 @@
 
     export let scene: THREE.Scene;
     export let renderer: THREE.WebGLRenderer;
+    export let cameraZ = 40;
+    export let cameraY = 40;
 
     let sky: any;
+    let time = 0;
+    let shaderMaterial: any;
+
     onMount(async () => {
         await init();
     });
@@ -14,6 +19,7 @@
     const init = async () => {
         lights();
         skybox();
+        loop();
     };
 
     const lights = () => {
@@ -53,29 +59,76 @@
     };
 
     const skybox = () => {
-        // const geometry = new THREE.PlaneGeometry(1, 1, 1, 1);
-        // const ig = new THREE.InstancedBufferGeometry();
-        // ig.attributes = geometry.attributes;
-        // ig.index = geometry.index;
+        shaderMaterial = new THREE.ShaderMaterial({
+            extensions: {
+                derivatives: "#extension GL_OES_standard_derivatives : enable",
+            },
+            side: THREE.DoubleSide,
+            uniforms: {
+                time: { type: "f", value: 0 },
+                uTexture: {
+                    type: "t",
+                    value: new THREE.TextureLoader().load(
+                        "/textures/clouds.png"
+                    ),
+                },
+                resolution: { type: "v4", value: new THREE.Vector4() },
+                uvRate1: {
+                    value: new THREE.Vector2(1, 1),
+                },
+            },
+            transparent: true,
+            vertexShader: document.getElementById("sky-vs")?.textContent,
+            fragmentShader: document.getElementById("sky-fs")?.textContent,
+            depthTest: false,
+            depthWrite: false,
+            //blending: THREE.MultiplyBlending,
+        });
 
-        // const material = new THREE.ShaderMaterial({
-        //     extensions: {
-        //         derivatives: "#extension GL_OES_standard_derivatives : enable",
-        //     },
-        //     side: THREE.DoubleSide,
-        //     uniforms: {
-        //         time: { type: "f", value: 0 },
-        //         resolution: { type: "v4", value: new THREE.Vector4() },
-        //         uvRate1: {
-        //             value: new THREE.Vector2(1, 1),
-        //         },
-        //     },
-        //     vertexShader: document.getElementById("sky-vs")?.textContent,
-        //     fragmentShader: document.getElementById("sky-fs")?.textContent,
-        // });
+        const geometry = new THREE.PlaneGeometry(0.5, 0.5, 1, 1);
+        const ig = new THREE.InstancedBufferGeometry();
+        ig.attributes = geometry.attributes;
+        ig.index = geometry.index;
 
-        // const plane = new THREE.Mesh(ig, material);
+        const number = 1000;
+        let translateArray = new Float32Array(number * 3);
+        let rotateArray = new Float32Array(number);
+        let radius = 0.7;
 
-        // scene.add(plane);
+        for (let i = 0; i < number; i++) {
+            let theta = Math.random() * 2 * Math.PI;
+            translateArray.set(
+                [
+                    radius * Math.sin(theta),
+                    radius * Math.cos(theta),
+                    -Math.random() * 5,
+                ],
+                3 * i
+            );
+
+            rotateArray.set([Math.random() * 2 * Math.PI], i);
+        }
+
+        ig.setAttribute(
+            "translate",
+            new THREE.InstancedBufferAttribute(translateArray, 3)
+        );
+
+        ig.setAttribute(
+            "aRotate",
+            new THREE.InstancedBufferAttribute(rotateArray, 1)
+        );
+
+        const plane = new THREE.Mesh(ig, shaderMaterial);
+        plane.position.z = cameraZ - 10;
+        plane.position.y = cameraY;
+        scene.add(plane);
+    };
+
+    const loop = () => {
+        requestAnimationFrame(loop);
+
+        time += 0.05;
+        shaderMaterial.uniforms.time.value = time;
     };
 </script>

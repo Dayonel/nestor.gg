@@ -25,6 +25,7 @@
 
     export let canvas: HTMLCanvasElement;
     export let renderer: THREE.WebGLRenderer;
+    export let cameraY = 8;
     export let cameraZ = 40;
 
     const start = 0;
@@ -34,7 +35,6 @@
     let dispatch = createEventDispatcher();
     let group: THREE.Group;
     let godRays: any;
-    let envMap: any;
 
     onMount(async () => {
         gsap.registerPlugin(ScrollTrigger);
@@ -49,7 +49,7 @@
             30000
         );
 
-        sceneFX.camera.position.set(0, 8, cameraZ);
+        sceneFX.camera.position.set(0, cameraY, cameraZ);
 
         await loadScene();
 
@@ -84,11 +84,10 @@
         // ]);
 
         const loader = new RGBELoader();
-        envMap = await loader.loadAsync("textures/skybox/venice_sunset_2k.hdr");
-        const bkg = await loader.loadAsync(
+        const envMap = await loader.loadAsync(
             "textures/skybox/kloppenheim_06_puresky_2k.hdr"
         );
-        sceneFX.scene.background = bkg;
+        envMap.mapping = THREE.EquirectangularReflectionMapping;
 
         // amsterdam
         const gltfLoader = new GLTFLoader();
@@ -106,7 +105,7 @@
 
         const windowMaterial = new THREE.MeshPhongMaterial({
             side: THREE.DoubleSide,
-            color: 0x767e82,
+            color: 0x0e0f12,
             envMap: envMap,
             refractionRatio: 0.98,
         });
@@ -344,7 +343,7 @@
 </script>
 
 {#if sceneFX}
-    <Sky scene={sceneFX.scene} {renderer} />
+    <Sky scene={sceneFX.scene} {renderer} {cameraY} {cameraZ} />
     <Water bind:this={water} scene={sceneFX.scene} />
     <!-- <Cloud {renderer} scene={sceneFX.scene} on:mount /> -->
 

@@ -183,18 +183,84 @@
 		  gl_PointSize = size;
 		  gl_Position = projectionMatrix * mvPosition;
 		}
-	  </script>
-	  
-	  <script type="x-shader/x-fragment" id="sparkles-fs">
-		// work by Louis Hoebregts https://codepen.io/Mamboleoo/pen/yLbxYdx/license
-		uniform sampler2D pointTexture;
-		varying vec3 vColor;
-		void main() {
-		  gl_FragColor = vec4(vColor, 1.0);
-		  gl_FragColor = gl_FragColor * texture2D(pointTexture, gl_PointCoord);
+	</script>
+
+	<script type="x-shader/x-fragment" id="sparkles-fs">
+	// work by Louis Hoebregts https://codepen.io/Mamboleoo/pen/yLbxYdx/license
+	uniform sampler2D pointTexture;
+	varying vec3 vColor;
+	void main() {
+		gl_FragColor = vec4(vColor, 1.0);
+		gl_FragColor = gl_FragColor * texture2D(pointTexture, gl_PointCoord);
+	}
+	</script>
+
+	<!-- Sky clouds -->
+	<script type="x-shader/x-vertex" id="sky-vs">
+		uniform float time;
+		varying vec2 vUv;
+		varying vec3 vPosition;
+		varying float vAlpha;
+		uniform vec2 pixels;
+		attribute vec3 translate;
+		attribute float aRotate;
+		float PI = 3.141592653589793238;
+
+		mat4 rotationMatrix(vec3 axis, float angle) {
+			axis = normalize(axis);
+			float s = sin(angle);
+			float c = cos(angle);
+			float oc = 1.0 - c;
+			
+			return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+						oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+						oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+						0.0,                                0.0,                                0.0,                                1.0);
 		}
-	  </script>
-	  
+		
+		vec3 rotate(vec3 v, vec3 axis, float angle) {
+			mat4 m = rotationMatrix(axis, angle);
+			return (m * vec4(v, 1.0)).xyz;
+		}
+
+		void main() {
+			vUv = (uv - vec2(0.5))/3.0 + vec2(0.5 + 0.33, 0.5);
+			float depth = 5.;
+
+			vec3 newpos = position;
+
+			newpos = rotate(newpos, vec3(0.,0.,1.), aRotate);
+			newpos += translate; 
+			vPosition = newpos;
+			newpos.z = -mod(newpos.z - time * 0.01, 5.);
+			vAlpha = smoothstep(-5. + 3.5,-4. + 3.5, newpos.z);
+			gl_Position = projectionMatrix * modelViewMatrix * vec4( newpos, 1.0 );
+		}
+	</script>
+
+	<script type="x-shader/x-fragment" id="sky-fs">
+		uniform float time;
+		uniform float progress;
+		uniform sampler2D uTexture;
+		uniform vec4 resolution;
+		varying vec2 vUv;
+		varying vec3 vPosition;
+		varying float vAlpha;
+		float PI = 3.141592653589793238;
+		void main()	{
+			vec3 color = vec3(0.835, 0.000, 0.564);
+
+			vec4 map = texture2D(uTexture,vUv);
+			if (map.r < 0.01) discard;
+
+			vec3 final = mix(vec3(1.),color,1. - map.r);
+
+			float opacity = smoothstep(0.5, 1., length(vPosition.xy));
+			gl_FragColor = vec4(vUv, 0.0, vAlpha);
+			gl_FragColor = vec4(final,vAlpha*opacity*0.1);
+		}
+	</script>
+
 	<div style="display: contents">%sveltekit.body%</div>
 </body>
 
