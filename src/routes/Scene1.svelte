@@ -18,6 +18,8 @@
     import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
     // @ts-ignore
     import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
+    // @ts-ignore
+    import { RectAreaLightHelper } from "three/addons/helpers/RectAreaLightHelper.js";
 
     import GodRays from "./GodRays.svelte";
     import Sky from "./Sky.svelte";
@@ -85,10 +87,14 @@
 
         const loader = new RGBELoader();
         envMap = await loader.loadAsync("textures/skybox/venice_sunset_2k.hdr");
-        const bkg = await loader.loadAsync(
-            "textures/skybox/kloppenheim_06_puresky_2k.hdr"
-        );
-        sceneFX.scene.background = bkg;
+        envMap.mapping = THREE.EquirectangularReflectionMapping;
+        // const bkg = await loader.loadAsync(
+        //     "textures/skybox/kloppenheim_02_puresky_2k.hdr"
+        // );
+        // sceneFX.scene.background = bkg;
+        // sceneFX.scene.environment = bkg;
+        // sceneFX.scene.backgroundBlurriness = 0.3;
+        // renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
         // amsterdam
         const gltfLoader = new GLTFLoader();
@@ -106,9 +112,11 @@
 
         const windowMaterial = new THREE.MeshPhongMaterial({
             side: THREE.DoubleSide,
-            color: 0x767e82,
+            color: 0x2a2823,
             envMap: envMap,
+            reflectivity: 1,
             refractionRatio: 0.98,
+            shininess: 100,
         });
 
         const model1 = (await gltfLoader.loadAsync("models/amsterdam6.gltf"))
@@ -261,6 +269,9 @@
         directionalLight.position.set(-0.317, 37.285, 45.0);
         directionalLight.target.position.set(0, 0, 0);
 
+        // building lights
+        addBuildingLights();
+
         group.add(model1);
         group.add(model2);
         group.add(model3);
@@ -295,6 +306,40 @@
         // sceneFX.scene.add(spotLight);
 
         sceneFX.scene.add(group);
+    };
+
+    const addBuildingLights = () => {
+        // const pl1 = new THREE.PointLight(0xfbc845, 1000, 10, 2);
+        // pl1.position.set(-4, 10, 1);
+        // const plh1 = new THREE.PointLightHelper(pl1, 1);
+        // group.add(plh1);
+        // group.add(pl1);
+
+        // const pl2 = new THREE.PointLight(0xe7670a, 200, 10, 2);
+        // pl2.position.set(-11.5, 5, 1);
+        // const plh2 = new THREE.PointLightHelper(pl2, 1);
+        // group.add(plh2);
+        // group.add(pl2);
+
+        // const pl3 = new THREE.PointLight(0xe7670a, 200, 10, 2);
+        // pl3.position.set(-11.5, 15.5, 1);
+        // const plh3 = new THREE.PointLightHelper(pl3, 1);
+        // group.add(plh3);
+        // group.add(pl3);
+
+        const rl1 = new THREE.RectAreaLight(0xffffbb, 25.0, 5, 20);
+        rl1.position.set(-10, 21, 2);
+        rl1.rotation.set(THREE.MathUtils.degToRad(-60), 0, 0);
+        const rlh1 = new RectAreaLightHelper(rl1);
+        group.add(rl1);
+        // group.add(rlh1);
+
+        const rl3 = new THREE.RectAreaLight(0xffffbb, 25.0, 5, 20);
+        rl3.position.set(10, 21, 2);
+        rl3.rotation.set(THREE.MathUtils.degToRad(-60), 0, 0);
+        const rlh3 = new RectAreaLightHelper(rl3);
+        group.add(rl3);
+        // group.add(rlh3);
     };
 
     const animateOnScroll = () => {

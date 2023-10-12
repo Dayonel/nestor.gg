@@ -28,8 +28,8 @@
             color: params.color,
             scale: params.scale,
             flowDirection: new THREE.Vector2(params.flowX, params.flowY),
-            textureWidth: 1024,
-            textureHeight: 1024,
+            // textureWidth: 1024,
+            // textureHeight: 1024,
             reflectivity: 1,
         });
 
