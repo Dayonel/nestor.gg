@@ -8,7 +8,14 @@
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"sourceMap": true,
-		"strict": true
+		"strict": true,
+		"typeRoots": [
+			"node_modules/@types"
+		],
+		"types": [
+			"three"
+		],
+		"moduleResolution": "node"
 	}
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
 	//

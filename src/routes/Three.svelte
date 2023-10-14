@@ -1,19 +1,10 @@
 <script lang="ts">
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
-    // @ts-ignore
-    import WebGL from "three/addons/capabilities/WebGL.js";
-    // @ts-ignore
+    import WebGL from "three/examples/jsm/capabilities/WebGL.js";
     import * as THREE from "three";
-    // @ts-ignore
-    import Stats from "three/addons/libs/stats.module";
+    import Stats from "three/examples/jsm/libs/stats.module";
     import TWEEN from "@tweenjs/tween.js";
-
     import Loading from "$lib/Loading.svelte";
-    import Parallax from "./Parallax.svelte";
-    import Stars from "./Stars.svelte";
-    import Sparkles from "./Sparkles.svelte";
-    import Lines from "./Lines.svelte";
-    import GodRays from "./GodRays.svelte";
     import Scene1 from "./Scene1.svelte";
     import Scene2 from "./Scene2.svelte";
     import type { SceneFX } from "$lib/SceneFX";
@@ -60,12 +51,13 @@
         renderer = new THREE.WebGLRenderer({
             canvas: canvas,
             antialias: true,
+            alpha: true,
             powerPreference: "high-performance",
         });
 
         renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.SRGBColorSpace;
-        renderer.setClearColor(0x000000, 1);
+        // renderer.setClearColor(0x000000, 1);
         // renderer.useLegacyLights = true;
 
         // shadows
@@ -82,10 +74,13 @@
     };
 
     const introAnimation = (scene: THREE.Scene) => {
+        // @ts-ignore
         animationIntro = new TWEEN.Tween(scene.camera.position)
             .to(
                 {
+                    // @ts-ignore
                     x: scene.camera.position.x,
+                    // @ts-ignore
                     y: scene.camera.position.y,
                     z: cameraZ - 10,
                 },

@@ -1,29 +1,17 @@
-<script lang="ts">
-    import { createEventDispatcher, onMount } from "svelte";
-    import { SceneFX } from "$lib/SceneFX";
-    import Water from "./Water.svelte";
-    // @ts-ignore
-    import * as THREE from "three";
-    // @ts-ignore
-    import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-    // @ts-ignore
-    import { RectAreaLightUniformsLib } from "three/addons/lights/RectAreaLightUniformsLib.js";
+<script lang="ts" type="module">
     // @ts-ignore
     import { gsap } from "gsap/dist/gsap.js";
     // @ts-ignore
     import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
-    // @ts-ignore
-    import { EXRLoader } from "three/addons/loaders/EXRLoader.js";
-    // @ts-ignore
-    import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
-    // @ts-ignore
+    import { createEventDispatcher, onMount } from "svelte";
+    import { SceneFX } from "$lib/SceneFX";
+    import Water from "./Water.svelte";
+    import * as THREE from "three";
+    import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+    import { RectAreaLightUniformsLib } from "three/examples/jsm/lights/RectAreaLightUniformsLib.js";
+    import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper.js";
+    import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
     import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
-    // @ts-ignore
-    import { RectAreaLightHelper } from "three/addons/helpers/RectAreaLightHelper.js";
-
-    import GodRays from "./GodRays.svelte";
-    import Sky from "./Sky.svelte";
-    import Cloud from "./Cloud.svelte";
 
     export let canvas: HTMLCanvasElement;
     export let renderer: THREE.WebGLRenderer;
@@ -57,44 +45,15 @@
 
         animateOnScroll();
 
-        // const funcs: { func: () => void }[] = [];
-        // funcs.push({ func: godRays.loop });
-
-        // sceneFX.render(funcs);
-
         dispatch("mount", { sceneFX });
     });
 
     const loadScene = async () => {
         group = new THREE.Group();
 
-        const textureLoader = new THREE.TextureLoader();
-
-        // const envMap = textureLoader.load(
-        //     "textures/skybox/2294472375_24a3b8ef46_o.jpg"
-        // );
-
-        const cubeLoader = new THREE.CubeTextureLoader();
-
-        // const envMap = cubeLoader.load([
-        //     "textures/skybox/posx.jpg",
-        //     "textures/skybox/negx.jpg",
-        //     "textures/skybox/posy.jpg",
-        //     "textures/skybox/negy.jpg",
-        //     "textures/skybox/posz.jpg",
-        //     "textures/skybox/negz.jpg",
-        // ]);
-
         const loader = new RGBELoader();
         envMap = await loader.loadAsync("textures/skybox/venice_sunset_2k.hdr");
         envMap.mapping = THREE.EquirectangularReflectionMapping;
-        // const bkg = await loader.loadAsync(
-        //     "textures/skybox/kloppenheim_02_puresky_2k.hdr"
-        // );
-        // sceneFX.scene.background = bkg;
-        // sceneFX.scene.environment = bkg;
-        // sceneFX.scene.backgroundBlurriness = 0.3;
-        // renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
         // amsterdam
         const gltfLoader = new GLTFLoader();
@@ -102,13 +61,6 @@
         draco.setDecoderConfig({ type: "js" });
         draco.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
         gltfLoader.setDRACOLoader(draco);
-
-        // const windowMaterial = new THREE.MeshBasicMaterial({
-        //     // side: THREE.DoubleSide,
-        //     // color: 0x767e82,
-        //     // envMap: envMap,
-        //     refractionRatio: 0.5,
-        // });
 
         const windowMaterial = new THREE.MeshPhongMaterial({
             side: THREE.DoubleSide,
@@ -121,7 +73,7 @@
 
         const model1 = (await gltfLoader.loadAsync("models/amsterdam6.gltf"))
             .scene;
-        model1.position.set(3.1, -1.5, 0);
+        model1.position.set(3.5, -1.5, 0);
         model1.scale.multiplyScalar(1.5);
         model1.traverse((obj: any) => {
             if (obj.isMesh) {
@@ -136,7 +88,7 @@
 
         const model2 = (await gltfLoader.loadAsync("models/amsterdam2.gltf"))
             .scene;
-        model2.position.set(-4.4, -1.0, 0);
+        model2.position.set(-4.0, -1.0, 0);
         model2.scale.multiplyScalar(1.5);
         model2.traverse((obj: any) => {
             if (obj.isMesh) {
@@ -151,7 +103,7 @@
 
         const model3 = (await gltfLoader.loadAsync("models/amsterdam3.gltf"))
             .scene;
-        model3.position.set(-11.9, -1.5, 0);
+        model3.position.set(-11.5, -1.5, 0);
         model3.scale.multiplyScalar(1.5);
         model3.traverse((obj: any) => {
             if (obj.isMesh) {
@@ -166,7 +118,7 @@
 
         const model4 = (await gltfLoader.loadAsync("models/amsterdam4.gltf"))
             .scene;
-        model4.position.set(10.6, -1.5, 0);
+        model4.position.set(11, -1.5, 0);
         model4.scale.multiplyScalar(1.5);
         model4.traverse((obj: any) => {
             if (obj.isMesh) {
@@ -181,7 +133,7 @@
 
         const model5 = (await gltfLoader.loadAsync("models/amsterdam5.gltf"))
             .scene;
-        model5.position.set(-19.3, -1.0, 0);
+        model5.position.set(-18.9, -1.0, 0);
         model5.scale.multiplyScalar(1.5);
         model5.traverse((obj: any) => {
             if (obj.isMesh) {
@@ -196,7 +148,7 @@
 
         const model6 = (await gltfLoader.loadAsync("models/amsterdam1.gltf"))
             .scene;
-        model6.position.set(18.2, -1.0, 0);
+        model6.position.set(18.6, -1.0, 0);
         model6.scale.multiplyScalar(1.5);
         model6.traverse((obj: any) => {
             if (obj.isMesh) {
@@ -209,9 +161,35 @@
             }
         });
 
-        // const bridge = (await gltfLoader.loadAsync("models/bridge.glb")).scene;
-        // bridge.position.z = -50;
-        // bridge.scale.multiplyScalar(100);
+        const model7 = (await gltfLoader.loadAsync("models/amsterdam6.gltf"))
+            .scene;
+        model7.position.set(-26.5, -1.0, 0);
+        model7.scale.multiplyScalar(1.5);
+        model7.traverse((obj: any) => {
+            if (obj.isMesh) {
+                obj.castShadow = true;
+                obj.receiveShadow = true;
+
+                if (obj.name == "Windows") {
+                    obj.material = windowMaterial;
+                }
+            }
+        });
+
+        const model8 = (await gltfLoader.loadAsync("models/amsterdam3.gltf"))
+            .scene;
+        model8.position.set(26, -1.0, 0);
+        model8.scale.multiplyScalar(1.5);
+        model8.traverse((obj: any) => {
+            if (obj.isMesh) {
+                obj.castShadow = true;
+                obj.receiveShadow = true;
+
+                if (obj.name == "Windows") {
+                    obj.material = windowMaterial;
+                }
+            }
+        });
 
         // area lights
         RectAreaLightUniformsLib.init();
@@ -269,8 +247,9 @@
         directionalLight.position.set(-0.317, 37.285, 45.0);
         directionalLight.target.position.set(0, 0, 0);
 
-        // building lights
-        addBuildingLights();
+        // lights
+        buildingLights();
+        sceneLights();
 
         group.add(model1);
         group.add(model2);
@@ -278,6 +257,8 @@
         group.add(model4);
         group.add(model5);
         group.add(model6);
+        group.add(model7);
+        group.add(model8);
         // group.add(bridge);
         // group.add(rectLight1);
         // group.add(rectLight2);
@@ -308,25 +289,43 @@
         sceneFX.scene.add(group);
     };
 
-    const addBuildingLights = () => {
-        // const pl1 = new THREE.PointLight(0xfbc845, 1000, 10, 2);
-        // pl1.position.set(-4, 10, 1);
-        // const plh1 = new THREE.PointLightHelper(pl1, 1);
-        // group.add(plh1);
-        // group.add(pl1);
+    const sceneLights = () => {
+        // sky color ground color intensity
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 2);
+        hemiLight.color.setHSL(0.6, 1, 0.6);
+        hemiLight.groundColor.setHSL(0.095, 1, 0.75);
+        hemiLight.position.set(0, 20, -20);
+        sceneFX.scene.add(hemiLight);
 
-        // const pl2 = new THREE.PointLight(0xe7670a, 200, 10, 2);
-        // pl2.position.set(-11.5, 5, 1);
-        // const plh2 = new THREE.PointLightHelper(pl2, 1);
-        // group.add(plh2);
-        // group.add(pl2);
+        const hemiLightHelper = new THREE.HemisphereLightHelper(hemiLight, 10);
+        // scene.add(hemiLightHelper);
 
-        // const pl3 = new THREE.PointLight(0xe7670a, 200, 10, 2);
-        // pl3.position.set(-11.5, 15.5, 1);
-        // const plh3 = new THREE.PointLightHelper(pl3, 1);
-        // group.add(plh3);
-        // group.add(pl3);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 10);
+        dirLight.color.setHSL(0.1, 1, 0.95);
+        dirLight.position.set(-1, 1.75, 1);
+        dirLight.position.multiplyScalar(30);
+        sceneFX.scene.add(dirLight);
 
+        dirLight.castShadow = true;
+
+        dirLight.shadow.mapSize.width = 2048;
+        dirLight.shadow.mapSize.height = 2048;
+
+        const d = 50;
+
+        dirLight.shadow.camera.left = -d;
+        dirLight.shadow.camera.right = d;
+        dirLight.shadow.camera.top = d;
+        dirLight.shadow.camera.bottom = -d;
+
+        dirLight.shadow.camera.far = 3500;
+        dirLight.shadow.bias = -0.0001;
+
+        const dirLightHelper = new THREE.DirectionalLightHelper(dirLight, 10);
+        // scene.add(dirLightHelper);
+    };
+
+    const buildingLights = () => {
         const rl1 = new THREE.RectAreaLight(0xffffbb, 25.0, 5, 20);
         rl1.position.set(-10, 21, 2);
         rl1.rotation.set(THREE.MathUtils.degToRad(-60), 0, 0);
@@ -356,28 +355,6 @@
             y: sceneFX.camera.position.y,
             z: cameraZ,
         });
-        // gsap.timeline({
-        //     scrollTrigger: {
-        //         scroller: "#scrolling",
-        //         trigger: ".hero",
-        //         start: "top top",
-        //         end: "+=" + window.innerHeight,
-        //         scrub: true,
-        //     },
-        // }).to(sceneFX.camera.rotation, {
-        //     x: THREE.MathUtils.degToRad(90),
-        //     y: sceneFX.camera.rotation.y,
-        //     z: sceneFX.camera.rotation.z,
-        // });
-        // gsap.timeline({
-        //     scrollTrigger: {
-        //         scroller: "#scrolling",
-        //         trigger: ".section2",
-        //         start: "bottom -100%",
-        //         end: "+=" + window.innerHeight * 5,
-        //         scrub: true,
-        //     },
-        // }).to(sceneFX.scene.fog, { density: 0.3 });
 
         // scene background color = fog color
         // const color = new THREE.Color("black");
@@ -389,14 +366,5 @@
 </script>
 
 {#if sceneFX}
-    <Sky scene={sceneFX.scene} {renderer} />
     <Water bind:this={water} scene={sceneFX.scene} />
-    <!-- <Cloud {renderer} scene={sceneFX.scene} on:mount /> -->
-
-    <!-- <GodRays
-        bind:this={godRays}
-        camera={sceneFX.camera}
-        {renderer}
-        scene={sceneFX.scene}
-    /> -->
 {/if}

@@ -1,7 +1,6 @@
 <script lang="ts">
-    // @ts-nocheck
     import { onMount } from "svelte";
-    import * as THREE from "three";
+    import type * as THREE from "three";
 
     export let camera: THREE.PerspectiveCamera;
     const mouseTolerance = 0.000015;

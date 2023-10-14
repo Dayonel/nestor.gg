@@ -1,10 +1,9 @@
 <script lang="ts">
-    import { createEventDispatcher, onMount } from "svelte";
-    // @ts-ignore
+    import { onMount } from "svelte";
     import * as THREE from "three";
 
     export let scene: THREE.Scene;
-    export let renderer: THREE.Scene;
+    export let renderer: THREE.WebGLRenderer;
 
     let texture: any;
     let uniforms: any;
@@ -32,8 +31,10 @@
 
         var material = new THREE.ShaderMaterial({
             uniforms: uniforms,
-            vertexShader: document.getElementById("cloud-vs")?.textContent,
-            fragmentShader: document.getElementById("cloud-fs")?.textContent,
+            vertexShader:
+                document.getElementById("cloud-vs")?.textContent ?? "",
+            fragmentShader:
+                document.getElementById("cloud-fs")?.textContent ?? "",
         });
 
         material.extensions.derivatives = true;

@@ -1,10 +1,8 @@
 <script lang="ts">
     import { Sparkle } from "$lib/SurfaceSampling/Sparkle";
     import { onMount } from "svelte";
-    // @ts-ignore
     import * as THREE from "three";
-    // @ts-ignore
-    import { MeshSurfaceSampler } from "three/addons/math/MeshSurfaceSampler.js";
+    import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler.js";
 
     export let scene: THREE.Scene;
     export let object: any;
@@ -46,7 +44,9 @@
                 new THREE.BufferGeometry(),
                 linesMaterial
             );
+            // @ts-ignore
             linesMesh.coordinates = [];
+            // @ts-ignore
             linesMesh.previous = null;
             lines.push(linesMesh);
             group.add(linesMesh);

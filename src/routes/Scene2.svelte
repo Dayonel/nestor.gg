@@ -1,7 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher, onMount } from "svelte";
     import { SceneFX } from "$lib/SceneFX";
-    // @ts-ignore
     import * as THREE from "three";
     // @ts-ignore
     import { gsap } from "gsap/dist/gsap.js";

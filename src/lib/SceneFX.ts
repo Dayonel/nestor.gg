@@ -12,7 +12,7 @@ export class SceneFX {
     fovPortrait = 105;
 
     constructor(start: number, end: number,
-        canvas: HTMLCanvasElement, renderer: THREE.WebGLRenderTarget,
+        canvas: HTMLCanvasElement, renderer: THREE.WebGLRenderer,
         width: number, height: number, far: number) {
 
         this.start = start;
@@ -36,7 +36,7 @@ export class SceneFX {
         this.resize(canvas, renderer);
     }
 
-    resize = (canvas: HTMLCanvasElement, renderer: THREE.WebGLRenderTarget) => {
+    resize = (canvas: HTMLCanvasElement, renderer: THREE.WebGLRenderer) => {
         if (canvas.clientHeight > canvas.clientWidth) this.camera.fov = this.fovPortrait;
         else this.camera.fov = this.fovLandscape;
 

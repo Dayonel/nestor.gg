@@ -1,15 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
-
-    // @ts-ignore
     import * as THREE from "three";
     import { Star } from "$lib/SurfaceSampling/Star";
-    // @ts-ignore
-    import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-    // @ts-ignore
-    import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-    // @ts-ignore
-    import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+    import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+    import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+    import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 
     export let scene: THREE.Scene;
     export let camera: THREE.PerspectiveCamera;
@@ -26,8 +21,8 @@
     ];
 
     let group: THREE.Group;
-    let composer: THREE.EffectComposer;
-    let bloomPass: THREE.UnrealBloomPass;
+    let composer: any;
+    let bloomPass: any;
 
     const stars: any[] = [];
     const galaxyGeometryVertices: any[] = [];

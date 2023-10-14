@@ -1,5 +1,4 @@
 <script lang="ts">
-    // @ts-nocheck
     import { onMount } from "svelte";
     import * as THREE from "three";
     import {
@@ -7,7 +6,7 @@
         GodRaysDepthMaskShader,
         GodRaysCombineShader,
         GodRaysGenerateShader,
-    } from "three/addons/shaders/GodRaysShader.js";
+    } from "three/examples/jsm/shaders/GodRaysShader.js";
 
     export let camera: THREE.PerspectiveCamera;
     export let scene: THREE.Scene;
@@ -19,7 +18,7 @@
     const clipPosition = new THREE.Vector4();
     const screenSpacePosition = new THREE.Vector3();
 
-    const postprocessing = { enabled: true };
+    const postprocessing: any = { enabled: true };
 
     const intensity = 0.75;
 
@@ -47,7 +46,10 @@
         scene.add(sphereMesh);
     };
 
-    const initPostprocessing = (renderTargetWidth, renderTargetHeight) => {
+    const initPostprocessing = (
+        renderTargetWidth: any,
+        renderTargetHeight: any
+    ) => {
         renderer.autoClear = false;
         materialDepth = new THREE.MeshDepthMaterial();
 
@@ -161,11 +163,11 @@
         postprocessing.scene.add(postprocessing.quad);
     };
 
-    const getStepSize = (filterLen, tapsPerPass, pass) => {
+    const getStepSize = (filterLen: any, tapsPerPass: any, pass: any) => {
         return filterLen * Math.pow(tapsPerPass, -pass);
     };
 
-    const filterGodRays = (inputTex, renderTarget, stepSize) => {
+    const filterGodRays = (inputTex: any, renderTarget: any, stepSize: any) => {
         postprocessing.scene.overrideMaterial =
             postprocessing.materialGodraysGenerate;
 
