@@ -12,6 +12,7 @@
     import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper.js";
     import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
     import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
+    import X from "./X.svelte";
 
     export let canvas: HTMLCanvasElement;
     export let renderer: THREE.WebGLRenderer;
@@ -41,7 +42,7 @@
 
         sceneFX.camera.position.set(0, 8, cameraZ);
 
-        await loadScene();
+        // await loadScene();
 
         animateOnScroll();
 
@@ -259,32 +260,6 @@
         group.add(model6);
         group.add(model7);
         group.add(model8);
-        // group.add(bridge);
-        // group.add(rectLight1);
-        // group.add(rectLight2);
-        // group.add(rectLight3);
-        // group.add(rectLight4);
-        // group.add(rectLight5);
-        // group.add(directionalLight);
-        // group.add(directionalLight.target);
-
-        // sceneFX.camera.lookAt(0, 3, 0);
-
-        // let color = new THREE.Color();
-        // renderer.getClearColor(color);
-
-        // spot light
-        const spotLight = new THREE.SpotLight(0xffffff, 2000, 0, 0.314, 1, 2);
-        spotLight.position.set(-30.254, 63.726, -24.101);
-        // spotLight.shadow.normalBias = 7.22;
-        spotLight.castShadow = true;
-        //Set up shadow properties for the light
-        spotLight.shadow.mapSize.width = 512; // default
-        spotLight.shadow.mapSize.height = 512; // default
-        spotLight.shadow.camera.near = 0.5; // default
-        spotLight.shadow.camera.far = 500; // default
-        spotLight.shadow.focus = 1; // default
-        // sceneFX.scene.add(spotLight);
 
         sceneFX.scene.add(group);
     };
@@ -355,16 +330,10 @@
             y: sceneFX.camera.position.y,
             z: cameraZ,
         });
-
-        // scene background color = fog color
-        // const color = new THREE.Color("black");
-        // sceneFX.scene.background = color;
-        // const near = 35;
-        // const far = cameraZ;
-        // sceneFX.scene.fog = new THREE.Fog(color, near, far);
     };
 </script>
 
 {#if sceneFX}
-    <Water bind:this={water} scene={sceneFX.scene} />
+    <!-- <Water bind:this={water} scene={sceneFX.scene} /> -->
+    <X scene={sceneFX.scene} camera={sceneFX.camera} {renderer} />
 {/if}
