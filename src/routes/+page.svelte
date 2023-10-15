@@ -22,6 +22,7 @@
 
     const loaded = () => {
         loading = false;
+        textReveal();
 
         scrolling.onscroll = () => {
             scrollPercent =
@@ -53,6 +54,20 @@
             }
         );
     };
+
+    const textReveal = () => {
+        const tl = gsap.timeline();
+
+        tl.from(".hero-text", 1.8, {
+            y: 100,
+            ease: "power4.out",
+            delay: 1,
+            skewY: 7,
+            stagger: {
+                amount: 0.3,
+            },
+        });
+    };
 </script>
 
 <svelte:head>
@@ -70,8 +85,12 @@
     <div id="three">
         <section class="hero">
             <div class="block">
-                <h1 class="name">Hi, I'm Nestor</h1>
-                <h2 class="position">I live in Amsterdam 🧡</h2>
+                <div class="line">
+                    <h1 class="name hero-text">Hi, I'm Nestor</h1>
+                </div>
+                <div class="line">
+                    <h2 class="position hero-text">I live in Amsterdam 🧡</h2>
+                </div>
             </div>
 
             <div class="block scroll-dots">
@@ -133,17 +152,11 @@
         justify-content: center;
         align-items: center;
         padding: 2rem;
-        /* position: fixed; */
         width: 100dvw;
         height: 100dvh;
-        text-shadow: 8px 12px 18px var(--background);
+        text-shadow: 0 0 18px var(--background);
     }
 
-    h1 {
-        font-size: calc(100% + 4dvw);
-    }
-
-    h2,
     p {
         font-size: calc(50% + 2dvw);
     }
@@ -152,13 +165,41 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.5rem;
+        width: 100dvw;
     }
 
     .hero {
         display: flex;
         flex-direction: column;
         justify-content: center;
+        /* align-items: center; */
+    }
+
+    .line {
+        width: 100%;
+        height: 40px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    @media (min-width: 768px) {
+        .line {
+            height: 70px;
+        }
+    }
+
+    .hero-text {
+        position: absolute;
+        font-size: 2rem;
+    }
+
+    @media (min-width: 768px) {
+        .hero-text {
+            font-size: 4rem;
+        }
     }
 
     .scroll-dots {

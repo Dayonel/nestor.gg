@@ -274,8 +274,8 @@
         group.add(model4);
         group.add(model5);
         group.add(model6);
-        group.add(model7);
-        group.add(model8);
+        // group.add(model7);
+        // group.add(model8);
 
         sceneFX.scene.add(group);
 
