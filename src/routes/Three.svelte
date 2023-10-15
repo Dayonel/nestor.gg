@@ -21,6 +21,7 @@
     let introAnimationCompleted: boolean;
     let animationIntro: any;
     let cameraZ: number;
+    let progress = 0;
 
     const totalScenes = 2;
     let scenes: SceneFX[] = [];
@@ -116,7 +117,7 @@
 <canvas bind:this={canvas} />
 
 {#if loading}
-    <Loading />
+    <Loading {progress} />
 {/if}
 {#if weblAvailable}
     <div class:hide={loading}>
@@ -129,27 +130,18 @@
                 scenes.push(f.detail.sceneFX);
                 introAnimation(f.detail.sceneFX);
             }}
+            on:progress={(p) => (progress = p.detail)}
             bind:cameraZ
         />
         <Scene2
             {canvas}
             {renderer}
             on:mount={(f) => scenes.push(f.detail.sceneFX)}
+            on:progress={(p) => (progress = p.detail)}
         />
-
-        <!-- <Parallax {camera} /> -->
-        <!-- <Stars
-            bind:this={stars}
-            {renderer}
-            {scene}
-            {camera}
-            {sparklesGeometry}
-            {sparklesMaterial}
-        /> -->
-        <!-- <Sparkles {sparklesGeometry} {scene} object={monitor} /> -->
-        <!-- <Lines {scene} object={monitor} /> -->
     </div>
 {/if}
+
 {#if message}
     <p class="message">{message}</p>
 {/if}

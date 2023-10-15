@@ -54,6 +54,7 @@
         const loader = new RGBELoader();
         envMap = await loader.loadAsync("textures/skybox/venice_sunset_2k.hdr");
         envMap.mapping = THREE.EquirectangularReflectionMapping;
+        dispatch("progress", 5);
 
         // amsterdam
         const gltfLoader = new GLTFLoader();
@@ -86,6 +87,8 @@
             }
         });
 
+        dispatch("progress", 10);
+
         const model2 = (await gltfLoader.loadAsync("models/amsterdam2.gltf"))
             .scene;
         model2.position.set(-4.0, -1.0, 0);
@@ -100,6 +103,8 @@
                 }
             }
         });
+
+        dispatch("progress", 15);
 
         const model3 = (await gltfLoader.loadAsync("models/amsterdam3.gltf"))
             .scene;
@@ -116,6 +121,8 @@
             }
         });
 
+        dispatch("progress", 20);
+
         const model4 = (await gltfLoader.loadAsync("models/amsterdam4.gltf"))
             .scene;
         model4.position.set(11, -1.5, 0);
@@ -130,6 +137,8 @@
                 }
             }
         });
+
+        dispatch("progress", 25);
 
         const model5 = (await gltfLoader.loadAsync("models/amsterdam5.gltf"))
             .scene;
@@ -146,6 +155,8 @@
             }
         });
 
+        dispatch("progress", 30);
+
         const model6 = (await gltfLoader.loadAsync("models/amsterdam1.gltf"))
             .scene;
         model6.position.set(18.6, -1.0, 0);
@@ -160,6 +171,8 @@
                 }
             }
         });
+
+        dispatch("progress", 35);
 
         const model7 = (await gltfLoader.loadAsync("models/amsterdam6.gltf"))
             .scene;
@@ -176,6 +189,8 @@
             }
         });
 
+        dispatch("progress", 40);
+
         const model8 = (await gltfLoader.loadAsync("models/amsterdam3.gltf"))
             .scene;
         model8.position.set(26, -1.0, 0);
@@ -190,6 +205,8 @@
                 }
             }
         });
+
+        dispatch("progress", 45);
 
         // area lights
         RectAreaLightUniformsLib.init();
@@ -259,34 +276,10 @@
         group.add(model6);
         group.add(model7);
         group.add(model8);
-        // group.add(bridge);
-        // group.add(rectLight1);
-        // group.add(rectLight2);
-        // group.add(rectLight3);
-        // group.add(rectLight4);
-        // group.add(rectLight5);
-        // group.add(directionalLight);
-        // group.add(directionalLight.target);
-
-        // sceneFX.camera.lookAt(0, 3, 0);
-
-        // let color = new THREE.Color();
-        // renderer.getClearColor(color);
-
-        // spot light
-        const spotLight = new THREE.SpotLight(0xffffff, 2000, 0, 0.314, 1, 2);
-        spotLight.position.set(-30.254, 63.726, -24.101);
-        // spotLight.shadow.normalBias = 7.22;
-        spotLight.castShadow = true;
-        //Set up shadow properties for the light
-        spotLight.shadow.mapSize.width = 512; // default
-        spotLight.shadow.mapSize.height = 512; // default
-        spotLight.shadow.camera.near = 0.5; // default
-        spotLight.shadow.camera.far = 500; // default
-        spotLight.shadow.focus = 1; // default
-        // sceneFX.scene.add(spotLight);
 
         sceneFX.scene.add(group);
+
+        dispatch("progress", 100);
     };
 
     const sceneLights = () => {

@@ -136,7 +136,7 @@
         /* position: fixed; */
         width: 100dvw;
         height: 100dvh;
-        text-shadow: 0 0 18px var(--background);
+        text-shadow: 8px 12px 18px var(--background);
     }
 
     h1 {

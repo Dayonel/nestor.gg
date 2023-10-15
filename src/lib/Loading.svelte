@@ -1,6 +1,14 @@
+<script lang="ts">
+    export let progress: number = 0;
+
+    let total = 150;
+</script>
+
 <div class="loading">
     <span>Loading...</span>
-    <span class="loader" />
+    <span class="loader" style="width: {total}px">
+        <span class="progress" style="width: {(progress * total) / 100}px" />
+    </span>
 </div>
 
 <style>
@@ -17,40 +25,14 @@
     }
 
     .loader {
-        width: 96px;
-        height: 24px;
-        display: inline-block;
-        background-color: #fff;
-        border: 1px solid #fff;
-        border-radius: 4px;
-        background: linear-gradient(
-                45deg,
-                transparent 49%,
-                #fff 50%,
-                #fff 50%,
-                transparent 51%,
-                transparent
-            ),
-            linear-gradient(
-                -45deg,
-                transparent 49%,
-                #fff 50%,
-                #fff 50%,
-                transparent 51%,
-                transparent
-            );
-        font-size: 15px;
-        background-size: 1em 1em;
-        box-sizing: border-box;
-        animation: barStripe 0.6s linear infinite;
+        height: 4px;
+        background: #393939;
+        position: relative;
     }
 
-    @keyframes barStripe {
-        0% {
-            background-position: 1em 0;
-        }
-        100% {
-            background-position: 0 0;
-        }
+    .progress {
+        height: 4px;
+        background-color: white;
+        position: absolute;
     }
 </style>
