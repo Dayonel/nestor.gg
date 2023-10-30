@@ -1,9 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    // @ts-ignore
-    import * as THREE from "three";
-    // @ts-ignore
-    import { Water } from "three/addons/objects/Water2.js";
+    import { PlaneGeometry, Vector2, MathUtils } from "three";
+    import { Water } from "three/examples/jsm/objects/Water2.js";
 
     export let scene: THREE.Scene;
 
@@ -18,16 +16,16 @@
 
     onMount(() => {
         init();
+        console.log("water has mounted");
     });
 
     const init = () => {
-        // water
-        const waterGeometry = new THREE.PlaneGeometry(100, 100);
+        const waterGeometry = new PlaneGeometry(100, 100);
 
         water = new Water(waterGeometry, {
             color: params.color,
             scale: params.scale,
-            flowDirection: new THREE.Vector2(params.flowX, params.flowY),
+            flowDirection: new Vector2(params.flowX, params.flowY),
             // textureWidth: 1024,
             // textureHeight: 1024,
             reflectivity: 1,
@@ -35,7 +33,7 @@
 
         water.position.z = 50;
         water.position.y = -0.05;
-        water.rotation.x = THREE.MathUtils.degToRad(-90);
+        water.rotation.x = MathUtils.degToRad(-90);
         scene.add(water);
     };
 </script>

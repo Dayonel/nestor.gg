@@ -1,47 +1,20 @@
 <script lang="ts">
-    import { createEventDispatcher, onDestroy, onMount } from "svelte";
+    import { onDestroy } from "svelte";
     import WebGL from "three/examples/jsm/capabilities/WebGL.js";
     import * as THREE from "three";
     import Stats from "three/examples/jsm/libs/stats.module";
-    import TWEEN from "@tweenjs/tween.js";
-    import Loading from "$lib/Loading.svelte";
     import Scene1 from "./Scene1.svelte";
     import Scene2 from "./Scene2.svelte";
-    import type { SceneFX } from "$lib/SceneFX";
 
+    export let models: any[] = [];
+    export let materials: any[] = [];
     export let scrollPercent = 0;
 
-    let message: string;
-    let dispatch = createEventDispatcher();
+    let weblAvailable = WebGL.isWebGLAvailable();
     let canvas: HTMLCanvasElement;
     let renderer: THREE.WebGLRenderer;
     let stats: any;
-    let loading: boolean = true;
-    let weblAvailable: boolean = false;
-    let introAnimationCompleted: boolean;
-    let animationIntro: any;
     let cameraZ: number;
-    let progress = 0;
-
-    const totalScenes = 2;
-    let scenes: SceneFX[] = [];
-
-    onMount(() => {
-        weblAvailable = WebGL.isWebGLAvailable();
-        if (!weblAvailable) {
-            const warning = WebGL.getWebGLErrorMessage();
-            message = warning.innerText;
-            loading = false;
-            return;
-        }
-
-        init();
-
-        window.onresize = () => onResize();
-        onResize();
-
-        requestAnimationFrame(loop);
-    });
 
     onDestroy(() => {
         if (stats) document.body.removeChild(stats.dom);
@@ -70,26 +43,7 @@
         document.body.appendChild(stats.dom);
     };
 
-    const onResize = () => {
-        scenes?.forEach((f) => f.resize(canvas, renderer));
-    };
-
-    const introAnimation = (scene: THREE.Scene) => {
-        // @ts-ignore
-        animationIntro = new TWEEN.Tween(scene.camera.position)
-            .to(
-                {
-                    // @ts-ignore
-                    x: scene.camera.position.x,
-                    // @ts-ignore
-                    y: scene.camera.position.y,
-                    z: cameraZ - 10,
-                },
-                1000 // 2500
-            ) // time take to animate
-            .easing(TWEEN.Easing.Quadratic.InOut)
-            .onComplete(() => (introAnimationCompleted = true));
-    };
+    init();
 
     const loop = () => {
         if (!weblAvailable) return;
@@ -97,53 +51,21 @@
         requestAnimationFrame(loop);
 
         stats.update();
-
-        if (!loading && !introAnimationCompleted) TWEEN.update();
-
-        if (loading && scenes?.length == totalScenes) {
-            dispatch("mount");
-            animationIntro.start();
-            loading = false;
-        }
-
-        scenes?.forEach((f) => {
-            if (scrollPercent >= f.start && scrollPercent <= f.end) {
-                renderer.render(f.scene, f.camera);
-            }
-        });
     };
+
+    loop();
 </script>
 
 <canvas bind:this={canvas} />
 
-{#if loading}
-    <Loading {progress} />
-{/if}
-{#if weblAvailable}
-    <div class:hide={loading}>
-        <span class="scroll">Scroll progress: {scrollPercent?.toFixed(2)}%</span
-        >
-        <Scene1
-            {canvas}
-            {renderer}
-            on:mount={(f) => {
-                scenes.push(f.detail.sceneFX);
-                introAnimation(f.detail.sceneFX);
-            }}
-            on:progress={(p) => (progress = p.detail)}
-            bind:cameraZ
-        />
-        <Scene2
-            {canvas}
-            {renderer}
-            on:mount={(f) => scenes.push(f.detail.sceneFX)}
-            on:progress={(p) => (progress = p.detail)}
-        />
-    </div>
-{/if}
-
-{#if message}
-    <p class="message">{message}</p>
+{#if !weblAvailable}
+    <p class="message">{WebGL.getWebGLErrorMessage()}</p>
+{:else}
+    <span class="scroll">Scroll progress: {scrollPercent?.toFixed(2)}%</span>
+    {#if scrollPercent >= 0 && scrollPercent <= 20}
+        <Scene1 {models} {materials} {canvas} {renderer} bind:cameraZ />
+    {/if}
+    <!-- <Scene2 {canvas} {renderer} /> -->
 {/if}
 
 <style>

@@ -5,6 +5,7 @@
     import { gsap } from "gsap/dist/gsap.js";
     // @ts-ignore
     import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
+    import Loading from "./Loading.svelte";
 
     let loading = true;
     let scrollPercent: number = 0;
@@ -13,6 +14,8 @@
     let totalHeight: number;
     let scrollY: number;
     let sections: any[];
+    let models: any[] = [];
+    let materials: any[] = [];
 
     onMount(() => {
         gsap.registerPlugin(ScrollTrigger);
@@ -20,9 +23,15 @@
         totalHeight = sections.length * window.innerHeight;
     });
 
-    const loaded = () => {
+    const loaded = (e: CustomEvent<any>) => {
+        // textReveal();
+
         loading = false;
-        textReveal();
+        models = e.detail.models;
+        materials = e.detail.materials;
+
+        console.log(models);
+        console.log(materials);
 
         scrolling.onscroll = () => {
             scrollPercent =
@@ -79,53 +88,61 @@
     />
 </svelte:head>
 
-<Three {scrollPercent} on:mount={() => loaded()} />
+<div bind:this={scrolling} id="scrolling">
+    {#if loading}
+        <Loading on:load={(e) => loaded(e)} />
+    {:else}
+        <Three {scrollPercent} {models} {materials} />
 
-<div bind:this={scrolling} id="scrolling" class:hide={loading}>
-    <div id="three">
-        <section class="hero">
-            <div class="block">
-                <div class="line">
-                    <h1 class="name hero-text">Hi, I'm Nestor</h1>
+        <div id="three">
+            <section class="hero">
+                <div class="block">
+                    <div class="line">
+                        <h1 class="name hero-text">Hi, I'm Nestor</h1>
+                    </div>
+                    <div class="line">
+                        <h2 class="position hero-text">
+                            I live in Amsterdam 🧡
+                        </h2>
+                    </div>
                 </div>
-                <div class="line">
-                    <h2 class="position hero-text">I live in Amsterdam 🧡</h2>
+
+                <div class="block scroll-dots">
+                    <span class="dot dot3" />
+                    <span class="dot dot2" />
+                    <span class="dot dot1" />
+                    <span>Scroll down</span>
                 </div>
-            </div>
+            </section>
+            <section class="section2">
+                <h2 class="web-development">
+                    I am passionate about web development
+                </h2>
+            </section>
+            <section>
+                <h2>Changing Objects Position</h2>
+                <p>The cubes position is now changing</p>
+            </section>
 
-            <div class="block scroll-dots">
-                <span class="dot dot3" />
-                <span class="dot dot2" />
-                <span class="dot dot1" />
-                <span>Scroll down</span>
-            </div>
-        </section>
-        <section class="section2">
-            <h2 class="web-development">
-                I am passionate about web development
-            </h2>
-        </section>
-        <section>
-            <h2>Changing Objects Position</h2>
-            <p>The cubes position is now changing</p>
-        </section>
+            <section>
+                <h2>Changing Objects Rotation</h2>
+                <p>The cubes rotation is now changing</p>
+            </section>
 
-        <section>
-            <h2>Changing Objects Rotation</h2>
-            <p>The cubes rotation is now changing</p>
-        </section>
+            <section>
+                <h2>Changing Camera Position</h2>
+                <p>The camera position is now changing</p>
+            </section>
 
-        <section>
-            <h2>Changing Camera Position</h2>
-            <p>The camera position is now changing</p>
-        </section>
-
-        <section>
-            <h2>You are at the bottom</h2>
-            <p>The cube will now be auto rotating</p>
-            <p>Now you can scroll back to the top to reverse the animation</p>
-        </section>
-    </div>
+            <section>
+                <h2>You are at the bottom</h2>
+                <p>The cube will now be auto rotating</p>
+                <p>
+                    Now you can scroll back to the top to reverse the animation
+                </p>
+            </section>
+        </div>
+    {/if}
 </div>
 
 <style>
