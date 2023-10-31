@@ -1,11 +1,11 @@
 <script lang="ts">
-    import Three from "./Three.svelte";
-    import { onMount } from "svelte";
+    import Three from "../components/Three.svelte";
     // @ts-ignore
     import { gsap } from "gsap/dist/gsap.js";
     // @ts-ignore
     import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
     import Loading from "./Loading.svelte";
+    import { onMount } from "svelte";
 
     let loading = true;
     let scrollPercent: number = 0;
@@ -202,7 +202,7 @@
         align-items: center;
     }
 
-    @media (min-width: 768px) {
+    @media (min-width: 920px) {
         .line {
             height: 70px;
         }
@@ -213,7 +213,7 @@
         font-size: 2rem;
     }
 
-    @media (min-width: 768px) {
+    @media (min-width: 920px) {
         .hero-text {
             font-size: 4rem;
         }
@@ -269,7 +269,7 @@
         width: 100%;
     }
 
-    @media (min-width: 768px) {
+    @media (min-width: 920px) {
         .web-development {
             width: 590px;
             font-size: 96px;

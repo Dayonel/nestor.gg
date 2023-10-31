@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Path } from "$lib/SurfaceSampling/Path";
+    import { Path } from "./Path";
     import { onMount } from "svelte";
     import * as THREE from "three";
     import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler.js";

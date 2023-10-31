@@ -1,26 +1,31 @@
 <script lang="ts">
-    import { onDestroy } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import WebGL from "three/examples/jsm/capabilities/WebGL.js";
     import * as THREE from "three";
     import Stats from "three/examples/jsm/libs/stats.module";
-    import Scene1 from "./Scene1.svelte";
-    import Scene2 from "./Scene2.svelte";
+    import Scene1 from "./scenes/Scene1.svelte";
+    import Scene2 from "./scenes/Scene2.svelte";
 
     export let models: any[] = [];
     export let materials: any[] = [];
     export let scrollPercent = 0;
 
-    let weblAvailable = WebGL.isWebGLAvailable();
+    let weblAvailable = false;
     let canvas: HTMLCanvasElement;
     let renderer: THREE.WebGLRenderer;
+    let camera: THREE.PerspectiveCamera;
     let stats: any;
-    let cameraZ: number;
+
+    onMount(() => init());
 
     onDestroy(() => {
         if (stats) document.body.removeChild(stats.dom);
     });
 
     const init = () => {
+        weblAvailable = WebGL.isWebGLAvailable();
+        if (!weblAvailable) return;
+
         // renderer
         renderer = new THREE.WebGLRenderer({
             canvas: canvas,
@@ -38,34 +43,54 @@
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+        camera = new THREE.PerspectiveCamera(
+            70,
+            window.innerWidth / window.innerHeight,
+            0.01,
+            30000
+        );
+
+        // set aspect ratio
+        canvas.resize(renderer, camera);
+
         // stats
         stats = new Stats();
         document.body.appendChild(stats.dom);
+
+        loop();
+
+        console.log("three has mounted");
     };
 
-    init();
-
     const loop = () => {
-        if (!weblAvailable) return;
-
         requestAnimationFrame(loop);
 
         stats.update();
     };
-
-    loop();
 </script>
 
+<svelte:window on:resize={() => canvas.resize(renderer, camera)} />
+
 <canvas bind:this={canvas} />
+<span class="scroll">Scroll progress: {scrollPercent?.toFixed(2)}%</span>
 
 {#if !weblAvailable}
     <p class="message">{WebGL.getWebGLErrorMessage()}</p>
 {:else}
-    <span class="scroll">Scroll progress: {scrollPercent?.toFixed(2)}%</span>
-    {#if scrollPercent >= 0 && scrollPercent <= 20}
-        <Scene1 {models} {materials} {canvas} {renderer} bind:cameraZ />
-    {/if}
-    <!-- <Scene2 {canvas} {renderer} /> -->
+    <Scene1
+        {models}
+        {materials}
+        {renderer}
+        {camera}
+        enabled={scrollPercent >= 0 && scrollPercent <= 20}
+    />
+    <Scene2
+        {models}
+        {materials}
+        {renderer}
+        {camera}
+        enabled={scrollPercent >= 20 && scrollPercent <= 40}
+    />
 {/if}
 
 <style>

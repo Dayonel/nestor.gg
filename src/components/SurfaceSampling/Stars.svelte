@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import * as THREE from "three";
-    import { Star } from "$lib/SurfaceSampling/Star";
+    import { Star } from "./Star";
     import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
     import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
     import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";

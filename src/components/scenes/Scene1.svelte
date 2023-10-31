@@ -3,30 +3,25 @@
     import { gsap } from "gsap/dist/gsap.js";
     // @ts-ignore
     import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
-    import Water from "./Water.svelte";
-    import { Vector3 } from "three";
     import * as THREE from "three";
     import GLTF from "$lib/GLTF.svelte";
-    import { MaterialDTO } from "../core/dto/MaterialDTO";
+    import { afterUpdate, onMount } from "svelte";
+    import { MaterialDTO } from "../../core/dto/MaterialDTO";
+    import Water from "../Water.svelte";
+    import { Vector3 } from "three";
     import TWEEN from "@tweenjs/tween.js";
 
     export let models: any[] = [];
     export let materials: any[] = [];
-    export let canvas: HTMLCanvasElement;
     export let renderer: THREE.WebGLRenderer;
-    export let cameraZ = 40;
+    export let camera: THREE.PerspectiveCamera;
+    export let enabled: boolean;
+    $: enabled, loop();
 
+    const cameraZ = 40;
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-        70,
-        window.innerWidth / window.innerHeight,
-        0.01,
-        30000
-    );
-
     const envMap = materials[0];
     envMap.mapping = THREE.EquirectangularReflectionMapping;
-
     const windowMaterial = new THREE.MeshPhongMaterial({
         side: THREE.DoubleSide,
         color: 0x2a2823,
@@ -35,6 +30,8 @@
         refractionRatio: 0.98,
         shininess: 100,
     });
+
+    onMount(() => init());
 
     const material = new MaterialDTO("Windows", windowMaterial);
 
@@ -49,11 +46,11 @@
 
         animateOnScroll();
 
-        console.log("scene1 has mounted");
-
         introAnimation();
 
         loop();
+
+        console.log("scene1 has mounted");
     };
 
     const introAnimation = () => {
@@ -69,8 +66,8 @@
                 },
                 1000 // 2500
             ) // time take to animate
-            .delay(500)
-            .easing(TWEEN.Easing.Quadratic.InOut);
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .start();
     };
 
     const lights = () => {
@@ -126,18 +123,18 @@
     };
 
     const loop = () => {
+        if (!enabled) return;
+
         requestAnimationFrame(loop);
+
         TWEEN.update();
+
         renderer.render(scene, camera);
     };
-
-    init();
 </script>
 
-<svelte:window on:resize={() => canvas.resize(renderer, camera)} />
-
 <GLTF
-    gltf={models[0]}
+    gltf={models[5]}
     {scene}
     position={new Vector3(3.5, -1.5, 0)}
     {material}
@@ -162,10 +159,9 @@
     {material}
 />
 <GLTF
-    gltf={models[5]}
+    gltf={models[0]}
     {scene}
     position={new Vector3(18.6, -1.0, 0)}
     {material}
 />
-
 <Water {scene} />

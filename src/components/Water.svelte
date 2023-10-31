@@ -16,7 +16,6 @@
 
     onMount(() => {
         init();
-        console.log("water has mounted");
     });
 
     const init = () => {
@@ -35,5 +34,7 @@
         water.position.y = -0.05;
         water.rotation.x = MathUtils.degToRad(-90);
         scene.add(water);
+
+        console.log("water has mounted");
     };
 </script>
