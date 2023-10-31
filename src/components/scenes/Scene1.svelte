@@ -48,8 +48,6 @@
 
         introAnimation();
 
-        loop();
-
         console.log("scene1 has mounted");
     };
 

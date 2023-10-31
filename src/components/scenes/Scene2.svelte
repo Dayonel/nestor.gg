@@ -21,8 +21,6 @@
         gsap.registerPlugin(ScrollTrigger);
 
         loadScene();
-
-        loop();
     };
 
     const loadScene = () => {};
