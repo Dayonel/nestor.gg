@@ -27,14 +27,10 @@
         spotLight: any,
         lightHelper: any;
     let mounted = false;
-    const envMap = materials[0];
-    const windowMaterial = new THREE.MeshPhongMaterial({
-        side: THREE.DoubleSide,
-        color: 0x2a2823,
-        envMap: envMap,
-        reflectivity: 1,
-        refractionRatio: 0.98,
-        shininess: 100,
+    const windowMaterial = new THREE.MeshPhysicalMaterial({
+        roughness: 0.7,
+        transmission: 0.7,
+        thickness: 1,
     });
     const material = new MaterialDTO("Windows", windowMaterial);
 
@@ -89,7 +85,7 @@
         // scene.add(ambient);
 
         const sphere = new THREE.SphereGeometry(0.5, 16, 8);
-        const intensity = 100;
+        const intensity = 50;
 
         light1 = new THREE.PointLight(0xff0040, intensity);
         light1.add(
@@ -127,7 +123,7 @@
         );
         scene.add(light4);
 
-        spotLight = new THREE.SpotLight(0xffffff, 2000);
+        spotLight = new THREE.SpotLight(0xffffff, 1000);
         spotLight.position.set(10, 50, 40);
         spotLight.angle = Math.PI / 6;
         spotLight.penumbra = 1;

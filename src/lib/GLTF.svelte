@@ -19,7 +19,12 @@
                 if (material && obj.name == material.key) {
                     obj.material = material.value;
                 } else {
-                    obj.material = new THREE.MeshLambertMaterial();
+                    obj.material = new THREE.MeshStandardMaterial({
+                        color: 0xffffff,
+                        metalness: 1,
+                        roughness: 0.6,
+                        side: THREE.DoubleSide,
+                    });
                 }
             }
         });

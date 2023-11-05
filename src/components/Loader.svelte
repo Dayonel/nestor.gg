@@ -18,7 +18,7 @@
         "models/amsterdam4.glb",
     ];
 
-    const materials: any[] = ["textures/skybox/kloppenheim_02_2k.hdr"];
+    const materials: any[] = [];
     const total = models.length + materials.length;
 </script>
 
