@@ -4,7 +4,7 @@
     import { gsap } from "gsap/dist/gsap.js";
     // @ts-ignore
     import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
-    import Loading from "./Loading.svelte";
+    import Loader from "../components/Loader.svelte";
     import { onMount } from "svelte";
 
     let loading = true;
@@ -29,9 +29,6 @@
         loading = false;
         models = e.detail.models;
         materials = e.detail.materials;
-
-        console.log(models);
-        console.log(materials);
 
         scrolling.onscroll = () => {
             scrollPercent =
@@ -90,7 +87,7 @@
 
 <div bind:this={scrolling} id="scrolling">
     {#if loading}
-        <Loading on:load={(e) => loaded(e)} />
+        <Loader on:load={(e) => loaded(e)} />
     {:else}
         <Three {scrollPercent} {models} {materials} />
 

@@ -30,18 +30,19 @@
         renderer = new THREE.WebGLRenderer({
             canvas: canvas,
             antialias: true,
-            alpha: true,
+            // alpha: true,
             powerPreference: "high-performance",
         });
 
         renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.SRGBColorSpace;
-        // renderer.setClearColor(0x000000, 1);
-        // renderer.useLegacyLights = true;
 
         // shadows
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1;
 
         camera = new THREE.PerspectiveCamera(
             70,
