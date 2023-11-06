@@ -30,7 +30,7 @@
             reflectivity: 1,
         });
 
-        water.position.z = 25;
+        water.position.z = 26;
         water.position.y = -0.05;
         water.rotation.x = MathUtils.degToRad(-90);
         scene.add(water);

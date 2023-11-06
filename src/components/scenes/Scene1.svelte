@@ -135,8 +135,8 @@
         scene.add(static3);
 
         ///
-        spotLight = new THREE.SpotLight(0xffffff, 2000);
-        spotLight.position.set(10, 50, 40);
+        spotLight = new THREE.SpotLight(0xffffff, 4000);
+        spotLight.position.set(0, 50, -1);
         spotLight.angle = Math.PI / 6;
         spotLight.penumbra = 1;
         spotLight.decay = 2;
@@ -145,26 +145,26 @@
         spotLight.castShadow = true;
         scene.add(spotLight);
 
-        // const dirLight = new THREE.DirectionalLight(0xffffff, 0.2);
-        // dirLight.color.setHSL(0.1, 1, 0.95);
-        // dirLight.position.set(-1, 1.75, 1);
-        // dirLight.position.multiplyScalar(30);
-        // scene.add(dirLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.12);
+        dirLight.color.setHSL(0.1, 1, 0.95);
+        dirLight.position.set(-1, 1.75, 1);
+        dirLight.position.multiplyScalar(30);
+        scene.add(dirLight);
 
-        // dirLight.castShadow = true;
+        dirLight.castShadow = true;
 
-        // dirLight.shadow.mapSize.width = 2048;
-        // dirLight.shadow.mapSize.height = 2048;
+        dirLight.shadow.mapSize.width = 2048;
+        dirLight.shadow.mapSize.height = 2048;
 
-        // const d = 50;
+        const d = 50;
 
-        // dirLight.shadow.camera.left = -d;
-        // dirLight.shadow.camera.right = d;
-        // dirLight.shadow.camera.top = d;
-        // dirLight.shadow.camera.bottom = -d;
+        dirLight.shadow.camera.left = -d;
+        dirLight.shadow.camera.right = d;
+        dirLight.shadow.camera.top = d;
+        dirLight.shadow.camera.bottom = -d;
 
-        // dirLight.shadow.camera.far = 3500;
-        // dirLight.shadow.bias = -0.0001;
+        dirLight.shadow.camera.far = 3500;
+        dirLight.shadow.bias = -0.0001;
     };
 
     const animateOnScroll = () => {
@@ -215,9 +215,9 @@
             light4.position.x = Math.sin(time * 0.3) * 30;
             light4.position.y = Math.cos(time * 0.7) * 40;
             light4.position.z = Math.sin(time * 0.5) * z;
-
-            spotLight.position.x = Math.cos(time) * 2.5;
-            spotLight.position.z = Math.sin(time) * 2.5;
+            
+            // spotLight.position.x = Math.cos(time) * 2.5;
+            // spotLight.position.z = Math.sin(time) * 2.5;
         }
 
         renderer.render(scene, camera);
@@ -227,25 +227,25 @@
 <GLTF
     gltf={models[0]}
     {scene}
-    position={new Vector3(2.45, -0.25, 0)}
+    position={new Vector3(2.45, -0.5, 0)}
     {material}
 />
 <GLTF
     gltf={models[1]}
     {scene}
-    position={new Vector3(-2.5, -0.25, 0)}
+    position={new Vector3(-2.5, -0.5, 0)}
     {material}
 />
 <GLTF
     gltf={models[2]}
     {scene}
-    position={new Vector3(-7.5, -0.25, 0)}
+    position={new Vector3(-7.5, -0.5, 0)}
     {material}
 />
 <GLTF
     gltf={models[3]}
     {scene}
-    position={new Vector3(7.35, -0.25, 0)}
+    position={new Vector3(7.35, -0.5, 0)}
     {material}
 />
-<Water {scene} />
+<!-- <Water {scene} /> -->

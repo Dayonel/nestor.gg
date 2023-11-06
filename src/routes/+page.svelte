@@ -97,11 +97,11 @@
             <section class="hero">
                 <div class="block">
                     <div class="line">
-                        <h1 class="name hero-text">Hi, I'm Nestor</h1>
+                        <h1 class="name hero-text">I'm Nestor</h1>
                     </div>
                     <div class="line">
                         <h2 class="position hero-text">
-                            I live in Amsterdam 🧡
+                            I live in Amsterdam
                         </h2>
                     </div>
                 </div>
@@ -190,24 +190,7 @@
         /* align-items: center; */
     }
 
-    .line {
-        width: 100%;
-        height: 40px;
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    @media (min-width: 920px) {
-        .line {
-            height: 70px;
-        }
-    }
-
     .hero-text {
-        position: absolute;
         font-size: 2rem;
     }
 
