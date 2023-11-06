@@ -42,7 +42,7 @@
         ///
         const geometry = new THREE.PlaneGeometry(200, 200);
         const material = new THREE.MeshStandardMaterial({
-            color: 0x2079e6,
+            color: 0xc22fca
         });
 
         const mesh = new THREE.Mesh(geometry, material);
@@ -135,7 +135,7 @@
         scene.add(static3);
 
         ///
-        spotLight = new THREE.SpotLight(0xffffff, 4000);
+        spotLight = new THREE.SpotLight(0xffffff, 2000);
         spotLight.position.set(0, 50, -1);
         spotLight.angle = Math.PI / 6;
         spotLight.penumbra = 1;

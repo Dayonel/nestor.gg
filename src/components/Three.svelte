@@ -71,7 +71,10 @@
     };
 </script>
 
-<svelte:window on:resize={() => canvas.resize(renderer, camera)} />
+<svelte:window
+    on:resize={() => canvas.resize(renderer, camera)}
+    on:orientationchange={() => canvas.resize(renderer, camera)}
+/>
 
 <canvas bind:this={canvas} />
 <span class="scroll">Scroll progress: {scrollPercent?.toFixed(2)}%</span>
