@@ -170,7 +170,6 @@
         padding: 2rem;
         width: 100dvw;
         height: 100dvh;
-        text-shadow: 0 0 18px var(--background);
     }
 
     p {

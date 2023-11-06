@@ -21,12 +21,7 @@
 
     const cameraZ = 25;
     const scene = new THREE.Scene();
-    let light1: any,
-        light2: any,
-        light3: any,
-        light4: any,
-        spotLight: any,
-        lightHelper: any;
+    let light1: any, light2: any, light3: any, light4: any, spotLight: any;
     let mounted = false;
     const windowMaterial = new THREE.MeshPhysicalMaterial({
         roughness: 0.7,
@@ -45,21 +40,22 @@
         scene.add(camera);
 
         ///
-        // const geometry = new THREE.PlaneGeometry(200, 200);
-        // const material = new THREE.MeshStandardMaterial({ color: 0x9c9c9c });
+        const geometry = new THREE.PlaneGeometry(200, 200);
+        const material = new THREE.MeshStandardMaterial({
+            color: 0x2079e6,
+        });
 
-        // const mesh = new THREE.Mesh(geometry, material);
-        // mesh.position.set(0, 0, -99);
-        // mesh.rotation.x = THREE.MathUtils.degToRad(-90);
-        // mesh.receiveShadow = true;
-        // scene.add(mesh);
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(0, 0, -5);
+        mesh.receiveShadow = true;
+        scene.add(mesh);
 
         ///
-        const texture = hdris[0];
-        texture.mapping = THREE.EquirectangularReflectionMapping;
+        // const texture = hdris[0];
+        // texture.mapping = THREE.EquirectangularReflectionMapping;
 
-        scene.backgroundBlurriness = 0.3;
-        scene.background = texture;
+        // scene.backgroundBlurriness = 1;
+        // scene.background = texture;
 
         ///
 
@@ -107,38 +103,39 @@
         scene.add(light4);
 
         // static
-        const pointLightIntensity = 30;
+        const pointLightIntensity = 50;
         const z = 10;
         const distance = 0;
         const decay = 2;
-        const light5 = new THREE.PointLight(
+        const static1 = new THREE.PointLight(
             0xff0000,
             pointLightIntensity,
             distance,
             decay
         );
-        light5.position.set(-10, 10, z);
-        scene.add(light5);
+        static1.position.set(-10, 10, z);
+        scene.add(static1);
 
-        const light6 = new THREE.PointLight(
+        const static2 = new THREE.PointLight(
             0x0000ff,
             pointLightIntensity,
             distance,
             decay
         );
-        light6.position.set(0, 10, z);
-        scene.add(light6);
+        static2.position.set(0, 10, z);
+        scene.add(static2);
 
-        const light7 = new THREE.PointLight(
+        const static3 = new THREE.PointLight(
             0xff0000,
             pointLightIntensity,
             distance,
             decay
         );
-        light7.position.set(10, 10, z);
-        scene.add(light7);
+        static3.position.set(10, 10, z);
+        scene.add(static3);
 
-        spotLight = new THREE.SpotLight(0xffffff, 1000);
+        ///
+        spotLight = new THREE.SpotLight(0xffffff, 2000);
         spotLight.position.set(10, 50, 40);
         spotLight.angle = Math.PI / 6;
         spotLight.penumbra = 1;
@@ -148,26 +145,26 @@
         spotLight.castShadow = true;
         scene.add(spotLight);
 
-        const dirLight = new THREE.DirectionalLight(0xffffff, 0.2);
-        dirLight.color.setHSL(0.1, 1, 0.95);
-        dirLight.position.set(-1, 1.75, 1);
-        dirLight.position.multiplyScalar(30);
-        scene.add(dirLight);
+        // const dirLight = new THREE.DirectionalLight(0xffffff, 0.2);
+        // dirLight.color.setHSL(0.1, 1, 0.95);
+        // dirLight.position.set(-1, 1.75, 1);
+        // dirLight.position.multiplyScalar(30);
+        // scene.add(dirLight);
 
-        dirLight.castShadow = true;
+        // dirLight.castShadow = true;
 
-        dirLight.shadow.mapSize.width = 2048;
-        dirLight.shadow.mapSize.height = 2048;
+        // dirLight.shadow.mapSize.width = 2048;
+        // dirLight.shadow.mapSize.height = 2048;
 
-        const d = 50;
+        // const d = 50;
 
-        dirLight.shadow.camera.left = -d;
-        dirLight.shadow.camera.right = d;
-        dirLight.shadow.camera.top = d;
-        dirLight.shadow.camera.bottom = -d;
+        // dirLight.shadow.camera.left = -d;
+        // dirLight.shadow.camera.right = d;
+        // dirLight.shadow.camera.top = d;
+        // dirLight.shadow.camera.bottom = -d;
 
-        dirLight.shadow.camera.far = 3500;
-        dirLight.shadow.bias = -0.0001;
+        // dirLight.shadow.camera.far = 3500;
+        // dirLight.shadow.bias = -0.0001;
     };
 
     const animateOnScroll = () => {

@@ -43,7 +43,7 @@
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1;
+        renderer.toneMappingExposure = 2;
 
         camera = new THREE.PerspectiveCamera(
             70,

@@ -5,37 +5,35 @@
 
 <div class="loading">
     <span>Loading...</span>
-    <span class="loader bar">
-        <span class="progress bar" style="width: {(progress / total) * 100}%" />
+    <span class="progress-bar">
+        <span
+            class="progress-sliver"
+            style="--width: {(progress / total) * 100}%"
+        />
     </span>
 </div>
 
 <style>
     .loading {
-        position: fixed;
-        z-index: 2;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        width: 100dvw;
-        height: 100dvh;
-        gap: 0.5rem;
+        width: 100%;
+        height: 100%;
     }
 
-    .loader {
-        background: #393939;
-        position: relative;
-        width: 150px;
+    .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 0.5rem;
     }
-
-    .progress {
-        background-color: white;
-        position: absolute;
-    }
-
-    .bar {
-        height: 2.5rem;
-        /* transition: all 0.25s; */
+    .progress-sliver {
+        display: flex;
+        width: var(--width);
+        background-color: #f8485e;
+        height: 100%;
     }
 </style>
