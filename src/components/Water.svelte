@@ -9,9 +9,9 @@
 
     const params = {
         color: "#ffffff",
-        scale: 4,
-        flowX: 0.5,
-        flowY: 0.5,
+        scale: 32,
+        flowX: 4,
+        flowY: 4,
     };
 
     onMount(() => {
@@ -19,7 +19,7 @@
     });
 
     const init = () => {
-        const waterGeometry = new PlaneGeometry(100, 100);
+        const waterGeometry = new PlaneGeometry(50, 50);
 
         water = new Water(waterGeometry, {
             color: params.color,
@@ -30,7 +30,7 @@
             reflectivity: 1,
         });
 
-        water.position.z = 50;
+        water.position.z = 0;
         water.position.y = -0.05;
         water.rotation.x = MathUtils.degToRad(-90);
         scene.add(water);

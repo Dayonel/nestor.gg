@@ -12,7 +12,8 @@
     import { MaterialDTO } from "../../core/dto/MaterialDTO";
 
     export let models: any[] = [];
-    export let materials: any[] = [];
+    export let hdris: any[] = [];
+    export let textures: any[] = [];
     export let renderer: THREE.WebGLRenderer;
     export let camera: THREE.PerspectiveCamera;
     export let enabled: boolean;
@@ -41,17 +42,26 @@
         gsap.registerPlugin(ScrollTrigger);
 
         camera.position.set(0, 7, cameraZ);
+        scene.add(camera);
 
-        const geometry = new THREE.PlaneGeometry(200, 200);
-        const material = new THREE.MeshLambertMaterial({ color: 0xbcbcbc });
+        ///
+        // const geometry = new THREE.PlaneGeometry(200, 200);
+        // const material = new THREE.MeshStandardMaterial({ color: 0x9c9c9c });
 
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.set(0, 0, 0);
-        mesh.rotation.x = THREE.MathUtils.degToRad(-90);
-        mesh.receiveShadow = true;
+        // const mesh = new THREE.Mesh(geometry, material);
+        // mesh.position.set(0, 0, -99);
+        // mesh.rotation.x = THREE.MathUtils.degToRad(-90);
+        // mesh.receiveShadow = true;
         // scene.add(mesh);
 
-        scene.add(camera);
+        ///
+        const texture = hdris[0];
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+
+        scene.backgroundBlurriness = 0.3;
+        scene.background = texture;
+
+        ///
 
         lights();
 
@@ -176,7 +186,7 @@
         });
 
         // scene background color = fog color
-        const color = new THREE.Color("black");
+        const color = new THREE.Color("#000000");
         scene.background = color;
         const near = cameraZ - 10;
         const far = cameraZ;
@@ -238,7 +248,7 @@
 <GLTF
     gltf={models[3]}
     {scene}
-    position={new Vector3(7.4, -0.25, 0)}
+    position={new Vector3(7.35, -0.25, 0)}
     {material}
 />
 <Water {scene} />

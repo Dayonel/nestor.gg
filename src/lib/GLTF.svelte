@@ -5,12 +5,16 @@
 
     export let scene: THREE.Scene;
     export let position: THREE.Vector3;
+    export let rotation: THREE.Euler = new THREE.Euler(0, 0, 0);
     export let material: MaterialDTO | undefined = undefined;
-    export let gltf: any;
+    export let gltf: THREE.Object3D;
+    export let scale: number = 1;
 
     onMount(() => {
         const model = gltf.clone();
         model.position.copy(position);
+        model.rotation.copy(rotation);
+        model.scale.multiplyScalar(scale);
         model.traverse((obj: any) => {
             if (obj.isMesh) {
                 obj.castShadow = true;

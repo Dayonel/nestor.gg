@@ -15,7 +15,8 @@
     let scrollY: number;
     let sections: any[];
     let models: any[] = [];
-    let materials: any[] = [];
+    let hdris: any[] = [];
+    let textures: any[] = [];
 
     onMount(() => {
         gsap.registerPlugin(ScrollTrigger);
@@ -28,7 +29,8 @@
 
         loading = false;
         models = e.detail.models;
-        materials = e.detail.materials;
+        hdris = e.detail.hdris;
+        textures = e.detail.textures;
 
         scrolling.onscroll = () => {
             scrollPercent =
@@ -89,7 +91,7 @@
     {#if loading}
         <Loader on:load={(e) => loaded(e)} />
     {:else}
-        <Three {scrollPercent} {models} {materials} />
+        <Three {scrollPercent} {models} {hdris} {textures} />
 
         <div id="three">
             <section class="hero">

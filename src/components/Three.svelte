@@ -7,7 +7,8 @@
     import Scene2 from "./scenes/Scene2.svelte";
 
     export let models: any[] = [];
-    export let materials: any[] = [];
+    export let hdris: any[] = [];
+    export let textures: any[] = [];
     export let scrollPercent = 0;
 
     let weblAvailable = false;
@@ -80,14 +81,16 @@
 {:else}
     <Scene1
         {models}
-        {materials}
+        {hdris}
+        {textures}
         {renderer}
         {camera}
         enabled={scrollPercent >= 0 && scrollPercent <= 20}
     />
     <Scene2
         {models}
-        {materials}
+        {hdris}
+        {textures}
         {renderer}
         {camera}
         enabled={scrollPercent >= 20 && scrollPercent <= 40}
