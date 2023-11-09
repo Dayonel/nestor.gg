@@ -16,6 +16,7 @@
     export let textures: any[] = [];
     export let renderer: THREE.WebGLRenderer;
     export let camera: THREE.PerspectiveCamera;
+    export let scrollPercent: number;
     export let enabled: boolean;
     $: enabled, loop();
 
@@ -25,11 +26,12 @@
     let mounted = false;
     const windowMaterial = new THREE.MeshPhysicalMaterial({
         roughness: 0.7,
-        // transmission: 0.7,
         thickness: 1,
         color: 0xcecece,
     });
     const material = new MaterialDTO("Windows", windowMaterial);
+    let group = new THREE.Group();
+    scene.add(group);
 
     onMount(() => init());
 
@@ -39,25 +41,16 @@
         camera.position.set(0, 7, cameraZ);
         scene.add(camera);
 
-        ///
+        // plane
         const geometry = new THREE.PlaneGeometry(200, 200);
         const material = new THREE.MeshStandardMaterial({
-            color: 0xc22fca
+            color: 0xc22fca,
         });
 
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.set(0, 0, -5);
         mesh.receiveShadow = true;
         scene.add(mesh);
-
-        ///
-        // const texture = hdris[0];
-        // texture.mapping = THREE.EquirectangularReflectionMapping;
-
-        // scene.backgroundBlurriness = 1;
-        // scene.background = texture;
-
-        ///
 
         lights();
 
@@ -185,7 +178,7 @@
         // scene background color = fog color
         const color = new THREE.Color("#000000");
         scene.background = color;
-        const near = cameraZ - 10;
+        const near = cameraZ - 5;
         const far = cameraZ;
         scene.fog = new THREE.Fog(color, near, far);
     };
@@ -215,10 +208,10 @@
             light4.position.x = Math.sin(time * 0.3) * 30;
             light4.position.y = Math.cos(time * 0.7) * 40;
             light4.position.z = Math.sin(time * 0.5) * z;
-            
-            // spotLight.position.x = Math.cos(time) * 2.5;
-            // spotLight.position.z = Math.sin(time) * 2.5;
         }
+
+        group.rotation.y =
+            THREE.MathUtils.degToRad((scrollPercent * 20) / 100) * 45;
 
         renderer.render(scene, camera);
     };
@@ -229,23 +222,27 @@
     {scene}
     position={new Vector3(2.45, -0.5, 0)}
     {material}
+    {group}
 />
 <GLTF
     gltf={models[1]}
     {scene}
     position={new Vector3(-2.5, -0.5, 0)}
     {material}
+    {group}
 />
 <GLTF
     gltf={models[2]}
     {scene}
     position={new Vector3(-7.5, -0.5, 0)}
     {material}
+    {group}
 />
 <GLTF
     gltf={models[3]}
     {scene}
-    position={new Vector3(7.35, -0.5, 0)}
+    position={new Vector3(7, -0.5, 0)}
     {material}
+    {group}
 />
 <!-- <Water {scene} /> -->

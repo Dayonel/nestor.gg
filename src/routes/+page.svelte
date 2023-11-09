@@ -97,7 +97,7 @@
             <section class="hero">
                 <div class="block">
                     <div class="line">
-                        <h1 class="name hero-text">I'm Nestor</h1>
+                        <h1 class="name hero-text">Hi, I'm Nestor</h1>
                     </div>
                     <div class="line">
                         <h2 class="position hero-text">

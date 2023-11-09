@@ -20,7 +20,7 @@
         "models/amsterdam4.glb",
     ];
 
-    const hdris: any[] = ["textures/venice_sunset_1k.hdr"];
+    const hdris: any[] = [];
     const textures: any[] = [];
     const total = models.length + hdris.length + textures.length;
 </script>

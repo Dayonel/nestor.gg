@@ -1,7 +1,6 @@
 <script lang="ts">
     import "./styles.css";
     import Header from "./Header.svelte";
-    import "../types/canvas.d.ts";
 </script>
 
 <Header />

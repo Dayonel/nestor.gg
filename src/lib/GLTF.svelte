@@ -7,6 +7,7 @@
     export let position: THREE.Vector3;
     export let rotation: THREE.Euler = new THREE.Euler(0, 0, 0);
     export let material: MaterialDTO | undefined = undefined;
+    export let group: THREE.Group | undefined = undefined;
     export let gltf: THREE.Object3D;
     export let scale: number = 1;
 
@@ -32,7 +33,10 @@
                 }
             }
         });
-        scene.add(model);
-        console.log("model " + model.uuid + " added");
+        if (group) {
+            group.add(model);
+        } else {
+            scene.add(model);
+        }
     });
 </script>

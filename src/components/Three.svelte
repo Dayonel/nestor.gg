@@ -12,10 +12,12 @@
     export let scrollPercent = 0;
 
     let weblAvailable = false;
-    let canvas: HTMLCanvasElement;
     let renderer: THREE.WebGLRenderer;
     let camera: THREE.PerspectiveCamera;
     let stats: any;
+
+    const fovLandscape = 70;
+    const fovPortrait = 105;
 
     onMount(() => init());
 
@@ -29,9 +31,8 @@
 
         // renderer
         renderer = new THREE.WebGLRenderer({
-            canvas: canvas,
             antialias: true,
-            // alpha: true,
+            alpha: true,
             powerPreference: "high-performance",
         });
 
@@ -52,8 +53,10 @@
             30000
         );
 
+        document.body.appendChild(renderer.domElement);
+
         // set aspect ratio
-        canvas.resize(renderer, camera);
+        resize();
 
         // stats
         stats = new Stats();
@@ -64,6 +67,22 @@
         console.log("three has mounted");
     };
 
+    const resize = () => {
+        if (window.innerHeight > window.innerWidth) {
+            camera.fov = fovPortrait;
+        } else {
+            camera.fov = fovLandscape;
+        }
+
+        const canvas = renderer.domElement;
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        const pixelRatio = window.devicePixelRatio;
+        const width = (canvas.clientWidth * pixelRatio) | 0;
+        const height = (canvas.clientHeight * pixelRatio) | 0;
+        renderer.setSize(width, height, false);
+    };
+
     const loop = () => {
         requestAnimationFrame(loop);
 
@@ -72,11 +91,10 @@
 </script>
 
 <svelte:window
-    on:resize={() => canvas.resize(renderer, camera)}
-    on:orientationchange={() => canvas.resize(renderer, camera)}
+    on:resize={() => resize()}
+    on:orientationchange={() => resize()}
 />
 
-<canvas bind:this={canvas} />
 <span class="scroll">Scroll progress: {scrollPercent?.toFixed(2)}%</span>
 
 {#if !weblAvailable}
@@ -88,6 +106,7 @@
         {textures}
         {renderer}
         {camera}
+        {scrollPercent}
         enabled={scrollPercent >= 0 && scrollPercent <= 20}
     />
     <Scene2
@@ -101,15 +120,6 @@
 {/if}
 
 <style>
-    canvas {
-        display: block;
-        width: 100%;
-        height: 100%;
-        position: fixed;
-        top: 0;
-        left: 0;
-    }
-
     .message {
         position: fixed;
         top: 50%;
