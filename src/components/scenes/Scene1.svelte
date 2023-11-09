@@ -21,6 +21,7 @@
     $: enabled, loop();
 
     const cameraZ = 25;
+    const tweenToZ = cameraZ - 10;
     const scene = new THREE.Scene();
     let light1: any, light2: any, light3: any, light4: any, spotLight: any;
     let mounted = false;
@@ -32,6 +33,10 @@
     const material = new MaterialDTO("Windows", windowMaterial);
     let group = new THREE.Group();
     scene.add(group);
+    let introFinished = false;
+    let introTime = 1000;
+    let introTween: any;
+    let scrollTween: any;
 
     onMount(() => init());
 
@@ -56,6 +61,13 @@
 
         animateOnScroll();
 
+        // scene background color = fog color
+        const color = new THREE.Color("#000000");
+        scene.background = color;
+        const near = cameraZ - 5;
+        const far = cameraZ;
+        scene.fog = new THREE.Fog(color, near, far);
+
         introAnimation();
 
         mounted = true;
@@ -65,18 +77,21 @@
 
     const introAnimation = () => {
         // @ts-ignore
-        new TWEEN.Tween(camera.position)
+        introTween = new TWEEN.Tween(camera.position)
             .to(
                 {
                     // @ts-ignore
                     x: camera.position.x,
                     // @ts-ignore
                     y: camera.position.y,
-                    z: cameraZ - 10,
+                    z: tweenToZ,
                 },
-                1000 // 2500
-            ) // time take to animate
+                introTime // time take to animate
+            )
             .easing(TWEEN.Easing.Quadratic.InOut)
+            .onComplete(() => {
+                introFinished = true;
+            })
             .start();
     };
 
@@ -161,38 +176,45 @@
     };
 
     const animateOnScroll = () => {
-        gsap.timeline({
-            scrollTrigger: {
-                scroller: "#scrolling",
-                trigger: ".hero",
-                start: "top top",
-                end: "+=" + window.innerHeight,
-                scrub: true,
-            },
-        }).to(camera.position, {
-            x: camera.position.x,
-            y: camera.position.y,
-            z: cameraZ,
-        });
-
-        // scene background color = fog color
-        const color = new THREE.Color("#000000");
-        scene.background = color;
-        const near = cameraZ - 5;
-        const far = cameraZ;
-        scene.fog = new THREE.Fog(color, near, far);
+        scrollTween = gsap
+            .timeline({
+                scrollTrigger: {
+                    scroller: "#scrolling",
+                    trigger: ".hero",
+                    start: "top top",
+                    end: "+=" + window.innerHeight,
+                    scrub: true,
+                },
+            })
+            .to(camera.position, {
+                x: camera.position.x,
+                y: camera.position.y,
+                z: cameraZ,
+            });
     };
 
     const loop = () => {
         if (!enabled) return;
 
+        const now = Date.now();
+
         requestAnimationFrame(loop);
 
-        TWEEN.update();
+        if (!introFinished) {
+            if (scrollPercent == 0) {
+                // regular update
+                TWEEN.update();
+            } else if (!introFinished) {
+                // force update
+                scrollTween.totalProgress(1).kill(); // kill
+                introTween.update(now + introTime); // kill
+                animateOnScroll(); // do this as usual
+            }
+        }
 
         if (mounted) {
             const z = 40;
-            const time = Date.now() * 0.0005;
+            const time = now * 0.0005;
             light1.position.x = Math.sin(time * 0.7) * 30;
             light1.position.y = Math.cos(time * 0.5) * 40;
             light1.position.z = Math.cos(time * 0.3) * z;
