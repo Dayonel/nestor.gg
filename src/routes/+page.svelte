@@ -32,7 +32,7 @@
         hdris = e.detail.hdris;
         textures = e.detail.textures;
 
-        await tick(); // DOM has been updated for gsap
+        await tick(); // wait for DOM updates to be applied for gsap
 
         gsapSection2();
 
@@ -82,9 +82,10 @@
     };
 
     const gsapSection2 = () => {
-        gsap.from(".section2", {
+        gsap.timeline({
             scrollTrigger: {
                 pin: ".section2",
+                pinType: "fixed",
                 start: "top top",
                 end: "+=200%",
                 scroller: "#scrolling",

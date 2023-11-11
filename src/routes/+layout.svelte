@@ -20,5 +20,6 @@
         position: fixed;
         overflow-y: auto;
         overscroll-behavior: none;
+        -webkit-overflow-scrolling: touch;
     }
 </style>

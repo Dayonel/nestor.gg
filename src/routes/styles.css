@@ -69,3 +69,11 @@ canvas {
     height: 100%;
     display: block;
 }
+
+.pin-spacer {
+    /* 
+        gsap bug
+        scroll events not triggering
+    */
+    pointer-events: none;
+}
