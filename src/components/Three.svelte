@@ -102,8 +102,6 @@
 {:else}
     <Scene1
         {models}
-        {hdris}
-        {textures}
         {renderer}
         {camera}
         {scrollPercent}

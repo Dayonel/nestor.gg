@@ -10,29 +10,37 @@
     import { Vector3 } from "three";
     import TWEEN from "@tweenjs/tween.js";
     import { MaterialDTO } from "../../core/dto/MaterialDTO";
+    import PointLight from "$lib/PointLight.svelte";
+    import SpotLight from "$lib/SpotLight.svelte";
+    import DirectionalLight from "$lib/DirectionalLight.svelte";
+    import Fog from "$lib/Fog.svelte";
+    import Background from "$lib/Background.svelte";
 
     export let models: any[] = [];
-    export let hdris: any[] = [];
-    export let textures: any[] = [];
     export let renderer: THREE.WebGLRenderer;
     export let camera: THREE.PerspectiveCamera;
     export let scrollPercent: number;
     export let enabled: boolean;
     $: enabled, loop();
 
+    const scene = new THREE.Scene();
+    scene.add(camera);
+
     const cameraZ = 25;
     const tweenToZ = cameraZ - 10;
-    const scene = new THREE.Scene();
-    let light1: any, light2: any, light3: any, light4: any, spotLight: any;
+    let light1: any, light2: any, light3: any, light4: any;
     let mounted = false;
+
     const windowMaterial = new THREE.MeshPhysicalMaterial({
         roughness: 0.7,
         thickness: 1,
         color: 0xcecece,
     });
     const material = new MaterialDTO("Windows", windowMaterial);
+
     let group = new THREE.Group();
     scene.add(group);
+
     let introFinished = false;
     let introTime = 1000;
     let introTween: any;
@@ -44,29 +52,8 @@
         gsap.registerPlugin(ScrollTrigger);
 
         camera.position.set(0, 7, cameraZ);
-        scene.add(camera);
-
-        // plane
-        const geometry = new THREE.PlaneGeometry(200, 200);
-        const material = new THREE.MeshStandardMaterial({
-            color: 0xc22fca,
-        });
-
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.set(0, 0, -5);
-        mesh.receiveShadow = true;
-        scene.add(mesh);
-
-        lights();
 
         animateOnScroll();
-
-        // scene background color = fog color
-        const color = new THREE.Color("#000000");
-        scene.background = color;
-        const near = cameraZ - 5;
-        const far = cameraZ;
-        scene.fog = new THREE.Fog(color, near, far);
 
         introAnimation();
 
@@ -76,103 +63,18 @@
     };
 
     const introAnimation = () => {
-        // @ts-ignore
         introTween = new TWEEN.Tween(camera.position)
             .to(
                 {
-                    // @ts-ignore
                     x: camera.position.x,
-                    // @ts-ignore
                     y: camera.position.y,
                     z: tweenToZ,
                 },
                 introTime // time take to animate
             )
             .easing(TWEEN.Easing.Quadratic.InOut)
-            .onComplete(() => {
-                introFinished = true;
-            })
+            .onComplete(() => (introFinished = true))
             .start();
-    };
-
-    const lights = () => {
-        const intensity = 50;
-
-        light1 = new THREE.PointLight(0xff0040, intensity);
-        scene.add(light1);
-
-        light2 = new THREE.PointLight(0x0040ff, intensity);
-        scene.add(light2);
-
-        light3 = new THREE.PointLight(0x80ff80, intensity);
-        scene.add(light3);
-
-        light4 = new THREE.PointLight(0xffaa00, intensity);
-        scene.add(light4);
-
-        // static
-        const pointLightIntensity = 50;
-        const z = 10;
-        const distance = 0;
-        const decay = 2;
-        const static1 = new THREE.PointLight(
-            0xff0000,
-            pointLightIntensity,
-            distance,
-            decay
-        );
-        static1.position.set(-10, 10, z);
-        scene.add(static1);
-
-        const static2 = new THREE.PointLight(
-            0x0000ff,
-            pointLightIntensity,
-            distance,
-            decay
-        );
-        static2.position.set(0, 10, z);
-        scene.add(static2);
-
-        const static3 = new THREE.PointLight(
-            0xff0000,
-            pointLightIntensity,
-            distance,
-            decay
-        );
-        static3.position.set(10, 10, z);
-        scene.add(static3);
-
-        ///
-        spotLight = new THREE.SpotLight(0xffffff, 2000);
-        spotLight.position.set(0, 50, -1);
-        spotLight.angle = Math.PI / 6;
-        spotLight.penumbra = 1;
-        spotLight.decay = 2;
-        spotLight.distance = 0;
-
-        spotLight.castShadow = true;
-        scene.add(spotLight);
-
-        const dirLight = new THREE.DirectionalLight(0xffffff, 0.12);
-        dirLight.color.setHSL(0.1, 1, 0.95);
-        dirLight.position.set(-1, 1.75, 1);
-        dirLight.position.multiplyScalar(30);
-        scene.add(dirLight);
-
-        dirLight.castShadow = true;
-
-        dirLight.shadow.mapSize.width = 2048;
-        dirLight.shadow.mapSize.height = 2048;
-
-        const d = 50;
-
-        dirLight.shadow.camera.left = -d;
-        dirLight.shadow.camera.right = d;
-        dirLight.shadow.camera.top = d;
-        dirLight.shadow.camera.bottom = -d;
-
-        dirLight.shadow.camera.far = 3500;
-        dirLight.shadow.bias = -0.0001;
     };
 
     const animateOnScroll = () => {
@@ -239,6 +141,8 @@
     };
 </script>
 
+<Background {scene} color={0xc22fca} position={new Vector3(0, 0, -5)} />
+
 <GLTF
     gltf={models[0]}
     {scene}
@@ -268,3 +172,48 @@
     {group}
 />
 <!-- <Water {scene} /> -->
+
+<!-- Moving lights -->
+<PointLight bind:ref={light1} {scene} color={0xff0040} intensity={50} />
+<PointLight bind:ref={light2} {scene} color={0x0040ff} intensity={50} />
+<PointLight bind:ref={light3} {scene} color={0x80ff80} intensity={50} />
+<PointLight bind:ref={light4} {scene} color={0xffaa00} intensity={50} />
+
+<!-- Static lights -->
+<PointLight
+    {scene}
+    color={0xff0000}
+    intensity={50}
+    position={new Vector3(-10, 10, 10)}
+/>
+
+<PointLight
+    {scene}
+    color={0x0000ff}
+    intensity={50}
+    position={new Vector3(0, 10, 10)}
+/>
+
+<PointLight
+    {scene}
+    color={0xff0000}
+    intensity={50}
+    position={new Vector3(10, 10, 10)}
+/>
+
+<SpotLight
+    {scene}
+    color={0xffffff}
+    intensity={2000}
+    position={new Vector3(0, 50, -1)}
+/>
+
+<DirectionalLight
+    {scene}
+    color={0xf2f2f2}
+    intensity={0.12}
+    position={new Vector3(-1, 1.75, 1)}
+    scale={30}
+/>
+
+<Fog {scene} color={0x000000} near={cameraZ - 5} far={cameraZ} />
