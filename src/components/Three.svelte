@@ -105,12 +105,10 @@
         {renderer}
         {camera}
         {scrollPercent}
-        enabled={scrollPercent >= 0 && scrollPercent <= 20}
+        enabled={scrollPercent >= 0 && scrollPercent < 20}
     />
     <Scene2
         {models}
-        {hdris}
-        {textures}
         {renderer}
         {camera}
         enabled={scrollPercent >= 20 && scrollPercent <= 40}

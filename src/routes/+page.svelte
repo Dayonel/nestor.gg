@@ -5,7 +5,7 @@
     // @ts-ignore
     import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
     import Loader from "../components/Loader.svelte";
-    import { onMount } from "svelte";
+    import { onMount, tick } from "svelte";
 
     let loading = true;
     let scrollPercent: number = 0;
@@ -24,13 +24,17 @@
         totalHeight = sections.length * window.innerHeight;
     });
 
-    const loaded = (e: CustomEvent<any>) => {
+    const loaded = async (e: CustomEvent<any>) => {
         // textReveal();
 
         loading = false;
         models = e.detail.models;
         hdris = e.detail.hdris;
         textures = e.detail.textures;
+
+        await tick(); // DOM has been updated for gsap
+
+        gsapSection2();
 
         scrolling.onscroll = () => {
             scrollPercent =
@@ -76,6 +80,17 @@
             },
         });
     };
+
+    const gsapSection2 = () => {
+        gsap.from(".section2", {
+            scrollTrigger: {
+                pin: ".section2",
+                start: "top top",
+                end: "+=200%",
+                scroller: "#scrolling",
+            },
+        });
+    };
 </script>
 
 <svelte:head>
@@ -89,21 +104,15 @@
 
 <div bind:this={scrolling} id="scrolling">
     {#if loading}
-        <Loader on:load={(e) => loaded(e)} />
+        <Loader on:load={async (e) => await loaded(e)} />
     {:else}
         <Three {scrollPercent} {models} {hdris} {textures} />
 
         <div id="three">
             <section class="hero">
                 <div class="block">
-                    <div class="line">
-                        <h1 class="name hero-text">Hi, I'm Nestor</h1>
-                    </div>
-                    <div class="line">
-                        <h2 class="position hero-text">
-                            I live in Amsterdam
-                        </h2>
-                    </div>
+                    <h1 class="name hero-text">Hi, I'm Nestor</h1>
+                    <h2 class="position hero-text">I live in Amsterdam</h2>
                 </div>
 
                 <div class="block scroll-dots">
@@ -114,9 +123,7 @@
                 </div>
             </section>
             <section class="section2">
-                <h2 class="web-development">
-                    I am passionate about web development
-                </h2>
+                <p>I'm on an epic quest to master the art of web development</p>
             </section>
             <section>
                 <h2>Changing Objects Position</h2>
@@ -172,10 +179,6 @@
         height: 100dvh;
     }
 
-    p {
-        font-size: calc(50% + 2dvw);
-    }
-
     .block {
         display: flex;
         flex-direction: column;
@@ -187,17 +190,26 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        /* align-items: center; */
     }
 
-    .hero-text {
+    h1,
+    h2,
+    p {
         font-size: 2rem;
+        max-width: 305px;
     }
 
     @media (min-width: 920px) {
-        .hero-text {
+        h1,
+        h2,
+        p {
             font-size: 4rem;
+            max-width: 610px;
         }
+    }
+
+    p {
+        font-weight: bold;
     }
 
     .scroll-dots {
@@ -243,17 +255,6 @@
         }
         100% {
             opacity: 0;
-        }
-    }
-
-    .web-development {
-        width: 100%;
-    }
-
-    @media (min-width: 920px) {
-        .web-development {
-            width: 590px;
-            font-size: 96px;
         }
     }
 </style>
