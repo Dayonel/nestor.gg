@@ -29,6 +29,17 @@
     let mounted = false;
     var uniforms: any;
     var clock = new THREE.Clock();
+    uniforms = {
+        time: { type: "f", value: 1 },
+        diffuse: { type: "c", value: new THREE.Color(0x00ccff) },
+        opacity: { type: "f", value: 1.0 },
+    };
+
+    var material = new THREE.ShaderMaterial({
+        uniforms: uniforms,
+        vertexShader: document.getElementById("noise-vs")?.textContent ?? "",
+        fragmentShader: document.getElementById("noise-fs")?.textContent ?? "",
+    });
 
     let sphere1: any;
 
@@ -38,30 +49,34 @@
         gsap.registerPlugin(ScrollTrigger);
 
         var planeGeom = new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector2(-1, 1),
-            new THREE.Vector2(0, -1),
-            new THREE.Vector2(1, 1),
+            // front
+            new THREE.Vector3(-1, 1, 1),
+            new THREE.Vector3(0, -1, 0),
+            new THREE.Vector3(1, 1, 1),
+            // left
+            new THREE.Vector3(-1, 1, -1),
+            new THREE.Vector3(0, -1, 0),
+            new THREE.Vector3(-1, 1, 1),
+            // right
+            new THREE.Vector3(1, 1, 1),
+            new THREE.Vector3(0, -1, 0),
+            new THREE.Vector3(1, 1, -1),
+            // rear
+            new THREE.Vector3(1, 1, -1),
+            new THREE.Vector3(0, -1, 0),
+            new THREE.Vector3(-1, 1, -1),
+
+            // top
+            new THREE.Vector3(-1, 1, -1),
+            new THREE.Vector3(-1, 1, 1),
+            new THREE.Vector3(1, 1, -1),
+
+            new THREE.Vector3(1, 1, -1),
+            new THREE.Vector3(-1, 1, 1),
+            new THREE.Vector3(1, 1, 1),
         ]);
-        planeGeom.setAttribute(
-            "uv",
-            new THREE.Float32BufferAttribute([0, 1, 0.5, 0, 1, 1], 2)
-        );
 
-        uniforms = {
-            time: { type: "f", value: 1 },
-            diffuse: { type: "c", value: new THREE.Color(0x00ccff) },
-            opacity: { type: "f", value: 1.0 },
-        };
-
-        var planeMat = new THREE.ShaderMaterial({
-            uniforms: uniforms,
-            vertexShader:
-                document.getElementById("noise-vs")?.textContent ?? "",
-            fragmentShader:
-                document.getElementById("noise-fs")?.textContent ?? "",
-        });
-
-        var plane = new THREE.Mesh(planeGeom, planeMat);
+        var plane = new THREE.Mesh(planeGeom, material);
         plane.scale.setScalar(4);
         scene.add(plane);
 
@@ -89,10 +104,17 @@
         // const time = now * 0.0005;
 
         // if (mounted) {
-        //     sphere1.rotation.y = Math.sin(time * 0.7) * 30;
+        //
         // }
 
-        uniforms.time.value = clock.getElapsedTime() * 0.125;
+        const time = clock.getElapsedTime() * 0.125;
+        uniforms.time.value = time;
+
+        if (mounted) {
+            sphere1.material.uniforms.time.value = -time;
+            sphere1.rotation.x = Math.sin(time * 0.7) * 30;
+            sphere1.rotation.y = Math.sin(time * 0.3) * 30;
+        }
 
         renderer.render(scene, camera);
     };
@@ -111,11 +133,12 @@
     scale={100}
 />
 
-<!-- <Sphere
+<Sphere
     bind:ref={sphere1}
     {scene}
-    color={0x000099}
+    color={0xcf0707}
     position={new Vector3(-2, -1, 2)}
     scale={3}
-/> -->
+    {material}
+/>
 <!-- <Fog {scene} color={0x000099} near={20} far={25} /> -->
