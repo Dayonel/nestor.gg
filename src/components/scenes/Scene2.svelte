@@ -19,27 +19,26 @@
 
     const scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(
-        40,
+        70,
         window.innerWidth / window.innerHeight,
         0.1,
         30000
     );
-    camera.position.set(0, 0, 20);
+    camera.position.set(0, 0, 15);
     camera.lookAt(0, 0, 0);
     let mounted = false;
-    var uniforms: any;
     var clock = new THREE.Clock();
-    uniforms = {
-        time: { type: "f", value: 1 },
-        diffuse: { type: "c", value: new THREE.Color(0x00ccff) },
-        secondColor: { type: "c", value: new THREE.Color(0xffffff) },
-        opacity: { type: "f", value: 1.0 },
-    };
+    let uniforms = THREE.UniformsUtils.merge([THREE.UniformsLib["fog"]]);
+    uniforms.time = { type: "f", value: 1 };
+    uniforms.diffuse = { type: "c", value: new THREE.Color(0x00ccff) };
+    uniforms.secondColor = { type: "c", value: new THREE.Color(0xffffff) };
+    uniforms.opacity = { type: "f", value: 1.0 };
 
     var material = new THREE.ShaderMaterial({
         uniforms: uniforms,
         vertexShader: document.getElementById("noise-vs")?.textContent ?? "",
         fragmentShader: document.getElementById("noise-fs")?.textContent ?? "",
+        fog: true,
     });
 
     let sphere1: any;
@@ -49,37 +48,37 @@
     const init = () => {
         gsap.registerPlugin(ScrollTrigger);
 
-        var planeGeom = new THREE.BufferGeometry().setFromPoints([
-            // front
-            new THREE.Vector3(-1, 1, 1),
-            new THREE.Vector3(0, -1, 0),
-            new THREE.Vector3(1, 1, 1),
-            // left
-            new THREE.Vector3(-1, 1, -1),
-            new THREE.Vector3(0, -1, 0),
-            new THREE.Vector3(-1, 1, 1),
-            // right
-            new THREE.Vector3(1, 1, 1),
-            new THREE.Vector3(0, -1, 0),
-            new THREE.Vector3(1, 1, -1),
-            // rear
-            new THREE.Vector3(1, 1, -1),
-            new THREE.Vector3(0, -1, 0),
-            new THREE.Vector3(-1, 1, -1),
+        // var planeGeom = new THREE.BufferGeometry().setFromPoints([
+        //     // front
+        //     new THREE.Vector3(-1, 1, 1),
+        //     new THREE.Vector3(0, -1, 0),
+        //     new THREE.Vector3(1, 1, 1),
+        //     // left
+        //     new THREE.Vector3(-1, 1, -1),
+        //     new THREE.Vector3(0, -1, 0),
+        //     new THREE.Vector3(-1, 1, 1),
+        //     // right
+        //     new THREE.Vector3(1, 1, 1),
+        //     new THREE.Vector3(0, -1, 0),
+        //     new THREE.Vector3(1, 1, -1),
+        //     // rear
+        //     new THREE.Vector3(1, 1, -1),
+        //     new THREE.Vector3(0, -1, 0),
+        //     new THREE.Vector3(-1, 1, -1),
 
-            // top
-            new THREE.Vector3(-1, 1, -1),
-            new THREE.Vector3(-1, 1, 1),
-            new THREE.Vector3(1, 1, -1),
+        //     // top
+        //     new THREE.Vector3(-1, 1, -1),
+        //     new THREE.Vector3(-1, 1, 1),
+        //     new THREE.Vector3(1, 1, -1),
 
-            new THREE.Vector3(1, 1, -1),
-            new THREE.Vector3(-1, 1, 1),
-            new THREE.Vector3(1, 1, 1),
-        ]);
+        //     new THREE.Vector3(1, 1, -1),
+        //     new THREE.Vector3(-1, 1, 1),
+        //     new THREE.Vector3(1, 1, 1),
+        // ]);
 
-        var plane = new THREE.Mesh(planeGeom, material);
-        plane.scale.setScalar(4);
-        scene.add(plane);
+        // var plane = new THREE.Mesh(planeGeom, material);
+        // plane.scale.setScalar(4);
+        // scene.add(plane);
 
         mounted = true;
     };
@@ -101,13 +100,6 @@
 
         requestAnimationFrame(loop);
 
-        // const now = Date.now();
-        // const time = now * 0.0005;
-
-        // if (mounted) {
-        //
-        // }
-
         const time = clock.getElapsedTime() * 0.01;
         uniforms.time.value = time;
 
@@ -126,21 +118,14 @@
     on:orientationchange={() => resize()}
 />
 
-<DirectionalLight
-    {scene}
-    color={0xf2f2f2}
-    intensity={10}
-    position={new Vector3(0, 0, 10)}
-    scale={100}
-/>
-
 <Sphere
     bind:ref={sphere1}
     {scene}
     color={0x0a0aff}
     secondColor={0xffffff}
-    position={new Vector3(-2, -1, 2)}
+    position={new Vector3(-10, -2, -5)}
     scale={3}
     {material}
 />
-<!-- <Fog {scene} color={0x000099} near={20} far={25} /> -->
+
+<Fog {scene} color={0x000099} near={10} far={25} />

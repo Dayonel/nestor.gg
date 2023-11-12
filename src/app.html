@@ -200,15 +200,20 @@
 
 	<!-- Noise -->
 	<script type="x-shader/x-vertex" id="noise-vs">
+		#include <fog_pars_vertex>
 		varying vec3 vPos;
 
 		void main() {
+			#include <begin_vertex>
+			#include <project_vertex>
+			#include <fog_vertex>
 			vPos = position;
 			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 		}
 	</script>
 
 	<script type="x-shader/x-fragment" id="noise-fs">
+		#include <fog_pars_fragment>
 		// Description : Array and textureless GLSL 2D/3D/4D simplex
 		//               noise functions.
 		//      Author : Ian McEwan, Ashima Arts.
@@ -329,10 +334,11 @@
 			float effect = smoothstep(0.1, 0.125, n1) * (1. - smoothstep(0.375, 0.4, n2));
 			float coef = sin(n2 * 3.141526 * 0.5) * 0.125;
 			float e = effect - abs(coef);
-			e = n1 > 0.25 && n1 < 0.75? e * e : pow(e, 16.);
+			e = n1 > 0.25 && n1 < 0.75? e * e : pow(e, 2.);
 
 			vec4 diffuseColor = vec4(mix(diffuse.rgb, secondColor.rgb, e), opacity);
         	gl_FragColor = diffuseColor;
+			#include <fog_fragment>
 		}
 	</script>
 
