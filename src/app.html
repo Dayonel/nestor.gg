@@ -312,24 +312,26 @@
 
 		uniform float time;
 		uniform vec3 diffuse;
+		uniform vec3 secondColor;
 		uniform float opacity;
     	varying vec3 vPos;
 
 		void main() {
-			vec3 tPos = vPos * 2.5;
+			vec3 tPos = vPos * 0.5;
 			tPos -= vec3(0, time, 0);
+
 			float n1 = snoise(vec3(tPos));
 			n1 = (n1 + 1.0) * 0.5;
-			
-			float n2 = snoise(vec3(n1 * 10., 1, 1));
-			n2 = sin(((n2 + 1.0) * 0.5) * 3.1415926 * 2.);
+
+			float n2 = snoise(vec3(n1 * 10.0, 1.0, 1.0));
+			n2 = (n2 + 1.0) * 0.5;
 			
 			float effect = smoothstep(0.1, 0.125, n1) * (1. - smoothstep(0.375, 0.4, n2));
 			float coef = sin(n2 * 3.141526 * 0.5) * 0.125;
 			float e = effect - abs(coef);
 			e = n1 > 0.25 && n1 < 0.75? e * e : pow(e, 16.);
 
-			vec4 diffuseColor = vec4(diffuse * e, opacity);
+			vec4 diffuseColor = vec4(mix(diffuse.rgb, secondColor.rgb, e), opacity);
         	gl_FragColor = diffuseColor;
 		}
 	</script>

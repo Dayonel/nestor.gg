@@ -32,6 +32,7 @@
     uniforms = {
         time: { type: "f", value: 1 },
         diffuse: { type: "c", value: new THREE.Color(0x00ccff) },
+        secondColor: { type: "c", value: new THREE.Color(0xffffff) },
         opacity: { type: "f", value: 1.0 },
     };
 
@@ -107,13 +108,13 @@
         //
         // }
 
-        const time = clock.getElapsedTime() * 0.125;
+        const time = clock.getElapsedTime() * 0.01;
         uniforms.time.value = time;
 
         if (mounted) {
             sphere1.material.uniforms.time.value = -time;
-            sphere1.rotation.x = Math.sin(time * 0.7) * 30;
-            sphere1.rotation.y = Math.sin(time * 0.3) * 30;
+            sphere1.rotation.x = Math.sin(time * 0.7) * 500;
+            sphere1.rotation.y = Math.sin(time * 0.3) * 500;
         }
 
         renderer.render(scene, camera);
@@ -136,7 +137,8 @@
 <Sphere
     bind:ref={sphere1}
     {scene}
-    color={0xcf0707}
+    color={0x0a0aff}
+    secondColor={0xffffff}
     position={new Vector3(-2, -1, 2)}
     scale={3}
     {material}
