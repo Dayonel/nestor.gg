@@ -34,7 +34,7 @@
 
         await tick(); // wait for DOM updates to be applied for gsap
 
-        gsapSection2();
+        // gsapSection2();
 
         scrolling.onscroll = () => {
             scrollPercent =

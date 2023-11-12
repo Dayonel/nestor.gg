@@ -23,6 +23,7 @@
     export let enabled: boolean;
     $: enabled, loop();
     $: enabled, resize();
+    $: enabled, tone();
 
     const scene = new THREE.Scene();
     scene.add(camera);
@@ -109,6 +110,13 @@
         }
 
         renderer.domElement.resize(renderer, camera);
+    };
+
+    const tone = () => {
+        if (!enabled) return;
+        
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 2;
     };
 
     const loop = () => {
