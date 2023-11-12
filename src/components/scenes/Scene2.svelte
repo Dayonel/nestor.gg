@@ -27,9 +27,7 @@
     camera.position.set(0, 0, 20);
     camera.lookAt(0, 0, 0);
     let mounted = false;
-    var uniforms = {
-        time: { value: 0 },
-    };
+    var uniforms: any;
     var clock = new THREE.Clock();
 
     let sphere1: any;
@@ -49,18 +47,19 @@
             new THREE.Float32BufferAttribute([0, 1, 0.5, 0, 1, 1], 2)
         );
 
-        var planeMat = new THREE.MeshBasicMaterial({
-            color: 0x00ccff,
-        });
-
-        planeMat.onBeforeCompile = (shader) => {
-            shader.uniforms.time = uniforms.time;
-            shader.vertexShader =
-                document.getElementById("noise-vs")?.textContent ?? "";
-
-            shader.fragmentShader =
-                document.getElementById("noise-fs")?.textContent ?? "";
+        uniforms = {
+            time: { type: "f", value: 1 },
+            diffuse: { type: "c", value: new THREE.Color(0x00ccff) },
+            opacity: { type: "f", value: 1.0 },
         };
+
+        var planeMat = new THREE.ShaderMaterial({
+            uniforms: uniforms,
+            vertexShader:
+                document.getElementById("noise-vs")?.textContent ?? "",
+            fragmentShader:
+                document.getElementById("noise-fs")?.textContent ?? "",
+        });
 
         var plane = new THREE.Mesh(planeGeom, planeMat);
         plane.scale.setScalar(4);
