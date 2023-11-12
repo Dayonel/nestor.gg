@@ -22,6 +22,7 @@
     export let scrollPercent: number;
     export let enabled: boolean;
     $: enabled, loop();
+    $: enabled, resize();
 
     const scene = new THREE.Scene();
     scene.add(camera);
@@ -45,6 +46,9 @@
     let introTime = 1000;
     let introTween: any;
     let scrollTween: any;
+
+    const fovLandscape = 70;
+    const fovPortrait = 105;
 
     onMount(() => init());
 
@@ -95,6 +99,18 @@
             });
     };
 
+    const resize = () => {
+        if (!enabled) return;
+
+        if (window.innerHeight > window.innerWidth) {
+            camera.fov = fovPortrait;
+        } else {
+            camera.fov = fovLandscape;
+        }
+
+        renderer.domElement.resize(renderer, camera);
+    };
+
     const loop = () => {
         if (!enabled) return;
 
@@ -140,6 +156,11 @@
         renderer.render(scene, camera);
     };
 </script>
+
+<svelte:window
+    on:resize={() => resize()}
+    on:orientationchange={() => resize()}
+/>
 
 <Background {scene} color={0xc22fca} position={new Vector3(0, 0, -5)} />
 

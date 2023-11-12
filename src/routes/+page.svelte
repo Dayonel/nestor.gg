@@ -87,7 +87,7 @@
                 pin: ".section2",
                 pinType: "fixed",
                 start: "top top",
-                end: "+=200%",
+                end: "+=50%",
                 scroller: "#scrolling",
             },
         });

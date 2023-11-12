@@ -36,7 +36,6 @@
             powerPreference: "high-performance",
         });
 
-        renderer.toneMapping = THREE.NoToneMapping;
         renderer.outputColorSpace = THREE.SRGBColorSpace;
 
         // shadows
@@ -55,9 +54,6 @@
 
         document.body.appendChild(renderer.domElement);
 
-        // set aspect ratio
-        resize();
-
         // stats
         stats = new Stats();
         document.body.appendChild(stats.dom);
@@ -67,33 +63,12 @@
         console.log("three has mounted");
     };
 
-    const resize = () => {
-        if (window.innerHeight > window.innerWidth) {
-            camera.fov = fovPortrait;
-        } else {
-            camera.fov = fovLandscape;
-        }
-
-        const canvas = renderer.domElement;
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        const pixelRatio = window.devicePixelRatio;
-        const width = (canvas.clientWidth * pixelRatio) | 0;
-        const height = (canvas.clientHeight * pixelRatio) | 0;
-        renderer.setSize(width, height, false);
-    };
-
     const loop = () => {
         requestAnimationFrame(loop);
 
         stats.update();
     };
 </script>
-
-<svelte:window
-    on:resize={() => resize()}
-    on:orientationchange={() => resize()}
-/>
 
 <span class="scroll">Scroll progress: {scrollPercent?.toFixed(2)}%</span>
 
@@ -108,7 +83,6 @@
         enabled={scrollPercent >= 0 && scrollPercent < 20}
     />
     <Scene2
-        {models}
         {renderer}
         {camera}
         enabled={scrollPercent >= 20 && scrollPercent <= 40}
