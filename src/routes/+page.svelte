@@ -110,7 +110,8 @@
         <Three {scrollPercent} {models} {hdris} {textures} />
 
         <div id="three">
-            <section class="hero">
+            <!-- Section 1 -->
+            <section class="gsap-hero">
                 <div class="block">
                     <h1 class="name hero-text">Hi, I'm Nestor</h1>
                     <h2 class="position hero-text">I live in Amsterdam</h2>
@@ -123,9 +124,33 @@
                     <span>Scroll down</span>
                 </div>
             </section>
-            <section class="section2">
-                <p>I'm on an epic quest to master the art of web development</p>
-            </section>
+
+            <!-- Section 2 -->
+            <div class="container">
+                <section>
+                    <p>
+                        I'm on an epic quest to master the art of web
+                        development
+                    </p>
+                </section>
+                <ul>
+                    {#each new Array(10).keys() as _}
+                        <li>
+                            <figure>
+                                <img
+                                    src="logos/svelte-logo.png"
+                                    alt="Svelte logo"
+                                />
+                            </figure>
+                            <div class="tech-container">
+                                <span class="tech">Svelte</span>
+                                <span class="tech tech-reveal">Svelte</span>
+                            </div>
+                        </li>
+                    {/each}
+                </ul>
+            </div>
+
             <section>
                 <h2>Changing Objects Position</h2>
                 <p>The cubes position is now changing</p>
@@ -187,10 +212,84 @@
         width: 100dvw;
     }
 
-    .hero {
+    img {
+        display: block;
+        max-width: 100%;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(1.05);
+        transition: transform 0.4s cubic-bezier(0.55, 0, 0.1, 1);
+    }
+
+    li:hover img {
+        transform: scale(1);
+    }
+
+    li:hover span {
+        transform: translateY(-100%);
+    }
+
+    .container {
         display: flex;
         flex-direction: column;
         justify-content: center;
+        align-items: center;
+    }
+
+    ul {
+        list-style: none;
+        display: grid;
+        justify-content: center;
+        max-width: 1400px;
+        grid-gap: 2.5rem;
+        grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 768px) {
+        ul {
+            grid-template-columns: 1fr 1fr;
+            padding: 0 80px;
+        }
+    }
+
+    li {
+        cursor: pointer;
+        padding: 0 20px;
+    }
+
+    @media (min-width: 768px) {
+        li {
+            padding: 0;
+        }
+    }
+
+    figure {
+        overflow: hidden;
+    }
+
+    .tech-container {
+        position: relative;
+        overflow: hidden;
+        margin-top: 0.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .tech-container {
+            margin-bottom: 2rem;
+        }
+    }
+
+    .tech {
+        font-size: 1.25rem;
+        display: block;
+        transition: all 0.4s cubic-bezier(0.55, 0, 0.1, 1);
+    }
+
+    .tech-reveal {
+        position: absolute;
+        top: 100%;
+        left: 0;
     }
 
     h1,

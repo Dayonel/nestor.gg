@@ -12,6 +12,7 @@
 
     export let renderer: THREE.WebGLRenderer;
     export let camera: THREE.PerspectiveCamera;
+    export let scrollPercent: number;
     export let enabled: boolean;
     $: enabled, loop();
     $: enabled, resize();
@@ -41,7 +42,7 @@
         fog: true,
     });
 
-    let sphere1: any;
+    let sphere1: any, sphere2: any;
 
     onMount(() => init());
 
@@ -107,7 +108,13 @@
             sphere1.material.uniforms.time.value = -time;
             sphere1.rotation.x = Math.sin(time * 0.7) * 500;
             sphere1.rotation.y = Math.sin(time * 0.3) * 500;
+
+            sphere2.material.uniforms.time.value = time;
+            sphere2.rotation.x = Math.sin(time * 0.8) * 500;
+            sphere2.rotation.y = Math.sin(time * 0.2) * 500;
         }
+
+        camera.position.y = (scrollPercent - 19) * -1;
 
         renderer.render(scene, camera);
     };
@@ -128,4 +135,14 @@
     {material}
 />
 
-<Fog {scene} color={0x000099} near={10} far={25} />
+<Sphere
+    bind:ref={sphere2}
+    {scene}
+    color={0x0a0aff}
+    secondColor={0xffffff}
+    position={new Vector3(7, -2, 0)}
+    scale={3}
+    {material}
+/>
+
+<Fog {scene} color={0x000000} near={10} far={25} />

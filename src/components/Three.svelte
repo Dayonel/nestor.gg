@@ -82,6 +82,7 @@
     <Scene2
         {renderer}
         {camera}
+        {scrollPercent}
         enabled={scrollPercent >= 19 && scrollPercent <= 40}
     />
 {/if}

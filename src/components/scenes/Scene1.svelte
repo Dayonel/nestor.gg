@@ -87,7 +87,7 @@
             .timeline({
                 scrollTrigger: {
                     scroller: "#scrolling",
-                    trigger: ".hero",
+                    trigger: ".gsap-hero",
                     start: "top top",
                     end: "+=" + window.innerHeight,
                     scrub: true,
