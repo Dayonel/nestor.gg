@@ -19,7 +19,7 @@
     export let models: any[] = [];
     export let renderer: THREE.WebGLRenderer;
     export let camera: THREE.PerspectiveCamera;
-    export let scrollPercent: number;
+    export let scrollY: number;
     export let enabled: boolean;
     $: enabled, loop();
     $: enabled, resize();
@@ -114,7 +114,7 @@
 
     const tone = () => {
         if (!enabled) return;
-        
+
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 2;
     };
@@ -127,7 +127,7 @@
         requestAnimationFrame(loop);
 
         if (!introFinished) {
-            if (scrollPercent == 0) {
+            if (scrollY == 0) {
                 // regular update
                 TWEEN.update();
             } else if (!introFinished) {
@@ -158,8 +158,9 @@
             light4.position.z = Math.sin(time * 0.5) * z;
         }
 
+        // first section is 100dvh = window.innerHeight
         group.rotation.y =
-            THREE.MathUtils.degToRad((scrollPercent * 20) / 100) * 45;
+            THREE.MathUtils.degToRad(scrollY / window.innerHeight) * 180;
 
         renderer.render(scene, camera);
     };

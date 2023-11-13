@@ -10,6 +10,7 @@
     export let hdris: any[] = [];
     export let textures: any[] = [];
     export let scrollPercent = 0;
+    export let scrollY = 0;
 
     let weblAvailable = false;
     let renderer: THREE.WebGLRenderer;
@@ -76,14 +77,14 @@
         {models}
         {renderer}
         {camera}
-        {scrollPercent}
-        enabled={scrollPercent >= 0 && scrollPercent < 19}
+        {scrollY}
+        enabled={scrollY >= 0 && scrollY < window.innerHeight}
     />
     <Scene2
         {renderer}
         {camera}
-        {scrollPercent}
-        enabled={scrollPercent >= 19 && scrollPercent <= 40}
+        {scrollY}
+        enabled={scrollY >= window.innerHeight && scrollY < 4000}
     />
 {/if}
 

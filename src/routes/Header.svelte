@@ -28,6 +28,9 @@
         width: fit-content;
         border-radius: 4px;
         padding: 10px 12px;
-        background-color: white;
+    }
+
+    .logo :global(path) {
+        fill: white;
     }
 </style>

@@ -9,19 +9,15 @@
 
     let loading = true;
     let scrollPercent: number = 0;
+    let scrollY: number = 0;
     let scrollHidden: boolean = true;
     let scrolling: any;
-    let totalHeight: number;
-    let scrollY: number;
-    let sections: any[];
     let models: any[] = [];
     let hdris: any[] = [];
     let textures: any[] = [];
 
     onMount(() => {
         gsap.registerPlugin(ScrollTrigger);
-        sections = gsap.utils.toArray("#three section");
-        totalHeight = sections.length * window.innerHeight;
     });
 
     const loaded = async (e: CustomEvent<any>) => {
@@ -107,7 +103,7 @@
     {#if loading}
         <Loader on:load={async (e) => await loaded(e)} />
     {:else}
-        <Three {scrollPercent} {models} {hdris} {textures} />
+        <Three {scrollPercent} {scrollY} {models} {hdris} {textures} />
 
         <div id="three">
             <!-- Section 1 -->
@@ -241,7 +237,6 @@
         list-style: none;
         display: grid;
         justify-content: center;
-        max-width: 1400px;
         grid-gap: 2.5rem;
         grid-template-columns: 1fr;
     }
@@ -250,6 +245,7 @@
         ul {
             grid-template-columns: 1fr 1fr;
             padding: 0 80px;
+            max-width: 1400px;
         }
     }
 
