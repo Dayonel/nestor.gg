@@ -11,14 +11,15 @@
     export let textures: any[] = [];
     export let scrollPercent = 0;
     export let scrollY = 0;
+    export let currentScene: number = 1;
+    $: currentScene, transitionScene();
 
     let weblAvailable = false;
     let renderer: THREE.WebGLRenderer;
     let camera: THREE.PerspectiveCamera;
     let stats: any;
-
-    const fovLandscape = 70;
-    const fovPortrait = 105;
+    let canvas: HTMLCanvasElement;
+    let scene: number = 1;
 
     onMount(() => init());
 
@@ -50,7 +51,7 @@
             30000
         );
 
-        document.body.appendChild(renderer.domElement);
+        canvas = document.body.appendChild(renderer.domElement);
 
         // stats
         stats = new Stats();
@@ -59,6 +60,21 @@
         loop();
 
         console.log("three has mounted");
+    };
+
+    const toggleScene = async () => {
+        if (!canvas) return;
+
+        canvas.style.opacity = "0";
+        await delay(250);
+        canvas.style.opacity = "1";
+        scene = currentScene;
+    };
+
+    const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+    const transitionScene = async () => {
+        await toggleScene();
     };
 
     const loop = () => {
@@ -73,19 +89,8 @@
 {#if !weblAvailable}
     <p class="message">{WebGL.getWebGLErrorMessage()}</p>
 {:else}
-    <Scene1
-        {models}
-        {renderer}
-        {camera}
-        {scrollY}
-        enabled={scrollY >= 0 && scrollY < window.innerHeight}
-    />
-    <Scene2
-        {renderer}
-        {camera}
-        {scrollY}
-        enabled={scrollY >= window.innerHeight && scrollY < 4000}
-    />
+    <Scene1 {models} {renderer} {camera} {scrollY} enabled={scene == 1} />
+    <Scene2 {renderer} {camera} {scrollY} enabled={scene == 2} />
 {/if}
 
 <style>

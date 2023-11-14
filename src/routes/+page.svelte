@@ -15,10 +15,35 @@
     let models: any[] = [];
     let hdris: any[] = [];
     let textures: any[] = [];
+    let observer: IntersectionObserver;
+    let scene: number = 1;
 
     onMount(() => {
         gsap.registerPlugin(ScrollTrigger);
+        createIntersectionObserver();
     });
+
+    export const createIntersectionObserver = () => {
+        const ioConfiguration = {
+            rootMargin: "0% 0% -100% 0%", // line at the very top
+            root: scrolling,
+        };
+
+        observer = new IntersectionObserver(onIntersect, ioConfiguration);
+    };
+
+    const onIntersect = (
+        entries: IntersectionObserverEntry[],
+        _: IntersectionObserver
+    ) => {
+        entries.forEach((entry: any) => {
+            const { id } = entry.target; // <- Gets the section id.;
+            if (!entry.isIntersecting) return;
+
+            const sceneText = id.replace("scene", "");
+            scene = +sceneText;
+        });
+    };
 
     const loaded = async (e: CustomEvent<any>) => {
         // textReveal();
@@ -28,7 +53,10 @@
         hdris = e.detail.hdris;
         textures = e.detail.textures;
 
-        await tick(); // wait for DOM updates to be applied for gsap
+        await tick(); // wait for DOM updates to be applied
+
+        const sections = [...document.querySelectorAll("section")];
+        sections.forEach((scene) => observer.observe(scene));
 
         // gsapSection2();
 
@@ -103,11 +131,18 @@
     {#if loading}
         <Loader on:load={async (e) => await loaded(e)} />
     {:else}
-        <Three {scrollPercent} {scrollY} {models} {hdris} {textures} />
+        <Three
+            {scrollPercent}
+            {scrollY}
+            {models}
+            {hdris}
+            {textures}
+            currentScene={scene}
+        />
 
         <div id="three">
             <!-- Section 1 -->
-            <section class="gsap-hero">
+            <section id="scene1" class="gsap-hero">
                 <div class="block">
                     <h1 class="name hero-text">Hi, I'm Nestor</h1>
                     <h2 class="position hero-text">I live in Amsterdam</h2>
@@ -123,7 +158,7 @@
 
             <!-- Section 2 -->
             <div class="container">
-                <section>
+                <section id="scene2">
                     <p>
                         I'm on an epic quest to master the art of web
                         development
@@ -147,22 +182,22 @@
                 </ul>
             </div>
 
-            <section>
+            <section id="scene3">
                 <h2>Changing Objects Position</h2>
                 <p>The cubes position is now changing</p>
             </section>
 
-            <section>
+            <section id="scene4">
                 <h2>Changing Objects Rotation</h2>
                 <p>The cubes rotation is now changing</p>
             </section>
 
-            <section>
+            <section id="scene5">
                 <h2>Changing Camera Position</h2>
                 <p>The camera position is now changing</p>
             </section>
 
-            <section>
+            <section id="scene6">
                 <h2>You are at the bottom</h2>
                 <p>The cube will now be auto rotating</p>
                 <p>
