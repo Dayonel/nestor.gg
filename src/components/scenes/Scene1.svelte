@@ -5,7 +5,7 @@
     import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
     import * as THREE from "three";
     import GLTF from "$lib/GLTF.svelte";
-    import { onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import Water from "../Water.svelte";
     import { Vector3 } from "three";
     import TWEEN from "@tweenjs/tween.js";
@@ -25,20 +25,37 @@
     $: enabled, resize();
     $: enabled, tone();
 
+    const dispatch = createEventDispatcher();
     const scene = new THREE.Scene();
-    scene.add(camera);
+    scene.userData.camera = camera;
 
     const cameraZ = 25;
     const tweenToZ = cameraZ - 10;
     let light1: any, light2: any, light3: any, light4: any;
     let mounted = false;
 
-    const windowMaterial = new THREE.MeshPhysicalMaterial({
-        roughness: 0.7,
-        thickness: 1,
-        color: 0xcecece,
-    });
-    const material = new MaterialDTO("Windows", windowMaterial);
+    let materials: MaterialDTO[] = [];
+    materials.push(
+        new MaterialDTO(
+            new THREE.MeshPhysicalMaterial({
+                roughness: 0.7,
+                thickness: 1,
+                color: 0xcecece,
+            }),
+            "Windows"
+        )
+    );
+
+    materials.push(
+        new MaterialDTO(
+            new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                metalness: 1,
+                roughness: 0.6,
+                side: THREE.DoubleSide,
+            })
+        )
+    );
 
     let group = new THREE.Group();
     scene.add(group);
@@ -64,6 +81,9 @@
 
         mounted = true;
 
+        renderer.compile(scene, camera);
+
+        dispatch("mount", { scene });
         console.log("scene1 has mounted");
     };
 
@@ -161,8 +181,6 @@
         // first section is 100dvh = window.innerHeight
         group.rotation.y =
             THREE.MathUtils.degToRad(scrollY / window.innerHeight) * 180;
-
-        renderer.render(scene, camera);
     };
 </script>
 
@@ -177,28 +195,28 @@
     gltf={models[0]}
     {scene}
     position={new Vector3(2.45, -0.5, 0)}
-    {material}
+    {materials}
     {group}
 />
 <GLTF
     gltf={models[1]}
     {scene}
     position={new Vector3(-2.5, -0.5, 0)}
-    {material}
+    {materials}
     {group}
 />
 <GLTF
     gltf={models[2]}
     {scene}
     position={new Vector3(-7.5, -0.5, 0)}
-    {material}
+    {materials}
     {group}
 />
 <GLTF
     gltf={models[3]}
     {scene}
     position={new Vector3(7, -0.5, 0)}
-    {material}
+    {materials}
     {group}
 />
 <!-- <Water {scene} /> -->

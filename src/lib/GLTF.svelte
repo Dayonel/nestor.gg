@@ -6,7 +6,7 @@
     export let scene: THREE.Scene;
     export let position: THREE.Vector3;
     export let rotation: THREE.Euler = new THREE.Euler(0, 0, 0);
-    export let material: MaterialDTO | undefined = undefined;
+    export let materials: MaterialDTO[] | undefined = undefined;
     export let group: THREE.Group | undefined = undefined;
     export let gltf: THREE.Object3D;
     export let scale: number = 1;
@@ -21,16 +21,7 @@
                 obj.castShadow = true;
                 obj.receiveShadow = true;
 
-                if (material && obj.name == material.key) {
-                    obj.material = material.value;
-                } else {
-                    obj.material = new THREE.MeshStandardMaterial({
-                        color: 0xffffff,
-                        metalness: 1,
-                        roughness: 0.6,
-                        side: THREE.DoubleSide,
-                    });
-                }
+                applyMaterials(obj);
             }
         });
         if (group) {
@@ -39,4 +30,21 @@
             scene.add(model);
         }
     });
+
+    const applyMaterials = (obj: any) => {
+        if (!materials) return;
+
+        materials
+            .sort((a, b) => {
+                if (b.key) return -1;
+                if (a.key) return 1;
+
+                return 0;
+            })
+            .forEach((f) => {
+                if ((f.key && obj.name == f.key) || !f.key) {
+                    obj.material = f.value;
+                }
+            });
+    };
 </script>

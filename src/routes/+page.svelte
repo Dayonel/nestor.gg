@@ -15,35 +15,12 @@
     let models: any[] = [];
     let hdris: any[] = [];
     let textures: any[] = [];
-    let observer: IntersectionObserver;
+    let sections: NodeListOf<HTMLElement>;
     let scene: number = 1;
 
     onMount(() => {
         gsap.registerPlugin(ScrollTrigger);
-        createIntersectionObserver();
     });
-
-    export const createIntersectionObserver = () => {
-        const ioConfiguration = {
-            rootMargin: "0% 0% -100% 0%", // line at the very top
-            root: scrolling,
-        };
-
-        observer = new IntersectionObserver(onIntersect, ioConfiguration);
-    };
-
-    const onIntersect = (
-        entries: IntersectionObserverEntry[],
-        _: IntersectionObserver
-    ) => {
-        entries.forEach((entry: any) => {
-            const { id } = entry.target; // <- Gets the section id.;
-            if (!entry.isIntersecting) return;
-
-            const sceneText = id.replace("scene", "");
-            scene = +sceneText;
-        });
-    };
 
     const loaded = async (e: CustomEvent<any>) => {
         // textReveal();
@@ -55,21 +32,43 @@
 
         await tick(); // wait for DOM updates to be applied
 
-        const sections = [...document.querySelectorAll("section")];
-        sections.forEach((scene) => observer.observe(scene));
+        sections = document.querySelectorAll("section");
 
-        // gsapSection2();
+        gsapSection2();
+    };
 
-        scrolling.onscroll = () => {
-            scrollPercent =
-                (scrolling.scrollTop /
-                    (scrolling.scrollHeight - scrolling.clientHeight)) *
-                100;
+    const onScroll = () => {
+        sections.forEach((f) => {
+            if (isSectionInViewport(f)) {
+                const id = f.getAttribute("id");
+                if (!id) return;
 
-            scrollY = scrolling.scrollTop;
-            if (scrollPercent > 1) toggleScroll(true);
-            else toggleScroll(false);
-        };
+                const text = id.replace("scene", "");
+                scene = +text;
+            }
+        });
+
+        scrollPercent =
+            (scrolling.scrollTop /
+                (scrolling.scrollHeight - scrolling.clientHeight)) *
+            100;
+
+        scrollY = scrolling.scrollTop;
+        if (scrollPercent > 1) toggleScroll(true);
+        else toggleScroll(false);
+    };
+
+    const isSectionInViewport = (f: HTMLElement) => {
+        var rect = f.getBoundingClientRect();
+
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <=
+                (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <=
+                (window.innerWidth || document.documentElement.clientWidth)
+        );
     };
 
     const toggleScroll = (hide: boolean) => {
@@ -108,10 +107,9 @@
     const gsapSection2 = () => {
         gsap.timeline({
             scrollTrigger: {
-                pin: ".section2",
+                pin: "#scene2",
                 pinType: "fixed",
-                start: "top top",
-                end: "+=50%",
+                end: "+=200%",
                 scroller: "#scrolling",
             },
         });
@@ -127,18 +125,11 @@
     />
 </svelte:head>
 
-<div bind:this={scrolling} id="scrolling">
+<div bind:this={scrolling} id="scrolling" on:scroll={() => onScroll()}>
     {#if loading}
         <Loader on:load={async (e) => await loaded(e)} />
     {:else}
-        <Three
-            {scrollPercent}
-            {scrollY}
-            {models}
-            {hdris}
-            {textures}
-            currentScene={scene}
-        />
+        <Three {scrollPercent} {scrollY} {models} {hdris} {textures} {scene} />
 
         <div id="three">
             <!-- Section 1 -->
@@ -157,14 +148,12 @@
             </section>
 
             <!-- Section 2 -->
-            <div class="container">
-                <section id="scene2">
-                    <p>
-                        I'm on an epic quest to master the art of web
-                        development
-                    </p>
-                </section>
-                <ul>
+            <section id="scene2">
+                <p>I'm on an epic quest to master the art of web development</p>
+            </section>
+            <!-- <div class="container"> -->
+
+            <!-- <ul>
                     {#each new Array(10).keys() as _}
                         <li>
                             <figure>
@@ -179,8 +168,8 @@
                             </div>
                         </li>
                     {/each}
-                </ul>
-            </div>
+                </ul> -->
+            <!-- </div> -->
 
             <section id="scene3">
                 <h2>Changing Objects Position</h2>

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onDestroy, onMount } from "svelte";
+    import { onDestroy } from "svelte";
     import WebGL from "three/examples/jsm/capabilities/WebGL.js";
     import * as THREE from "three";
     import Stats from "three/examples/jsm/libs/stats.module";
@@ -11,24 +11,20 @@
     export let textures: any[] = [];
     export let scrollPercent = 0;
     export let scrollY = 0;
-    export let currentScene: number = 1;
-    $: currentScene, transitionScene();
+    export let scene: number = 1;
 
-    let weblAvailable = false;
+    let weblAvailable = WebGL.isWebGLAvailable();
     let renderer: THREE.WebGLRenderer;
     let camera: THREE.PerspectiveCamera;
     let stats: any;
     let canvas: HTMLCanvasElement;
-    let scene: number = 1;
-
-    onMount(() => init());
+    const scenes: THREE.Scene[] = [];
 
     onDestroy(() => {
         if (stats) document.body.removeChild(stats.dom);
     });
 
     const init = () => {
-        weblAvailable = WebGL.isWebGLAvailable();
         if (!weblAvailable) return;
 
         // renderer
@@ -57,31 +53,26 @@
         stats = new Stats();
         document.body.appendChild(stats.dom);
 
-        loop();
-
         console.log("three has mounted");
-    };
-
-    const toggleScene = async () => {
-        if (!canvas) return;
-
-        canvas.style.opacity = "0";
-        await delay(250);
-        canvas.style.opacity = "1";
-        scene = currentScene;
     };
 
     const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-    const transitionScene = async () => {
-        await toggleScene();
-    };
-
     const loop = () => {
         requestAnimationFrame(loop);
 
+        scenes?.forEach((f, i) => {
+            if (i + 1 == scene) {
+                renderer.render(f, f.userData.camera);
+            }
+        });
+
         stats.update();
     };
+
+    // this happens prior to chilren onMount()
+    init();
+    loop();
 </script>
 
 <span class="scroll">Scroll progress: {scrollPercent?.toFixed(2)}%</span>
@@ -89,8 +80,23 @@
 {#if !weblAvailable}
     <p class="message">{WebGL.getWebGLErrorMessage()}</p>
 {:else}
-    <Scene1 {models} {renderer} {camera} {scrollY} enabled={scene == 1} />
-    <Scene2 {renderer} {camera} {scrollY} enabled={scene == 2} />
+    <Scene1
+        {models}
+        {renderer}
+        {camera}
+        {scrollY}
+        enabled={scene == 1}
+        on:mount={(e) => scenes.push(e.detail.scene)}
+    />
+    <Scene2
+        {models}
+        {renderer}
+        {camera}
+        {scrollY}
+        enabled={scene == 2}
+        {textures}
+        on:mount={(e) => scenes.push(e.detail.scene)}
+    />
 {/if}
 
 <style>
