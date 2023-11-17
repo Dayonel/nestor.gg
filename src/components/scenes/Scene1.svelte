@@ -28,6 +28,7 @@
     const dispatch = createEventDispatcher();
     const scene = new THREE.Scene();
     scene.userData.camera = camera;
+    scene.userData.scene = 1;
 
     const cameraZ = 25;
     const tweenToZ = cameraZ - 10;

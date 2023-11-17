@@ -5,6 +5,7 @@
     import Stats from "three/examples/jsm/libs/stats.module";
     import Scene1 from "./scenes/Scene1.svelte";
     import Scene2 from "./scenes/Scene2.svelte";
+    import Scene3 from "./scenes/Scene3.svelte";
 
     export let models: any[] = [];
     export let hdris: any[] = [];
@@ -12,6 +13,7 @@
     export let scrollPercent = 0;
     export let scrollY = 0;
     export let scene: number = 1;
+    $: scene, renderer.clear();
 
     let weblAvailable = WebGL.isWebGLAvailable();
     let renderer: THREE.WebGLRenderer;
@@ -56,13 +58,11 @@
         console.log("three has mounted");
     };
 
-    const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
-
     const loop = () => {
         requestAnimationFrame(loop);
 
-        scenes?.forEach((f, i) => {
-            if (i + 1 == scene) {
+        scenes?.forEach((f) => {
+            if (f.userData.scene == scene) {
                 renderer.render(f, f.userData.camera);
             }
         });
@@ -94,6 +94,15 @@
         {camera}
         {scrollY}
         enabled={scene == 2}
+        {textures}
+        on:mount={(e) => scenes.push(e.detail.scene)}
+    />
+    <Scene3
+        {models}
+        {renderer}
+        {camera}
+        {scrollY}
+        enabled={scene == 3}
         {textures}
         on:mount={(e) => scenes.push(e.detail.scene)}
     />
