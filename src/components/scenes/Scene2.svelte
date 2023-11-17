@@ -79,7 +79,6 @@
                 Math.tan((camera.fov * Math.PI) / 180 / 2) *
                 camera.position.z;
             const scale = fovHeight / texture.image.height;
-            console.log(scale);
             particles.scale.set(scale, scale, 1);
         }
 
@@ -89,8 +88,7 @@
     const tone = () => {
         if (!enabled) return;
 
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 2;
+        renderer.toneMapping = THREE.NoToneMapping;
     };
 
     const random = (min: number, max: number): number => {
@@ -274,15 +272,5 @@
     on:resize={() => resize()}
     on:orientationchange={() => resize()}
 />
-
-<!-- <Background {scene} color={0xc22fca} position={new Vector3(0, 0, -5)} /> -->
-
-<!-- <DirectionalLight
-    {scene}
-    color={0xffffff}
-    intensity={1}
-    position={new Vector3(-1, 1.75, 1)}
-    scale={30}
-/> -->
 
 <!-- <Fog {scene} color={0x000000} near={20} far={25} /> -->

@@ -7,6 +7,7 @@
     export let height: number = 200;
     export let color: THREE.ColorRepresentation;
     export let position: THREE.Vector3 = new THREE.Vector3(0, 0, 0);
+    export let scale: number = 1;
     export let receiveShadow: boolean = true;
 
     onMount(() => {
@@ -16,6 +17,7 @@
 
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.copy(position);
+        mesh.scale.multiplyScalar(scale);
         if (receiveShadow) {
             mesh.receiveShadow = true;
         }

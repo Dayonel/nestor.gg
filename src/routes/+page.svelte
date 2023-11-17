@@ -39,7 +39,7 @@
 
     const onScroll = () => {
         sections.forEach((f) => {
-            if (isSectionInViewport(f)) {
+            if (isInViewport(f)) {
                 const id = f.getAttribute("id");
                 if (!id) return;
 
@@ -58,17 +58,13 @@
         else toggleScroll(false);
     };
 
-    const isSectionInViewport = (f: HTMLElement) => {
-        var rect = f.getBoundingClientRect();
+    const isInViewport = (element: HTMLElement) => {
+        var rect = element.getBoundingClientRect();
 
-        return (
-            rect.top >= 0 &&
-            rect.left >= 0 &&
-            rect.bottom <=
-                (window.innerHeight || document.documentElement.clientHeight) &&
-            rect.right <=
-                (window.innerWidth || document.documentElement.clientWidth)
-        );
+        var verticalInView = rect.top <= 0 && rect.bottom >= 0;
+        var horizontalInView = rect.left <= 0 && rect.right >= 0;
+
+        return verticalInView && horizontalInView;
     };
 
     const toggleScroll = (hide: boolean) => {
