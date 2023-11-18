@@ -101,7 +101,7 @@
     };
 
     const gsapSection2 = () => {
-        gsap.timeline({
+        const t1 = gsap.timeline({
             scrollTrigger: {
                 pin: "#scene2",
                 pinType: "fixed",
@@ -109,6 +109,20 @@
                 scroller: "#scrolling",
             },
         });
+
+        const t2 = gsap.timeline({
+            scrollTrigger: {
+                trigger: "#scene2",
+                start: "top top",
+                end: "+=50%",
+                scroller: "#scrolling",
+                scrub: true,
+            },
+        });
+
+        if (window.innerWidth > 768) {
+            t2.to("#scene2", { x: "-=20%" });
+        }
     };
 </script>
 
