@@ -12,6 +12,8 @@
     export let textures: any[] = [];
     export let scrollPercent = 0;
     export let scrollY = 0;
+    export let section2AnimComplete = false;
+    export let section2AnimBackwards = false;
     export let scene: number = 1;
     $: scene, renderer.clear();
 
@@ -36,6 +38,7 @@
             powerPreference: "high-performance",
         });
 
+        renderer.setPixelRatio(window.devicePixelRatio);
         renderer.outputColorSpace = THREE.SRGBColorSpace;
 
         // shadows
@@ -63,6 +66,21 @@
 
         scenes?.forEach((f) => {
             if (f.userData.scene == scene) {
+                renderer.setScissorTest(false);
+                renderer.clear();
+                renderer.setScissorTest(true);
+                renderer.setViewport(
+                    0,
+                    0,
+                    window.innerWidth,
+                    window.innerHeight
+                );
+                renderer.setScissor(
+                    0,
+                    0,
+                    window.innerWidth,
+                    window.innerHeight
+                );
                 renderer.render(f, f.userData.camera);
             }
         });
@@ -95,6 +113,8 @@
         {scrollY}
         enabled={scene == 2}
         {textures}
+        {section2AnimComplete}
+        {section2AnimBackwards}
         on:mount={(e) => scenes.push(e.detail.scene)}
     />
     <Scene3

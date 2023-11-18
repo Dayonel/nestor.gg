@@ -17,6 +17,8 @@
     let textures: any[] = [];
     let sections: NodeListOf<HTMLElement>;
     let scene: number = 1;
+    let section2AnimComplete = false;
+    let section2AnimBackwards = false;
 
     onMount(() => {
         gsap.registerPlugin(ScrollTrigger);
@@ -117,14 +119,39 @@
                 end: "+=50%",
                 scroller: "#scrolling",
                 scrub: true,
+                onUpdate: (self: any) => {
+                    section2AnimBackwards = self.direction === -1;
+                    if (section2AnimBackwards) {
+                        section2AnimComplete = false;
+                    }
+                },
             },
         });
 
-        if (window.innerWidth > 768) {
-            t2.to("#scene2", { x: "-=20%" });
+        let mm = gsap.matchMedia();
+        mm.add("(min-width: 1600px)", () => {
+            t2.to(".scene2-text", {
+                x: "-50%",
+                onComplete: () => {
+                    section2AnimComplete = true;
+                },
+            });
+        });
+
+        section2Resize();
+    };
+
+    const section2Resize = () => {
+        if (window.innerWidth < 1600) {
+            section2AnimComplete = true;
         }
     };
 </script>
+
+<svelte:window
+    on:resize={() => section2Resize()}
+    on:orientationchange={() => section2Resize()}
+/>
 
 <svelte:head>
     <title>Nestor Orest Plysyuk Hladunko - Full stack developer</title>
@@ -139,7 +166,16 @@
     {#if loading}
         <Loader on:load={async (e) => await loaded(e)} />
     {:else}
-        <Three {scrollPercent} {scrollY} {models} {hdris} {textures} {scene} />
+        <Three
+            {scrollPercent}
+            {scrollY}
+            {models}
+            {hdris}
+            {textures}
+            {scene}
+            {section2AnimComplete}
+            {section2AnimBackwards}
+        />
 
         <div id="three">
             <!-- Section 1 -->
@@ -159,7 +195,9 @@
 
             <!-- Section 2 -->
             <section id="scene2">
-                <p>I'm on an epic quest to master the art of web development</p>
+                <p class="scene2-text">
+                    I'm on an epic quest to master the art of web development
+                </p>
             </section>
             <!-- <div class="container"> -->
 
@@ -233,6 +271,19 @@
         padding: 2rem;
         width: 100dvw;
         height: 100dvh;
+    }
+
+    @media (max-width: 1599px) {
+        .scene2-text {
+            top: calc(25% - 3.5rem);
+            position: absolute;
+        }
+    }
+
+    @media (min-width: 920px) {
+        .scene2-text {
+            top: calc(25% - 8rem);
+        }
     }
 
     .block {
