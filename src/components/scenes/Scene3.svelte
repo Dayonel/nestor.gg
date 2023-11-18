@@ -34,7 +34,7 @@
         1,
         10000
     );
-    camera.position.set(0, 0, 300);
+    camera.position.set(0, 0, 200);
     scene.userData.camera = camera;
     scene.userData.scene = 3;
     let mounted = false;

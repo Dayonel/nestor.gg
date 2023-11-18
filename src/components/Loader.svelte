@@ -21,7 +21,7 @@
     ];
 
     const hdris: any[] = [];
-    const textures: any[] = ["textures/ranni.jpg"];
+    const textures: any[] = ["textures/melina.jpg"];
     const total = models.length + hdris.length + textures.length;
 </script>
 
