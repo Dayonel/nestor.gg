@@ -11,9 +11,11 @@
     import { createEventDispatcher, onMount } from "svelte";
     import * as THREE from "three";
     import { Vector3 } from "three";
+    import Subscene2 from "../Subscene2.svelte";
 
     export let models: any[] = [];
     export let textures: any[] = [];
+    export let hdris: any[] = [];
     export let renderer: THREE.WebGLRenderer;
     export let camera: THREE.PerspectiveCamera;
     export let scrollY: number;
@@ -25,6 +27,7 @@
     $: section2AnimComplete, showExtraCanvas();
     $: enabled, resize();
     $: enabled, loop();
+    $: enabled, tone();
     $: enabled, showExtraCanvas();
 
     onMount(() => init());
@@ -46,8 +49,15 @@
     scene.userData.scene = 2;
 
     const scene2 = new THREE.Scene();
+    const camera2 = new THREE.PerspectiveCamera(
+        70,
+        window.innerWidth / window.innerHeight,
+        0.01,
+        1000
+    );
+    camera2.position.set(0, 0, 20);
+    scene2.add(camera2);
     let element: HTMLElement;
-    let elementScene2: HTMLElement;
     let extraCanvasVisible = false;
     let loopingExtra = false;
 
@@ -55,8 +65,6 @@
         gsap.registerPlugin(ScrollTrigger);
 
         animateOnScroll();
-
-        addExtraCanvas();
 
         mounted = true;
 
@@ -93,13 +101,11 @@
         renderer.domElement.resize(renderer, camera);
     };
 
-    const addExtraCanvas = () => {
-        const section2 = document.getElementById("scene2");
-        element = document.createElement("div");
-        element.className = "scene2-extra-canvas";
-        section2?.appendChild(element);
+    const tone = () => {
+        if (!enabled) return;
 
-        scene2.background = new THREE.Color("#ffffff");
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1;
     };
 
     const showExtraCanvas = () => {
@@ -138,6 +144,9 @@
 
         renderer.setViewport(left, bottom, width, height);
         renderer.setScissor(left, bottom, width, height);
+
+        camera2.aspect = width / height; // not changing in this example
+        camera2.updateProjectionMatrix();
     };
 
     const loop = () => {
@@ -156,7 +165,8 @@
 
         renderer.setScissorTest(true);
         resetViewport();
-        renderer.render(scene2, camera);
+
+        renderer.render(scene2, camera2);
 
         loopingExtra = true;
     };
@@ -167,48 +177,16 @@
     on:orientationchange={() => resize()}
 />
 
-<div bind:this={elementScene2} class="scene2">
-    <Background {scene} color={0xc22fca} position={new Vector3(0, 0, -5)} />
+<!-- <Fog {scene} color={0x000000} near={cameraZ - 5} far={cameraZ} /> -->
 
-    <!-- Static lights -->
-    <PointLight
-        {scene}
-        color={0xff0000}
-        intensity={50}
-        position={new Vector3(-10, 10, 10)}
-    />
-
-    <PointLight
-        {scene}
-        color={0x0000ff}
-        intensity={50}
-        position={new Vector3(0, 10, 10)}
-    />
-
-    <PointLight
-        {scene}
-        color={0xff0000}
-        intensity={50}
-        position={new Vector3(10, 10, 10)}
-    />
-
-    <SpotLight
-        {scene}
-        color={0xffffff}
-        intensity={2000}
-        position={new Vector3(0, 50, -1)}
-    />
-
-    <DirectionalLight
-        {scene}
-        color={0xf2f2f2}
-        intensity={0.12}
-        position={new Vector3(-1, 1.75, 1)}
-        scale={30}
-    />
-
-    <Fog {scene} color={0x000000} near={cameraZ - 5} far={cameraZ} />
-</div>
+<Subscene2
+    scene={scene2}
+    camera={camera2}
+    {renderer}
+    bind:element
+    {hdris}
+    enabled={enabled && extraCanvasVisible}
+/>
 
 <style>
     :global(.scene2-extra-canvas) {
@@ -231,8 +209,8 @@
             display: none;
             height: 90dvh;
             width: 600px;
-            right: 5rem;
-            transform: translate(-8dvw, -50%);
+            right: 14rem;
+            transform: translateY(-50%);
             top: 50%;
             bottom: 0;
         }

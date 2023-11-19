@@ -9,18 +9,19 @@
     export let position: THREE.Vector3 = new THREE.Vector3(0, 0, 0);
     export let scale: number = 1;
     export let receiveShadow: boolean = true;
+    export let ref: any = undefined;
 
     onMount(() => {
         // plane
         const geometry = new THREE.PlaneGeometry(width, height);
         const material = new THREE.MeshStandardMaterial({ color: color });
 
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.copy(position);
-        mesh.scale.multiplyScalar(scale);
+        ref = new THREE.Mesh(geometry, material);
+        ref.position.copy(position);
+        ref.scale.multiplyScalar(scale);
         if (receiveShadow) {
-            mesh.receiveShadow = true;
+            ref.receiveShadow = true;
         }
-        scene.add(mesh);
+        scene.add(ref);
     });
 </script>

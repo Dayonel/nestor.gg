@@ -121,7 +121,7 @@
                 scrub: true,
                 onUpdate: (self: any) => {
                     section2AnimBackwards = self.direction === -1;
-                    if (section2AnimBackwards) {
+                    if (window.innerWidth >= 1600 && section2AnimBackwards) {
                         section2AnimComplete = false;
                     }
                 },
@@ -137,21 +137,12 @@
                 },
             });
         });
-
-        section2Resize();
     };
 
-    const section2Resize = () => {
-        if (window.innerWidth < 1600) {
-            section2AnimComplete = true;
-        }
-    };
+    $: if (window.innerWidth < 1600) {
+        section2AnimComplete = true;
+    }
 </script>
-
-<svelte:window
-    on:resize={() => section2Resize()}
-    on:orientationchange={() => section2Resize()}
-/>
 
 <svelte:head>
     <title>Nestor Orest Plysyuk Hladunko - Full stack developer</title>
@@ -220,13 +211,13 @@
             <!-- </div> -->
 
             <section id="scene3">
-                <h2>Changing Objects Position</h2>
-                <p>The cubes position is now changing</p>
+                <p>I love</p>
+                <p>videogames</p>
             </section>
 
             <section id="scene4">
-                <h2>Changing Objects Rotation</h2>
-                <p>The cubes rotation is now changing</p>
+                <p>I love</p>
+                <p>videogames</p>
             </section>
 
             <section id="scene5">

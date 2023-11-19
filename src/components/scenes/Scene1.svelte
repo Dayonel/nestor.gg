@@ -31,8 +31,7 @@
     scene.userData.scene = 1;
 
     const cameraZ = 25;
-    const tweenToZ = cameraZ - 10;
-    let light1: any, light2: any, light3: any, light4: any;
+    const tweenToZ = cameraZ - 10;let light1: any, light2: any, light3: any, light4: any;
     let mounted = false;
 
     let materials: MaterialDTO[] = [];

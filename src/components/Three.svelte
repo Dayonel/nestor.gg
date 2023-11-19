@@ -113,6 +113,7 @@
         {scrollY}
         enabled={scene == 2}
         {textures}
+        {hdris}
         {section2AnimComplete}
         {section2AnimBackwards}
         on:mount={(e) => scenes.push(e.detail.scene)}

@@ -20,7 +20,7 @@
         "models/amsterdam4.glb",
     ];
 
-    const hdris: any[] = [];
+    const hdris: any[] = ["hdris/empty_warehouse_01_1k.hdr"];
     const textures: any[] = ["textures/melina.jpg"];
     const total = models.length + hdris.length + textures.length;
 </script>
