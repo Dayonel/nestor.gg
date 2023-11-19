@@ -50,7 +50,7 @@
 
     const scene2 = new THREE.Scene();
     const camera2 = new THREE.PerspectiveCamera(
-        70,
+        50,
         window.innerWidth / window.innerHeight,
         0.01,
         1000
@@ -104,8 +104,8 @@
     const tone = () => {
         if (!enabled) return;
 
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1;
+        renderer.toneMapping = THREE.NoToneMapping;
+        // renderer.toneMappingExposure = 1;
     };
 
     const showExtraCanvas = () => {

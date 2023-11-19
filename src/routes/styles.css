@@ -73,7 +73,12 @@ canvas {
     will-change: opacity;
 }
 
-.pin-spacer {
+
+.pin-spacer * {
+    pointer-events: all;
+}
+
+.pin-spacer section {
     /* 
         gsap bug
         scroll events not triggering
