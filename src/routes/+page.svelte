@@ -107,7 +107,7 @@
             scrollTrigger: {
                 pin: "#scene2",
                 pinType: "fixed",
-                end: "+=200%",
+                end: "+=100%",
                 scroller: "#scrolling",
             },
         });
@@ -120,10 +120,9 @@
                 scroller: "#scrolling",
                 scrub: true,
                 onUpdate: (self: any) => {
+                    if (window.innerWidth < 1600) return;
+
                     section2AnimBackwards = self.direction === -1;
-                    if (window.innerWidth >= 1600 && section2AnimBackwards) {
-                        section2AnimComplete = false;
-                    }
                 },
             },
         });
@@ -262,19 +261,6 @@
         padding: 2rem;
         width: 100dvw;
         height: 100dvh;
-    }
-
-    @media (max-width: 1599px) {
-        .scene2-text {
-            top: calc(25% - 3.5rem);
-            position: absolute;
-        }
-    }
-
-    @media (min-width: 920px) {
-        .scene2-text {
-            top: calc(25% - 8rem);
-        }
     }
 
     .block {

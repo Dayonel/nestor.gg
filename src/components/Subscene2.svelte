@@ -19,11 +19,11 @@
     let spheres: THREE.Object3D[] = [];
     let background: any;
     const world = new CANNON.World();
-    const blueMaterial = new THREE.MeshPhysicalMaterial({
+    const blueMaterial = new THREE.MeshStandardMaterial({
         color: new THREE.Color("#3897a9"),
         emissive: new THREE.Color("#3897a9"),
-        roughness: 0.5,
-        reflectivity: 0.5,
+        roughness: 1,
+        metalness: 1,
     });
 
     const blackMaterial = new THREE.MeshStandardMaterial({
@@ -259,7 +259,7 @@
     intensity={100}
     distance={100}
     angle={1}
-    decay={1}
+    decay={2}
     position={new Vector3(-6, 0, 0)}
 />
 

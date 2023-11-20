@@ -111,6 +111,7 @@
     const showExtraCanvas = () => {
         if (!section2AnimComplete) return;
         if (!element) return;
+        if (!enabled) return;
 
         extraCanvasVisible = true;
         element.style.display = "block";
@@ -121,6 +122,7 @@
     const backwards = () => {
         if (!section2AnimBackwards) return;
         if (!element) return;
+        if (!enabled) return;
 
         element.style.display = "none";
         extraCanvasVisible = false;
@@ -164,7 +166,9 @@
         requestAnimationFrame(loopExtra);
 
         renderer.setScissorTest(true);
-        resetViewport();
+        if (window.innerWidth >= 1600) {
+            resetViewport(); // mobile fullscreen
+        }
 
         renderer.render(scene2, camera2);
 
@@ -191,17 +195,10 @@
 <style>
     :global(.scene2-extra-canvas) {
         display: block;
-        width: 90dvw;
-        height: 50dvh;
-        -webkit-border-radius: 16px;
-        -moz-border-radius: 16px;
-        border-radius: 16px;
-        -webkit-box-shadow: 0px 0px 0px 16px #000000;
-        -moz-box-shadow: 0px 0px 0px 16px #000000;
-        box-shadow: 0px 0px 0px 16px #000000;
+        width: 92dvw;
+        height: 65dvh;
         position: absolute;
-        bottom: 3rem;
-        padding: 3rem;
+        bottom: 1rem;
     }
 
     @media (min-width: 1600px) {
@@ -213,6 +210,12 @@
             transform: translateY(-50%);
             top: 50%;
             bottom: 0;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            border-radius: 8px;
+            -webkit-box-shadow: 0px 0px 0px 4px #000000;
+            -moz-box-shadow: 0px 0px 0px 4px #000000;
+            box-shadow: 0px 0px 0px 4px #000000;
         }
     }
 </style>
