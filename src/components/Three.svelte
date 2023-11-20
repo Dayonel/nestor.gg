@@ -5,6 +5,7 @@
     import Stats from "three/examples/jsm/libs/stats.module";
     import Scene1 from "./scenes/Scene1.svelte";
     import Scene2 from "./scenes/Scene2.svelte";
+    import Subscene2 from "./scenes/Subscene2.svelte";
     import Scene3 from "./scenes/Scene3.svelte";
 
     export let models: any[] = [];
@@ -64,23 +65,46 @@
     const loop = () => {
         requestAnimationFrame(loop);
 
+        renderer.setScissorTest(false);
+        renderer.clear();
+        renderer.setScissorTest(true);
+
         scenes?.forEach((f) => {
             if (f.userData.scene == scene) {
-                renderer.setScissorTest(false);
-                renderer.clear();
-                renderer.setScissorTest(true);
-                renderer.setViewport(
-                    0,
-                    0,
-                    window.innerWidth,
-                    window.innerHeight
-                );
-                renderer.setScissor(
-                    0,
-                    0,
-                    window.innerWidth,
-                    window.innerHeight
-                );
+                if (f.userData.viewport) {
+                    // cut
+                    renderer.setViewport(
+                        f.userData.left,
+                        f.userData.bottom,
+                        f.userData.width,
+                        f.userData.height
+                    );
+                    renderer.setScissor(
+                        f.userData.left,
+                        f.userData.bottom,
+                        f.userData.width,
+                        f.userData.height
+                    );
+
+                    // cut aspect
+                    f.userData.camera.aspect =
+                        f.userData.width / f.userData.height;
+                    f.userData.camera.updateProjectionMatrix();
+                } else if (!f.userData.viewport) {
+                    // fullscreen
+                    renderer.setViewport(
+                        0,
+                        0,
+                        window.innerWidth,
+                        window.innerHeight
+                    );
+                    renderer.setScissor(
+                        0,
+                        0,
+                        window.innerWidth,
+                        window.innerHeight
+                    );
+                }
                 renderer.render(f, f.userData.camera);
             }
         });
@@ -114,6 +138,12 @@
         enabled={scene == 2}
         {textures}
         {hdris}
+        on:mount={(e) => scenes.push(e.detail.scene)}
+    />
+    <Subscene2
+        {renderer}
+        {hdris}
+        enabled={scene == 2}
         {section2AnimComplete}
         {section2AnimBackwards}
         on:mount={(e) => scenes.push(e.detail.scene)}

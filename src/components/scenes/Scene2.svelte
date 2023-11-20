@@ -11,7 +11,6 @@
     import { createEventDispatcher, onMount } from "svelte";
     import * as THREE from "three";
     import { Vector3 } from "three";
-    import Subscene2 from "../Subscene2.svelte";
 
     export let models: any[] = [];
     export let textures: any[] = [];
@@ -19,16 +18,10 @@
     export let renderer: THREE.WebGLRenderer;
     export let camera: THREE.PerspectiveCamera;
     export let scrollY: number;
-    export let section2AnimComplete = false;
-    export let section2AnimBackwards = false;
     export let enabled: boolean;
-    $: enabled, scissors();
-    $: section2AnimBackwards, backwards();
-    $: section2AnimComplete, showExtraCanvas();
     $: enabled, resize();
     $: enabled, loop();
     $: enabled, tone();
-    $: enabled, showExtraCanvas();
 
     onMount(() => init());
     const dispatch = createEventDispatcher();
@@ -47,19 +40,6 @@
     scene.add(camera);
     scene.userData.camera = camera;
     scene.userData.scene = 2;
-
-    const scene2 = new THREE.Scene();
-    const camera2 = new THREE.PerspectiveCamera(
-        40,
-        window.innerWidth / window.innerHeight,
-        0.01,
-        1000
-    );
-    camera2.position.set(0, 0, 20);
-    scene2.add(camera2);
-    let element: HTMLElement;
-    let extraCanvasVisible = false;
-    let loopingExtra = false;
 
     const init = () => {
         gsap.registerPlugin(ScrollTrigger);
@@ -108,71 +88,10 @@
         // renderer.toneMappingExposure = 1;
     };
 
-    const showExtraCanvas = () => {
-        if (!section2AnimComplete) return;
-        if (!element) return;
-        if (!enabled) return;
-
-        extraCanvasVisible = true;
-        element.style.display = "block";
-
-        if (!loopingExtra) loopExtra();
-    };
-
-    const backwards = () => {
-        if (!section2AnimBackwards) return;
-        if (!element) return;
-        if (!enabled) return;
-
-        element.style.display = "none";
-        extraCanvasVisible = false;
-    };
-
-    const scissors = () => {
-        if (!enabled) renderer.setScissorTest(false);
-    };
-
-    const resetViewport = () => {
-        if (!element) return;
-
-        // get its position relative to the page's viewport
-        const rect = element.getBoundingClientRect();
-
-        // set the viewport
-        const width = rect.right - rect.left;
-        const height = rect.bottom - rect.top;
-        const left = rect.left;
-        const bottom = renderer.domElement.clientHeight - rect.bottom;
-
-        renderer.setViewport(left, bottom, width, height);
-        renderer.setScissor(left, bottom, width, height);
-
-        camera2.aspect = width / height; // not changing in this example
-        camera2.updateProjectionMatrix();
-    };
-
     const loop = () => {
         if (!enabled) return;
 
         requestAnimationFrame(loop);
-    };
-
-    const loopExtra = () => {
-        if (!enabled || !extraCanvasVisible) {
-            loopingExtra = false;
-            return;
-        }
-
-        requestAnimationFrame(loopExtra);
-
-        renderer.setScissorTest(true);
-        if (window.innerWidth >= 1600) {
-            resetViewport(); // mobile fullscreen
-        }
-
-        renderer.render(scene2, camera2);
-
-        loopingExtra = true;
     };
 </script>
 
@@ -182,40 +101,3 @@
 />
 
 <!-- <Fog {scene} color={0x000000} near={cameraZ - 5} far={cameraZ} /> -->
-
-<Subscene2
-    scene={scene2}
-    camera={camera2}
-    {renderer}
-    bind:element
-    {hdris}
-    enabled={enabled && extraCanvasVisible}
-/>
-
-<style>
-    :global(.scene2-extra-canvas) {
-        display: block;
-        width: 92dvw;
-        height: 65dvh;
-        position: absolute;
-        bottom: 1rem;
-    }
-
-    @media (min-width: 1600px) {
-        :global(.scene2-extra-canvas) {
-            display: none;
-            height: 90dvh;
-            width: 600px;
-            right: 14rem;
-            transform: translateY(-50%);
-            top: 50%;
-            bottom: 0;
-            -webkit-border-radius: 8px;
-            -moz-border-radius: 8px;
-            border-radius: 8px;
-            -webkit-box-shadow: 0px 0px 0px 4px #000000;
-            -moz-box-shadow: 0px 0px 0px 4px #000000;
-            box-shadow: 0px 0px 0px 4px #000000;
-        }
-    }
-</style>
