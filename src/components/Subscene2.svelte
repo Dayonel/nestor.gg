@@ -6,7 +6,6 @@
     import Background from "$lib/Background.svelte";
     import SpotLight from "$lib/SpotLight.svelte";
     import * as CANNON from "cannon-es";
-    import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
     export let renderer: THREE.WebGLRenderer;
     export let camera: THREE.PerspectiveCamera;
@@ -21,7 +20,28 @@
     let background: any;
     const world = new CANNON.World();
 
-    const totalSpheres = Array.from(new Array(20).keys());
+    const spawnSpheres = [
+        { position: new Vector3(-4, 6, 3), radius: 0.7 },
+        { position: new Vector3(-1, 6, 5), radius: 0.8 },
+        { position: new Vector3(4.5, 6, 3), radius: 0.7 },
+        { position: new Vector3(-4, 3, 0), radius: 0.8 },
+        { position: new Vector3(-3, 3.5, 2), radius: 0.77 },
+        { position: new Vector3(1, 4, 2), radius: 0.75 },
+        { position: new Vector3(2.25, 4, 0), radius: 0.75 },
+        { position: new Vector3(5.25, 4, 0), radius: 0.85 },
+        { position: new Vector3(-4, 0, 1.5), radius: 0.75 },
+        { position: new Vector3(-0.75, 0.5, 0), radius: 0.88 },
+        { position: new Vector3(0.6, -0.5, -2), radius: 0.9 },
+        { position: new Vector3(1.85, 0, 0), radius: 0.7 },
+        { position: new Vector3(3, -1, -1), radius: 0.9 },
+        { position: new Vector3(-3, -1, 3), radius: 1 },
+        { position: new Vector3(-3, -3, 2), radius: 0.6 },
+        { position: new Vector3(-1, -3.5, 2), radius: 0.6 },
+        { position: new Vector3(5, -3.5, 0), radius: 0.7 },
+        { position: new Vector3(-2.5, -4.5, 4), radius: 0.8 },
+        { position: new Vector3(0, -6, 4), radius: 0.8 },
+        { position: new Vector3(3, -5, 4), radius: 0.65 },
+    ];
     let mounted = false;
     let allowForce = true;
 
@@ -29,13 +49,6 @@
 
     const init = () => {
         addExtraCanvas();
-
-        // const controls = new OrbitControls(camera, element);
-        // controls.minDistance = 2;
-        // controls.maxDistance = 5;
-        // controls.enablePan = false;
-        // controls.enableZoom = false;
-        // scene.userData.controls = controls;
 
         // reflections
         envMap = hdris[0];
@@ -153,12 +166,12 @@
     position={new Vector3(-6, 0, 0)}
 />
 
-{#each totalSpheres as _}
+{#each spawnSpheres as spawn}
     <Sphere
         {scene}
         {envMap}
-        position={new THREE.Vector3(random(-6, 6), random(-6, 6), random(5, 7))}
-        radius={random(0.7, 1)}
+        position={spawn.position}
+        radius={spawn.radius}
         on:mount={(e) => {
             spheres.push(e.detail.ref);
             world.addBody(e.detail.ref.userData.body);
@@ -169,7 +182,7 @@
                 const s = e.detail.ref.userData.body;
                 const v = new CANNON.Vec3();
                 v.set(-s.position.x, -s.position.y, -s.position.z).normalize();
-                v.scale(0.5, s.force);
+                v.scale(0.1, s.force);
                 s.applyLocalForce(v);
             });
         }}

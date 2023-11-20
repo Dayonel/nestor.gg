@@ -50,7 +50,7 @@
 
     const scene2 = new THREE.Scene();
     const camera2 = new THREE.PerspectiveCamera(
-        50,
+        40,
         window.innerWidth / window.innerHeight,
         0.01,
         1000

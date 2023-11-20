@@ -62,7 +62,7 @@
         dispatch("mount", { ref });
     });
 
-    const random = (min: number = -0.002, max: number = 0.002) => {
+    const random = (min: number = -0.001, max: number = 0.001) => {
         return min + Math.random() * (max - min);
     };
 </script>
