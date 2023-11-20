@@ -6,6 +6,7 @@
     export let scene: THREE.Scene;
     export let position: THREE.Vector3 = new THREE.Vector3(0, 0, 0);
     export let scale: number = 1;
+    export let material: any = new THREE.MeshStandardMaterial();
     export let ref: any = undefined;
     export let radius = 1;
     export let envMap: any = undefined;
@@ -15,25 +16,11 @@
     onMount(() => {
         const geometry = new THREE.IcosahedronGeometry(radius, 15);
 
-        // const material = new THREE.MeshPhysicalMaterial({
-        //     transmission: 1,
-        //     roughness: 0,
-        //     reflectivity: 1,
-        //     ior: 1.2,
-        //     thickness: 10,
-        // });
-        // if (envMap) {
-        //     material.envMap = envMap;
-        //     material.envMapIntensity = 1.5;
-        // }
+        if (envMap) {
+            material.envMap = envMap;
+            material.envMapIntensity = 1.5;
+        }
 
-        const material = new THREE.MeshPhysicalMaterial({
-            color: new THREE.Color("#3897a9"),
-            emissive: new THREE.Color("#3897a9"),
-            roughness: 0.5,
-            // metalness: 0.1,
-            reflectivity: 0.5,
-        });
         ref = new THREE.Mesh(geometry, material);
         ref.position.copy(position);
         ref.scale.setScalar(scale);

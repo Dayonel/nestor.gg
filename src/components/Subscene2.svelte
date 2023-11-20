@@ -19,28 +19,125 @@
     let spheres: THREE.Object3D[] = [];
     let background: any;
     const world = new CANNON.World();
+    const blueMaterial = new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color("#3897a9"),
+        emissive: new THREE.Color("#3897a9"),
+        roughness: 0.5,
+        reflectivity: 0.5,
+    });
+
+    const blackMaterial = new THREE.MeshStandardMaterial({
+        color: new THREE.Color("#000000"),
+        emissive: new THREE.Color("#000000"),
+        roughness: 1, // matte appearance
+        metalness: 0,
+    });
+
+    const transparentMaterial = new THREE.MeshPhysicalMaterial({
+        transmission: 1,
+        roughness: 0,
+        reflectivity: 1,
+        ior: 1.2,
+        thickness: 10,
+    });
 
     const spawnSpheres = [
-        { position: new Vector3(-4, 6, 3), radius: 0.7 },
-        { position: new Vector3(-1, 6, 5), radius: 0.8 },
-        { position: new Vector3(4.5, 6, 3), radius: 0.7 },
-        { position: new Vector3(-4, 3, 0), radius: 0.8 },
-        { position: new Vector3(-3, 3.5, 2), radius: 0.77 },
-        { position: new Vector3(1, 4, 2), radius: 0.75 },
-        { position: new Vector3(2.25, 4, 0), radius: 0.75 },
-        { position: new Vector3(5.25, 4, 0), radius: 0.85 },
-        { position: new Vector3(-4, 0, 1.5), radius: 0.75 },
-        { position: new Vector3(-0.75, 0.5, 0), radius: 0.88 },
-        { position: new Vector3(0.6, -0.5, -2), radius: 0.9 },
-        { position: new Vector3(1.85, 0, 0), radius: 0.7 },
-        { position: new Vector3(3, -1, -1), radius: 0.9 },
-        { position: new Vector3(-3, -1, 3), radius: 1 },
-        { position: new Vector3(-3, -3, 2), radius: 0.6 },
-        { position: new Vector3(-1, -3.5, 2), radius: 0.6 },
-        { position: new Vector3(5, -3.5, 0), radius: 0.7 },
-        { position: new Vector3(-2.5, -4.5, 4), radius: 0.8 },
-        { position: new Vector3(0, -6, 4), radius: 0.8 },
-        { position: new Vector3(3, -5, 4), radius: 0.65 },
+        {
+            position: new Vector3(-4, 6, 3),
+            radius: 0.7,
+            material: blueMaterial,
+        },
+        {
+            position: new Vector3(-1, 6, 5),
+            radius: 0.8,
+            material: blackMaterial,
+        },
+        {
+            position: new Vector3(4.5, 6, 3),
+            radius: 0.7,
+            material: blackMaterial,
+        },
+        {
+            position: new Vector3(-4, 3, 0),
+            radius: 0.8,
+            material: blueMaterial,
+        },
+        {
+            position: new Vector3(-3, 3.5, 2),
+            radius: 0.77,
+            material: transparentMaterial,
+        },
+        {
+            position: new Vector3(1, 4, 2),
+            radius: 0.75,
+            material: transparentMaterial,
+        },
+        {
+            position: new Vector3(2.25, 4, 0),
+            radius: 0.75,
+            material: transparentMaterial,
+        },
+        {
+            position: new Vector3(5.25, 4, 0),
+            radius: 0.85,
+            material: blueMaterial,
+        },
+        {
+            position: new Vector3(-4, 0, 1.5),
+            radius: 0.75,
+            material: blackMaterial,
+        },
+        {
+            position: new Vector3(-0.75, 0.5, 0),
+            radius: 0.88,
+            material: blueMaterial,
+        },
+        {
+            position: new Vector3(0.6, -0.5, -2),
+            radius: 0.9,
+            material: transparentMaterial,
+        },
+        {
+            position: new Vector3(1.85, 0, 0),
+            radius: 0.7,
+            material: blueMaterial,
+        },
+        {
+            position: new Vector3(3, -1, -1),
+            radius: 0.9,
+            material: blackMaterial,
+        },
+        { position: new Vector3(-3, -1, 3), radius: 1, material: blueMaterial },
+        {
+            position: new Vector3(-3, -3, 2),
+            radius: 0.6,
+            material: transparentMaterial,
+        },
+        {
+            position: new Vector3(-1, -3.5, 2),
+            radius: 0.6,
+            material: blueMaterial,
+        },
+        {
+            position: new Vector3(5, -3.5, 0),
+            radius: 0.7,
+            material: transparentMaterial,
+        },
+        {
+            position: new Vector3(-2.5, -4.5, 4),
+            radius: 0.8,
+            material: blueMaterial,
+        },
+        {
+            position: new Vector3(0, -6, 4),
+            radius: 0.8,
+            material: transparentMaterial,
+        },
+        {
+            position: new Vector3(3, -5, 4),
+            radius: 0.65,
+            material: blueMaterial,
+        },
     ];
     let mounted = false;
     let allowForce = true;
@@ -172,6 +269,7 @@
         {envMap}
         position={spawn.position}
         radius={spawn.radius}
+        material={spawn.material}
         on:mount={(e) => {
             spheres.push(e.detail.ref);
             world.addBody(e.detail.ref.userData.body);
