@@ -7,10 +7,10 @@
     export let position: THREE.Vector3 = new THREE.Vector3(0, 0, 0);
     export let scale: number = 1;
     export let ref: any = undefined;
+    export let radius = 1;
     export let envMap: any = undefined;
 
     const dispatch = createEventDispatcher();
-    const radius = 1;
 
     onMount(() => {
         const geometry = new THREE.IcosahedronGeometry(radius, 15);
@@ -43,7 +43,7 @@
         ref.userData.radius = radius;
 
         // physics
-        const shape = new CANNON.Sphere(1);
+        const shape = new CANNON.Sphere(radius);
         const body = new CANNON.Body({
             mass: 1,
             position: new CANNON.Vec3(
@@ -62,7 +62,7 @@
         dispatch("mount", { ref });
     });
 
-    const random = (min: number = 0.001, max: number = 0.002) => {
+    const random = (min: number = -0.002, max: number = 0.002) => {
         return min + Math.random() * (max - min);
     };
 </script>

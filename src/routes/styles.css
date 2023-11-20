@@ -74,11 +74,7 @@ canvas {
 }
 
 
-.pin-spacer * {
-    pointer-events: all;
-}
-
-.pin-spacer section {
+.pin-spacer {
     /* 
         gsap bug
         scroll events not triggering

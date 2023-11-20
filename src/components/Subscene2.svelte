@@ -20,11 +20,8 @@
     let spheres: THREE.Object3D[] = [];
     let background: any;
     const world = new CANNON.World();
-    const clock = new THREE.Clock();
 
     const totalSpheres = Array.from(new Array(20).keys());
-    const spherePositions: THREE.Vector3[] = [];
-    const radius = 1;
     let mounted = false;
     let allowForce = true;
 
@@ -40,15 +37,6 @@
         // controls.enableZoom = false;
         // scene.userData.controls = controls;
 
-        totalSpheres.forEach(() => {
-            let newPosition = new THREE.Vector3();
-            // Place the object without collision
-            do {
-                newPosition.set(random(-6, 6), random(-6, 6), random(6, 7));
-            } while (isColliding(newPosition));
-            spherePositions.push(newPosition);
-        });
-
         // reflections
         envMap = hdris[0];
         envMap.mapping = THREE.EquirectangularReflectionMapping;
@@ -62,7 +50,7 @@
     const addExtraCanvas = () => {
         const section2 = document.getElementById("scene2");
         element = document.createElement("div");
-        element.addEventListener("click", applyForce);
+        // element.addEventListener("click", applyForce);
         element.className = "scene2-extra-canvas";
         section2?.appendChild(element);
     };
@@ -106,23 +94,11 @@
         setTimeout(() => (allowForce = true), 1000);
     };
 
-    // Function to check collision with other spheres
-    function isColliding(position: THREE.Vector3) {
-        for (var i = 0; i < spherePositions.length; i++) {
-            var distance = position.distanceTo(spherePositions[i]);
-            if (distance < radius + radius) {
-                return true; // Collision detected
-            }
-        }
-        return false; // No collision
-    }
-
     const loop = () => {
         if (!enabled) return;
         if (!mounted) return;
 
-        const delta = Math.min(clock.getDelta(), 0.1);
-        world.step(delta);
+        world.fixedStep();
 
         const date = Date.now();
 
@@ -147,36 +123,14 @@
             f.userData.body.position.z += f.userData.velocity.z;
 
             // Copy coordinates from Cannon to Three.js
-            f.position.set(
-                f.userData.body.position.x,
-                f.userData.body.position.y,
-                f.userData.body.position.z
-            );
+            f.position.copy(f.userData.body.position);
+            f.quaternion.copy(f.userData.body.quaternion);
 
             // boundaries
             if (!isObjectInCameraFrustum(f)) {
-                // Determine which axis is outside the frustum
-                const position = f.position;
-                const deltaX = Math.abs(position.x);
-                const deltaY = Math.abs(position.y);
-
-                if (deltaX > deltaY) {
-                    // Reverse X axis
-                    if (!f.userData.toggleX) {
-                        f.userData.toggleX = true;
-                        f.userData.velocity.x *= -1;
-                    }
-                } else {
-                    // Reverse Y axis
-                    if (!f.userData.toggleY) {
-                        f.userData.toggleY = true;
-                        f.userData.velocity.y *= -1;
-                    }
-                }
-            } else {
-                // Reset toggle flags when inside the frustum
-                f.userData.toggleX = false;
-                f.userData.toggleY = false;
+                f.userData.gravity = true;
+            } else if (isObjectInCameraFrustum(f)) {
+                f.userData.gravity = false;
             }
         }
     };
@@ -199,19 +153,23 @@
     position={new Vector3(-6, 0, 0)}
 />
 
-{#each spherePositions as position}
+{#each totalSpheres as _}
     <Sphere
         {scene}
         {envMap}
-        {position}
+        position={new THREE.Vector3(random(-6, 6), random(-6, 6), random(5, 7))}
+        radius={random(0.7, 1)}
         on:mount={(e) => {
             spheres.push(e.detail.ref);
             world.addBody(e.detail.ref.userData.body);
-            world.addEventListener("postStep", function () {
+            world.addEventListener("postStep", () => {
+                if (!e.detail.ref.userData.gravity) return;
+
+                // pull sphere back to scene
                 const s = e.detail.ref.userData.body;
                 const v = new CANNON.Vec3();
                 v.set(-s.position.x, -s.position.y, -s.position.z).normalize();
-                v.scale(9.8, s.force);
+                v.scale(0.5, s.force);
                 s.applyLocalForce(v);
             });
         }}
