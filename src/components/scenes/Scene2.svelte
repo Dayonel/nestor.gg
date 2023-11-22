@@ -85,7 +85,6 @@
         if (!enabled) return;
 
         renderer.toneMapping = THREE.NoToneMapping;
-        // renderer.toneMappingExposure = 1;
     };
 
     const loop = () => {
@@ -100,4 +99,43 @@
     on:orientationchange={() => resize()}
 />
 
-<!-- <Fog {scene} color={0x000000} near={cameraZ - 5} far={cameraZ} /> -->
+<Background {scene} color={0xc22fca} position={new Vector3(0, 0, -5)} />
+
+<!-- Static lights -->
+<PointLight
+    {scene}
+    color={0xff0000}
+    intensity={50}
+    position={new Vector3(-10, 10, 10)}
+/>
+
+<PointLight
+    {scene}
+    color={0x0000ff}
+    intensity={50}
+    position={new Vector3(0, 10, 10)}
+/>
+
+<PointLight
+    {scene}
+    color={0xff0000}
+    intensity={50}
+    position={new Vector3(10, 10, 10)}
+/>
+
+<SpotLight
+    {scene}
+    color={0xffffff}
+    intensity={2000}
+    position={new Vector3(0, 50, -1)}
+/>
+
+<DirectionalLight
+    {scene}
+    color={0xf2f2f2}
+    intensity={0.12}
+    position={new Vector3(-1, 1.75, 1)}
+    scale={30}
+/>
+
+<Fog {scene} color={0x000000} near={cameraZ - 5} far={cameraZ} />

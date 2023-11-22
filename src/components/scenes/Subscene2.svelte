@@ -9,14 +9,11 @@
 
     export let renderer: THREE.WebGLRenderer;
     export let hdris: any[] = [];
-    export let section2AnimComplete = false;
-    export let section2AnimBackwards = false;
     export let enabled: boolean;
 
-    $: section2AnimBackwards, backwards();
-    $: section2AnimComplete, showExtraCanvas();
     $: enabled, loop();
-    $: enabled, showExtraCanvas();
+    $: enabled, tone();
+    $: hdris, hdr();
 
     let canvas: any;
     const scene = new THREE.Scene();
@@ -61,7 +58,6 @@
     let spawnSpheres: any[] = [];
     let mounted = false;
     let allowForce = true;
-    let extraCanvasVisible = false;
 
     onMount(() => init());
 
@@ -173,16 +169,20 @@
             },
         ];
 
-        // reflections
-        envMap = hdris[0];
-        envMap.mapping = THREE.EquirectangularReflectionMapping;
-        scene.environment = envMap;
-
         renderer.compile(scene, camera);
 
         mounted = true;
 
         dispatch("mount", { scene });
+    };
+
+    const hdr = () => {
+        if (!hdris || hdris.length == 0) return;
+
+        // reflections
+        envMap = hdris[0];
+        envMap.mapping = THREE.EquirectangularReflectionMapping;
+        scene.environment = envMap;
     };
 
     // Function to check if an object is inside the camera frustum
@@ -220,7 +220,18 @@
         setTimeout(() => (allowForce = true), 1000);
     };
 
+    const tone = () => {
+        if (!enabled) return;
+
+        renderer.toneMapping = THREE.NoToneMapping;
+    };
+
     const setViewport = () => {
+        if (window.innerWidth < 1600) {
+            scene.userData.viewport = false;
+            return;
+        }
+
         // get its position relative to the page's viewport
         const rect = canvas.getBoundingClientRect();
 
@@ -237,32 +248,14 @@
         scene.userData.bottom = bottom;
     };
 
-    const showExtraCanvas = () => {
-        if (!section2AnimComplete) return;
-        if (!canvas) return;
-        if (!enabled) return;
-
-        extraCanvasVisible = true;
-        canvas.style.display = "block";
-    };
-
-    const backwards = () => {
-        if (!section2AnimBackwards) return;
-        if (!canvas) return;
-        if (!enabled) return;
-
-        canvas.style.display = "none";
-        extraCanvasVisible = false;
-    };
-
     const loop = () => {
         if (!enabled) return;
+
+        requestAnimationFrame(loop);
 
         world.fixedStep();
 
         const date = Date.now();
-
-        requestAnimationFrame(loop);
 
         const ROTATE_TIME = 10; // Time in seconds for a full rotation
         const xAxis = new THREE.Vector3(1, 0, 0);
@@ -294,9 +287,7 @@
             }
         }
 
-        // if (window.innerWidth >= 1600) {
-        //     resetViewport(); // mobile fullscreen
-        // }
+        // setViewport();
     };
 </script>
 

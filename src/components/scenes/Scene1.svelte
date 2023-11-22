@@ -31,7 +31,8 @@
     scene.userData.scene = 1;
 
     const cameraZ = 25;
-    const tweenToZ = cameraZ - 10;let light1: any, light2: any, light3: any, light4: any;
+    const tweenToZ = cameraZ - 10;
+    let light1: any, light2: any, light3: any, light4: any;
     let mounted = false;
 
     let materials: MaterialDTO[] = [];
@@ -191,34 +192,43 @@
 
 <Background {scene} color={0xc22fca} position={new Vector3(0, 0, -5)} />
 
-<GLTF
-    gltf={models[0]}
-    {scene}
-    position={new Vector3(2.45, -0.5, 0)}
-    {materials}
-    {group}
-/>
-<GLTF
-    gltf={models[1]}
-    {scene}
-    position={new Vector3(-2.5, -0.5, 0)}
-    {materials}
-    {group}
-/>
-<GLTF
-    gltf={models[2]}
-    {scene}
-    position={new Vector3(-7.5, -0.5, 0)}
-    {materials}
-    {group}
-/>
-<GLTF
-    gltf={models[3]}
-    {scene}
-    position={new Vector3(7, -0.5, 0)}
-    {materials}
-    {group}
-/>
+{#if models && models.length > 0}
+    <GLTF
+        gltf={models[0]}
+        {scene}
+        position={new Vector3(2.45, -0.5, 0)}
+        {materials}
+        {group}
+    />
+{/if}
+
+{#if models && models.length > 1}
+    <GLTF
+        gltf={models[1]}
+        {scene}
+        position={new Vector3(-2.5, -0.5, 0)}
+        {materials}
+        {group}
+    />
+{/if}
+{#if models && models.length > 2}
+    <GLTF
+        gltf={models[2]}
+        {scene}
+        position={new Vector3(-7.5, -0.5, 0)}
+        {materials}
+        {group}
+    />
+{/if}
+{#if models && models.length > 3}
+    <GLTF
+        gltf={models[3]}
+        {scene}
+        position={new Vector3(7, -0.5, 0)}
+        {materials}
+        {group}
+    />
+{/if}
 <!-- <Water {scene} /> -->
 
 <!-- Moving lights -->

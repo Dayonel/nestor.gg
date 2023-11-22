@@ -1,5 +1,4 @@
 <script lang="ts">
-    import Three from "../components/Three.svelte";
     // @ts-ignore
     import { gsap } from "gsap/dist/gsap.js";
     // @ts-ignore
@@ -12,9 +11,6 @@
     let scrollY: number = 0;
     let scrollHidden: boolean = true;
     let scrolling: any;
-    let models: any[] = [];
-    let hdris: any[] = [];
-    let textures: any[] = [];
     let sections: NodeListOf<HTMLElement>;
     let scene: number = 1;
     let section2AnimComplete = true;
@@ -28,9 +24,6 @@
         // textReveal();
 
         loading = false;
-        models = e.detail.models;
-        hdris = e.detail.hdris;
-        textures = e.detail.textures;
 
         await tick(); // wait for DOM updates to be applied
 
@@ -149,20 +142,14 @@
 </svelte:head>
 
 <div bind:this={scrolling} id="scrolling" on:scroll={() => onScroll()}>
-    {#if loading}
-        <Loader on:load={async (e) => await loaded(e)} />
-    {:else}
-        <Three
-            {scrollPercent}
-            {scrollY}
-            {models}
-            {hdris}
-            {textures}
-            {scene}
-            {section2AnimComplete}
-            {section2AnimBackwards}
-        />
+    <Loader
+        on:load={async (e) => await loaded(e)}
+        {scrollPercent}
+        {scrollY}
+        {scene}
+    />
 
+    {#if !loading}
         <div id="three">
             <!-- Section 1 -->
             <section id="scene1" class="gsap-hero">
@@ -423,7 +410,6 @@
 
     @media (min-width: 1600px) {
         #scene2-canvas {
-            display: none;
             height: 90dvh;
             width: 600px;
             right: 14rem;

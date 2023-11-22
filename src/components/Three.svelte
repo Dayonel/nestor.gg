@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onDestroy } from "svelte";
+    import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import WebGL from "three/examples/jsm/capabilities/WebGL.js";
     import * as THREE from "three";
     import Stats from "three/examples/jsm/libs/stats.module";
@@ -13,17 +13,17 @@
     export let textures: any[] = [];
     export let scrollPercent = 0;
     export let scrollY = 0;
-    export let section2AnimComplete = false;
-    export let section2AnimBackwards = false;
     export let scene: number = 1;
+    export let renderer: THREE.WebGLRenderer;
+    export let scenes: THREE.Scene[] = [];
+    export let preRendered: boolean = false;
     $: scene, renderer.clear();
+    $: preRendered, start();
 
     let weblAvailable = WebGL.isWebGLAvailable();
-    let renderer: THREE.WebGLRenderer;
     let camera: THREE.PerspectiveCamera;
     let stats: any;
     let canvas: HTMLCanvasElement;
-    const scenes: THREE.Scene[] = [];
 
     onDestroy(() => {
         if (stats) document.body.removeChild(stats.dom);
@@ -46,6 +46,8 @@
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+        renderer.autoClear = false;
+
         camera = new THREE.PerspectiveCamera(
             70,
             window.innerWidth / window.innerHeight,
@@ -55,23 +57,26 @@
 
         canvas = document.body.appendChild(renderer.domElement);
 
+        console.log("three has mounted");
+    };
+
+    const start = () => {
+        if (!preRendered) return;
+
         // stats
         stats = new Stats();
         document.body.appendChild(stats.dom);
-
-        console.log("three has mounted");
+        loop();
     };
 
     const loop = () => {
         requestAnimationFrame(loop);
 
-        renderer.setScissorTest(false);
-        renderer.clear();
-        renderer.setScissorTest(true);
-
         scenes?.forEach((f) => {
             if (f.userData.scene == scene) {
+                renderer.clear();
                 if (f.userData.viewport) {
+                    renderer.setScissorTest(true);
                     // cut
                     renderer.setViewport(
                         f.userData.left,
@@ -91,19 +96,7 @@
                         f.userData.width / f.userData.height;
                     f.userData.camera.updateProjectionMatrix();
                 } else if (!f.userData.viewport) {
-                    // fullscreen
-                    renderer.setViewport(
-                        0,
-                        0,
-                        window.innerWidth,
-                        window.innerHeight
-                    );
-                    renderer.setScissor(
-                        0,
-                        0,
-                        window.innerWidth,
-                        window.innerHeight
-                    );
+                    renderer.setScissorTest(false);
                 }
                 renderer.render(f, f.userData.camera);
             }
@@ -114,7 +107,6 @@
 
     // this happens prior to chilren onMount()
     init();
-    loop();
 </script>
 
 <span class="scroll">Scroll progress: {scrollPercent?.toFixed(2)}%</span>
@@ -130,7 +122,7 @@
         enabled={scene == 1}
         on:mount={(e) => scenes.push(e.detail.scene)}
     />
-    <Scene2
+    <!-- <Scene2
         {models}
         {renderer}
         {camera}
@@ -139,13 +131,11 @@
         {textures}
         {hdris}
         on:mount={(e) => scenes.push(e.detail.scene)}
-    />
+    /> -->
     <Subscene2
         {renderer}
         {hdris}
         enabled={scene == 2}
-        {section2AnimComplete}
-        {section2AnimBackwards}
         on:mount={(e) => scenes.push(e.detail.scene)}
     />
     <Scene3

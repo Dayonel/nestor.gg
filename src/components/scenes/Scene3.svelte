@@ -24,7 +24,7 @@
     $: enabled, resize();
     $: enabled, tone();
     $: enabled, show();
-    const texture = textures[0];
+    $: textures, setupParticles();
 
     const dispatch = createEventDispatcher();
     const scene = new THREE.Scene();
@@ -40,6 +40,7 @@
     let mounted = false;
     let clock = new THREE.Clock();
     let particles: any;
+    let texture: any;
     // let uniforms = THREE.UniformsUtils.merge([THREE.UniformsLib["fog"]]);
     // uniforms.time = { type: "f", value: 1 };
     // uniforms.diffuse = { type: "c", value: new THREE.Color(0x00ccff) };
@@ -63,8 +64,6 @@
 
         scene.add(group);
 
-        setupParticles();
-
         mounted = true;
 
         renderer.compile(scene, camera);
@@ -74,6 +73,7 @@
 
     const resize = () => {
         if (!enabled) return;
+        if (!texture) return;
 
         if (particles) {
             const fovHeight =
@@ -102,6 +102,9 @@
     };
 
     const setupParticles = () => {
+        if (!textures || textures.length == 0) return;
+        texture = textures[0];
+
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
         texture.format = THREE.RGBAFormat;
