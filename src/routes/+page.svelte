@@ -77,7 +77,7 @@
                 opacity: hide ? 0 : 1,
                 duration: 0.2,
                 ease: "power1.out",
-            }
+            },
         );
     };
 
@@ -149,33 +149,32 @@
         {scene}
     />
 
-    {#if !loading}
-        <div id="three">
-            <!-- Section 1 -->
-            <section id="scene1" class="gsap-hero">
-                <div class="block">
-                    <h1 class="name hero-text">Hi, I'm Nestor</h1>
-                    <h2 class="position hero-text">I live in Amsterdam</h2>
-                </div>
+    <div id="three" class:invisible={loading}>
+        <!-- Section 1 -->
+        <section id="scene1" class="gsap-hero">
+            <div class="block">
+                <h1 class="name hero-text">Hi, I'm Nestor</h1>
+                <h2 class="position hero-text">I live in Amsterdam</h2>
+            </div>
 
-                <div class="block scroll-dots">
-                    <span class="dot dot3" />
-                    <span class="dot dot2" />
-                    <span class="dot dot1" />
-                    <span>Scroll down</span>
-                </div>
-            </section>
+            <div class="block scroll-dots">
+                <span class="dot dot3" />
+                <span class="dot dot2" />
+                <span class="dot dot1" />
+                <span>Scroll down</span>
+            </div>
+        </section>
 
-            <!-- Section 2 -->
-            <section id="scene2">
-                <p class="scene2-text">
-                    I'm on an epic quest to master the art of web development
-                </p>
-                <div id="scene2-canvas" />
-            </section>
-            <!-- <div class="container"> -->
+        <!-- Section 2 -->
+        <section id="scene2">
+            <p class="scene2-text">
+                I'm on an epic quest to master the art of web development
+            </p>
+            <div id="scene2-canvas" />
+        </section>
+        <!-- <div class="container"> -->
 
-            <!-- <ul>
+        <!-- <ul>
                     {#each new Array(10).keys() as _}
                         <li>
                             <figure>
@@ -191,32 +190,29 @@
                         </li>
                     {/each}
                 </ul> -->
-            <!-- </div> -->
+        <!-- </div> -->
 
-            <section id="scene3">
-                <p>I love</p>
-                <p>videogames</p>
-            </section>
+        <section id="scene3">
+            <p>I love</p>
+            <p>videogames</p>
+        </section>
 
-            <section id="scene4">
-                <p>I love</p>
-                <p>videogames</p>
-            </section>
+        <section id="scene4">
+            <p>I love</p>
+            <p>videogames</p>
+        </section>
 
-            <section id="scene5">
-                <h2>Changing Camera Position</h2>
-                <p>The camera position is now changing</p>
-            </section>
+        <section id="scene5">
+            <h2>Changing Camera Position</h2>
+            <p>The camera position is now changing</p>
+        </section>
 
-            <section id="scene6">
-                <h2>You are at the bottom</h2>
-                <p>The cube will now be auto rotating</p>
-                <p>
-                    Now you can scroll back to the top to reverse the animation
-                </p>
-            </section>
-        </div>
-    {/if}
+        <section id="scene6">
+            <h2>You are at the bottom</h2>
+            <p>The cube will now be auto rotating</p>
+            <p>Now you can scroll back to the top to reverse the animation</p>
+        </section>
+    </div>
 </div>
 
 <style>

@@ -32,7 +32,7 @@
         50,
         window.innerWidth / window.innerHeight,
         1,
-        10000
+        10000,
     );
     camera.position.set(0, 0, 200);
     scene.userData.camera = camera;
@@ -90,7 +90,7 @@
     const tone = () => {
         if (!enabled) return;
 
-        renderer.toneMapping = THREE.NoToneMapping;
+        renderer.toneMappingExposure = 1;
     };
 
     const random = (min: number, max: number): number => {
@@ -131,7 +131,7 @@
             0,
             0,
             texture.image.width,
-            texture.image.height * -1
+            texture.image.height * -1,
         );
 
         const imgData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
@@ -150,7 +150,7 @@
             uTextureSize: {
                 value: new THREE.Vector2(
                     texture.image.width,
-                    texture.image.height
+                    texture.image.height,
                 ),
             },
             uTexture: { value: texture },
@@ -187,7 +187,7 @@
 
         // index
         geometry.setIndex(
-            new THREE.BufferAttribute(new Uint16Array([0, 2, 1, 2, 3, 1]), 1)
+            new THREE.BufferAttribute(new Uint16Array([0, 2, 1, 2, 3, 1]), 1),
         );
 
         const indices = new Uint16Array(numPoints);
@@ -205,15 +205,15 @@
 
         geometry.setAttribute(
             "pindex",
-            new THREE.InstancedBufferAttribute(indices, 1, false)
+            new THREE.InstancedBufferAttribute(indices, 1, false),
         );
         geometry.setAttribute(
             "offset",
-            new THREE.InstancedBufferAttribute(offsets, 3, false)
+            new THREE.InstancedBufferAttribute(offsets, 3, false),
         );
         geometry.setAttribute(
             "angle",
-            new THREE.InstancedBufferAttribute(angles, 1, false)
+            new THREE.InstancedBufferAttribute(angles, 1, false),
         );
 
         particles = new THREE.Mesh(geometry, material);
@@ -228,7 +228,7 @@
             particles.material.uniforms.uSize,
             time,
             { value: 0.5 },
-            { value: 1.5 }
+            { value: 1.5 },
         );
         gsap.to(particles.material.uniforms.uRandom, time, {
             value: 2.0,
@@ -237,7 +237,7 @@
             particles.material.uniforms.uDepth,
             time * 1.5,
             { value: 40.0 },
-            { value: 4.0 }
+            { value: 4.0 },
         );
     };
 

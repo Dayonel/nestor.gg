@@ -96,21 +96,19 @@
         return new Promise((resolve) => {
             const startTime = performance.now();
 
-            function checkTime(currentTime: any) {
+            function checkTime(currentTime: number) {
                 elapsed = currentTime - startTime;
                 if (elapsed >= timeMs) {
-                    scene = 1;
                     preRendered = true;
                     resolve();
                 } else {
                     scenes.forEach((f, i) => {
-                        scene = i + 1;
                         renderer.clear();
                         renderer.render(f, f.userData.camera);
                         renderer.clear();
                     });
 
-                    if (progressTimeUpdates == 0 && elapsed >= timeMs * 0.4) {
+                    if (progressTimeUpdates == 0 && elapsed >= timeMs * 0.5) {
                         progressTimeUpdates++;
                         progress += time / 2;
                         console.log("half");

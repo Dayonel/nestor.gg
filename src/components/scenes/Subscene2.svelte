@@ -21,7 +21,7 @@
         40,
         window.innerWidth / window.innerHeight,
         0.01,
-        1000
+        1000,
     );
     camera.position.set(0, 0, 20);
     scene.add(camera);
@@ -197,7 +197,7 @@
         // Combine the camera's projection and view matrix
         cameraViewProjectionMatrix.multiplyMatrices(
             camera.projectionMatrix,
-            camera.matrixWorldInverse
+            camera.matrixWorldInverse,
         );
 
         // Set the frustum's matrix to the combined matrix
@@ -223,7 +223,7 @@
     const tone = () => {
         if (!enabled) return;
 
-        renderer.toneMapping = THREE.NoToneMapping;
+        renderer.toneMappingExposure = 1;
     };
 
     const setViewport = () => {
