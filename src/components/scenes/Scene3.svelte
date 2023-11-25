@@ -235,7 +235,7 @@
         });
         gsap.fromTo(
             particles.material.uniforms.uDepth,
-            time * 1.5,
+            time * 1,
             { value: 40.0 },
             { value: 4.0 },
         );

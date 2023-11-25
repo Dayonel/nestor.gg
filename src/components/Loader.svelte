@@ -50,7 +50,6 @@
         await loadModels();
         await loadHdris();
         await loadTextures();
-        preRenderProgress();
         await preRender();
 
         dispatch("load");
@@ -86,12 +85,6 @@
         }
     };
 
-    const preRenderProgress = () => {
-        if (elapsed >= timeMs) return;
-
-        requestAnimationFrame(preRenderProgress);
-    };
-
     const preRender = (): Promise<void> => {
         return new Promise((resolve) => {
             const startTime = performance.now();
@@ -103,7 +96,6 @@
                     resolve();
                 } else {
                     scenes.forEach((f, i) => {
-                        renderer.clear();
                         renderer.render(f, f.userData.camera);
                         renderer.clear();
                     });
@@ -111,14 +103,12 @@
                     if (progressTimeUpdates == 0 && elapsed >= timeMs * 0.5) {
                         progressTimeUpdates++;
                         progress += time / 2;
-                        console.log("half");
                     } else if (
                         progressTimeUpdates == 1 &&
                         elapsed >= timeMs * 0.9
                     ) {
                         progressTimeUpdates++;
                         progress += time / 2;
-                        console.log("full");
                     }
 
                     requestAnimationFrame(checkTime);

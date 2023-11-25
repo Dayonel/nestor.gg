@@ -21,9 +21,11 @@
     export let camera: THREE.PerspectiveCamera;
     export let scrollY: number;
     export let enabled: boolean;
+    export let intro: boolean;
     $: enabled, loop();
     $: enabled, resize();
     $: enabled, tone();
+    $: intro, introAnimation();
 
     const dispatch = createEventDispatcher();
     const scene = new THREE.Scene();
@@ -78,8 +80,6 @@
 
         animateOnScroll();
 
-        introAnimation();
-
         mounted = true;
 
         renderer.compile(scene, camera);
@@ -89,6 +89,8 @@
     };
 
     const introAnimation = () => {
+        if (!intro) return;
+        
         introTween = new TWEEN.Tween(camera.position)
             .to(
                 {
@@ -136,7 +138,6 @@
     const tone = () => {
         if (!enabled) return;
 
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 2;
     };
 

@@ -84,7 +84,7 @@
     const tone = () => {
         if (!enabled) return;
 
-        renderer.toneMapping = THREE.NoToneMapping;
+        renderer.toneMappingExposure = 1;
     };
 
     const loop = () => {

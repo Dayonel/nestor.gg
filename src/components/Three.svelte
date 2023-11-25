@@ -24,6 +24,7 @@
     let camera: THREE.PerspectiveCamera;
     let stats: any;
     let canvas: HTMLCanvasElement;
+    let intro: boolean = false;
 
     onDestroy(() => {
         if (stats) document.body.removeChild(stats.dom);
@@ -41,6 +42,7 @@
 
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
         // shadows
         renderer.shadowMap.enabled = true;
@@ -52,7 +54,7 @@
             70,
             window.innerWidth / window.innerHeight,
             0.01,
-            30000
+            30000,
         );
 
         canvas = document.body.appendChild(renderer.domElement);
@@ -67,6 +69,7 @@
         stats = new Stats();
         document.body.appendChild(stats.dom);
         loop();
+        intro = true;
     };
 
     const loop = () => {
@@ -82,13 +85,13 @@
                         f.userData.left,
                         f.userData.bottom,
                         f.userData.width,
-                        f.userData.height
+                        f.userData.height,
                     );
                     renderer.setScissor(
                         f.userData.left,
                         f.userData.bottom,
                         f.userData.width,
-                        f.userData.height
+                        f.userData.height,
                     );
 
                     // cut aspect
@@ -120,6 +123,7 @@
         {camera}
         {scrollY}
         enabled={scene == 1}
+        {intro}
         on:mount={(e) => scenes.push(e.detail.scene)}
     />
     <!-- <Scene2
