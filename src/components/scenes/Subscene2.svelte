@@ -11,9 +11,11 @@
     export let renderer: THREE.WebGLRenderer;
     export let hdris: any[] = [];
     export let enabled: boolean;
+    export let section2AnimComplete: boolean;
 
     $: enabled, loop();
     $: enabled, tone();
+    $: section2AnimComplete, toggleExtraCanvas();
     $: hdris, hdr();
 
     let canvas: any;
@@ -32,7 +34,6 @@
     const dispatch = createEventDispatcher();
     let envMap: any;
     let spheres: THREE.Object3D[] = [];
-    let background: any;
     const world = new CANNON.World();
     const blueMaterial = new THREE.MeshStandardMaterial({
         color: new THREE.Color("#3897a9"),
@@ -64,6 +65,8 @@
 
     const init = () => {
         canvas = document.getElementById("scene2-canvas");
+
+        scene.background = new THREE.Color("#ffffff");
 
         data.spheres.forEach((f) => {
             let material = blueMaterial;
@@ -158,6 +161,19 @@
         scene.userData.bottom = bottom;
     };
 
+    const resize = () => {
+        if (!enabled) return;
+
+        renderer.domElement.resize(renderer, camera);
+    };
+
+    const toggleExtraCanvas = () => {
+        if (!canvas) return;
+
+        canvas.style.display =
+            enabled && section2AnimComplete ? "block" : "none";
+    };
+
     const loop = () => {
         if (!enabled) return;
 
@@ -197,16 +213,16 @@
             }
         }
 
-        // setViewport();
+        setViewport();
     };
 </script>
 
-<Background
-    bind:ref={background}
-    {scene}
-    color={0x88d0e3}
-    position={new Vector3(0, 0, -25)}
+<svelte:window
+    on:resize={() => resize()}
+    on:orientationchange={() => resize()}
 />
+
+<Background {scene} color={0x88d0e3} position={new Vector3(0, 0, -25)} />
 
 <SpotLight
     {scene}

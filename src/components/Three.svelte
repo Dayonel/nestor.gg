@@ -17,6 +17,8 @@
     export let renderer: THREE.WebGLRenderer;
     export let scenes: THREE.Scene[] = [];
     export let preRendered: boolean = false;
+    export let section2AnimComplete: boolean;
+
     $: scene, renderer.clear();
     $: preRendered, start();
 
@@ -75,11 +77,13 @@
     const loop = () => {
         requestAnimationFrame(loop);
 
+        renderer.setScissorTest(false);
+        renderer.clear();
+        renderer.setScissorTest(true);
+
         scenes?.forEach((f) => {
             if (f.userData.scene == scene) {
-                renderer.clear();
                 if (f.userData.viewport) {
-                    renderer.setScissorTest(true);
                     // cut
                     renderer.setViewport(
                         f.userData.left,
@@ -98,8 +102,20 @@
                     f.userData.camera.aspect =
                         f.userData.width / f.userData.height;
                     f.userData.camera.updateProjectionMatrix();
-                } else if (!f.userData.viewport) {
-                    renderer.setScissorTest(false);
+                } else {
+                    // fullscreen
+                    renderer.setViewport(
+                        0,
+                        0,
+                        window.innerWidth,
+                        window.innerHeight,
+                    );
+                    renderer.setScissor(
+                        0,
+                        0,
+                        window.innerWidth,
+                        window.innerHeight,
+                    );
                 }
                 renderer.render(f, f.userData.camera);
             }
@@ -129,7 +145,6 @@
     <Scene2
         {models}
         {renderer}
-        {camera}
         {scrollY}
         enabled={scene == 2}
         {textures}
@@ -140,6 +155,7 @@
         {renderer}
         {hdris}
         enabled={scene == 2}
+        {section2AnimComplete}
         on:mount={(e) => scenes.push(e.detail.scene)}
     />
     <Scene3

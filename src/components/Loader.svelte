@@ -38,6 +38,7 @@
     export let scrollPercent: number = 0;
     export let scrollY: number = 0;
     export let scene: number = 1;
+    export let section2AnimComplete: boolean;
 
     const dispatch = createEventDispatcher();
     let models_loaded: any[] = [];
@@ -132,6 +133,7 @@
     textures={textures_loaded}
     {scene}
     {preRendered}
+    {section2AnimComplete}
 />
 
 {#await load()}

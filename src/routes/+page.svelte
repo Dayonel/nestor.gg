@@ -13,8 +13,7 @@
     let scrolling: any;
     let sections: NodeListOf<HTMLElement>;
     let scene: number = 1;
-    let section2AnimComplete = true;
-    let section2AnimBackwards = false;
+    let section2AnimComplete = false;
 
     onMount(() => {
         gsap.registerPlugin(ScrollTrigger);
@@ -96,11 +95,11 @@
     };
 
     const gsapSection2 = () => {
-        const t1 = gsap.timeline({
+        gsap.timeline({
             scrollTrigger: {
                 pin: "#scene2",
                 pinType: "fixed",
-                end: "+=100%",
+                end: "+=200%",
                 scroller: "#scrolling",
             },
         });
@@ -115,7 +114,8 @@
                 onUpdate: (self: any) => {
                     if (window.innerWidth < 1600) return;
 
-                    section2AnimBackwards = self.direction === -1;
+                    const backwards = self.direction === -1;
+                    if (backwards) section2AnimComplete = false;
                 },
             },
         });
@@ -147,6 +147,7 @@
         {scrollPercent}
         {scrollY}
         {scene}
+        {section2AnimComplete}
     />
 
     <div id="three" class:invisible={loading}>
@@ -172,25 +173,6 @@
             </p>
             <div id="scene2-canvas" />
         </section>
-        <!-- <div class="container"> -->
-
-        <!-- <ul>
-                    {#each new Array(10).keys() as _}
-                        <li>
-                            <figure>
-                                <img
-                                    src="logos/svelte-logo.png"
-                                    alt="Svelte logo"
-                                />
-                            </figure>
-                            <div class="tech-container">
-                                <span class="tech">Svelte</span>
-                                <span class="tech tech-reveal">Svelte</span>
-                            </div>
-                        </li>
-                    {/each}
-                </ul> -->
-        <!-- </div> -->
 
         <section id="scene3">
             <p>I love</p>
@@ -248,86 +230,6 @@
         flex-direction: column;
         align-items: center;
         width: 100dvw;
-    }
-
-    img {
-        display: block;
-        max-width: 100%;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transform: scale(1.05);
-        transition: transform 0.4s cubic-bezier(0.55, 0, 0.1, 1);
-    }
-
-    li:hover img {
-        transform: scale(1);
-    }
-
-    li:hover span {
-        transform: translateY(-100%);
-    }
-
-    .container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-
-    ul {
-        list-style: none;
-        display: grid;
-        justify-content: center;
-        grid-gap: 2.5rem;
-        grid-template-columns: 1fr;
-    }
-
-    @media (min-width: 768px) {
-        ul {
-            grid-template-columns: 1fr 1fr;
-            padding: 0 80px;
-            max-width: 1400px;
-        }
-    }
-
-    li {
-        cursor: pointer;
-        padding: 0 20px;
-    }
-
-    @media (min-width: 768px) {
-        li {
-            padding: 0;
-        }
-    }
-
-    figure {
-        overflow: hidden;
-    }
-
-    .tech-container {
-        position: relative;
-        overflow: hidden;
-        margin-top: 0.5rem;
-    }
-
-    @media (min-width: 768px) {
-        .tech-container {
-            margin-bottom: 2rem;
-        }
-    }
-
-    .tech {
-        font-size: 1.25rem;
-        display: block;
-        transition: all 0.4s cubic-bezier(0.55, 0, 0.1, 1);
-    }
-
-    .tech-reveal {
-        position: absolute;
-        top: 100%;
-        left: 0;
     }
 
     h1,
@@ -406,6 +308,7 @@
 
     @media (min-width: 1600px) {
         #scene2-canvas {
+            display: none;
             height: 90dvh;
             width: 600px;
             right: 14rem;

@@ -16,9 +16,9 @@
     export let textures: any[] = [];
     export let hdris: any[] = [];
     export let renderer: THREE.WebGLRenderer;
-    export let camera: THREE.PerspectiveCamera;
     export let scrollY: number;
     export let enabled: boolean;
+
     $: enabled, resize();
     $: enabled, loop();
     $: enabled, tone();
@@ -30,11 +30,11 @@
     const cameraZ = 25;
     const fovLandscape = 70;
     const fovPortrait = 105;
-    camera = new THREE.PerspectiveCamera(
+    const camera = new THREE.PerspectiveCamera(
         70,
         window.innerWidth / window.innerHeight,
         0.01,
-        30000
+        30000,
     );
     camera.position.set(0, 7, cameraZ);
     scene.add(camera);
