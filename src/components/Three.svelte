@@ -126,7 +126,7 @@
         {intro}
         on:mount={(e) => scenes.push(e.detail.scene)}
     />
-    <!-- <Scene2
+    <Scene2
         {models}
         {renderer}
         {camera}
@@ -135,7 +135,7 @@
         {textures}
         {hdris}
         on:mount={(e) => scenes.push(e.detail.scene)}
-    /> -->
+    />
     <Subscene2
         {renderer}
         {hdris}

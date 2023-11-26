@@ -1,0 +1,144 @@
+{
+    "spheres": [
+        {
+            "x": -4,
+            "y": 6,
+            "z": 3,
+            "radius": 0.7,
+            "material": 1
+        },
+        {
+            "x": -1,
+            "y": 6,
+            "z": 5,
+            "radius": 0.8,
+            "material": 2
+        },
+        {
+            "x": 4.5,
+            "y": 6,
+            "z": 3,
+            "radius": 0.7,
+            "material": 2
+        },
+        {
+            "x": -4,
+            "y": 3,
+            "z": 0,
+            "radius": 0.8,
+            "material": 1
+        },
+        {
+            "x": -3,
+            "y": 3.5,
+            "z": 2,
+            "radius": 0.77,
+            "material": 3
+        },
+        {
+            "x": 1,
+            "y": 4,
+            "z": 2,
+            "radius": 0.75,
+            "material": 3
+        },
+        {
+            "x": 2.25,
+            "y": 4,
+            "z": 0,
+            "radius": 0.75,
+            "material": 3
+        },
+        {
+            "x": 5.25,
+            "y": 4,
+            "z": 0,
+            "radius": 0.85,
+            "material": 1
+        },
+        {
+            "x": -4,
+            "y": 0,
+            "z": 1.5,
+            "radius": 0.75,
+            "material": 2
+        },
+        {
+            "x": -0.75,
+            "y": 0.5,
+            "z": 0,
+            "radius": 0.88,
+            "material": 1
+        },
+        {
+            "x": 0.6,
+            "y": -0.5,
+            "z": -2,
+            "radius": 0.9,
+            "material": 3
+        },
+        {
+            "x": 1.85,
+            "y": 0,
+            "z": 0,
+            "radius": 0.7,
+            "material": 1
+        },
+        {
+            "x": 3,
+            "y": -1,
+            "z": -1,
+            "radius": 0.9,
+            "material": 2
+        },
+        {
+            "x": -3,
+            "y": -1,
+            "z": 3,
+            "radius": 1,
+            "material": 1
+        },
+        {
+            "x": -3,
+            "y": -3,
+            "z": 2,
+            "radius": 0.6,
+            "material": 3
+        },
+        {
+            "x": -1,
+            "y": -3.5,
+            "z": 2,
+            "radius": 0.6,
+            "material": 1
+        },
+        {
+            "x": 5,
+            "y": -3.5,
+            "z": 0,
+            "radius": 0.7,
+            "material": 3
+        },
+        {
+            "x": -2.5,
+            "y": -4.5,
+            "z": 4,
+            "radius": 0.8,
+            "material": 1
+        },
+        {
+            "x": 0,
+            "y": -6,
+            "z": 4,
+            "radius": 0.8,
+            "material": 3
+        },
+        {
+            "x": 3,
+            "y": -5,
+            "z": 4,
+            "radius": 0.65,
+            "material": 1
+        }
+    ]
+}
