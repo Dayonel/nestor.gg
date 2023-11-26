@@ -36,7 +36,7 @@
             position: new CANNON.Vec3(
                 ref.position.x,
                 ref.position.y,
-                ref.position.z
+                ref.position.z,
             ),
             shape: shape,
         });

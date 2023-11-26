@@ -24,7 +24,7 @@
     const time: number = 1;
     const timeMs = time * 1000;
     const hdris: any[] = ["hdris/empty_warehouse_01_1k.hdr"];
-    const textures: any[] = ["textures/melina.jpg"];
+    const textures: any[] = ["textures/melina.jpg", "logos/svelte_logo.png"];
 
     const updates = 2;
     const breakpoint = ((timeMs * 1) / updates) * 0.9;

@@ -106,6 +106,7 @@
         {renderer}
         {hdris}
         enabled={scene == 2}
+        {textures}
         on:mount={(e) => scenes.push(e.detail.scene)}
     />
     <Scene3

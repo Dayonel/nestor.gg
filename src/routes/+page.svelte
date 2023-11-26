@@ -168,9 +168,8 @@
 
             <!-- Section 2 -->
             <section id="scene2">
-                <p class="scene2-text">
-                    I'm on an epic quest to master the art of web development
-                </p>
+                <p>I love</p>
+                <p>web development</p>
             </section>
 
             <section id="scene3">
@@ -297,32 +296,6 @@
         }
         100% {
             opacity: 0;
-        }
-    }
-
-    #scene2-canvas {
-        display: block;
-        width: 92dvw;
-        height: 65dvh;
-        position: absolute;
-        bottom: 1rem;
-    }
-
-    @media (min-width: 1600px) {
-        #scene2-canvas {
-            display: none;
-            height: 90dvh;
-            width: 600px;
-            right: 14rem;
-            transform: translateY(-50%);
-            top: 50%;
-            bottom: 0;
-            -webkit-border-radius: 8px;
-            -moz-border-radius: 8px;
-            border-radius: 8px;
-            -webkit-box-shadow: 0px 0px 0px 4px #000000;
-            -moz-box-shadow: 0px 0px 0px 4px #000000;
-            box-shadow: 0px 0px 0px 4px #000000;
         }
     }
 </style>

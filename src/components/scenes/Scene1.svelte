@@ -22,6 +22,7 @@
     export let scrollY: number;
     export let enabled: boolean;
     export let intro: boolean;
+    
     $: enabled, loop();
     $: enabled, resize();
     $: enabled, tone();
