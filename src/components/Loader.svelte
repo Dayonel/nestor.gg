@@ -25,7 +25,11 @@
     const timeMs = time * 1000;
     const hdris: any[] = ["hdris/empty_warehouse_01_1k.hdr"];
     const textures: any[] = ["textures/melina.jpg"];
-    const total = models.length + hdris.length + textures.length + time;
+
+    const updates = 2;
+    const breakpoint = ((timeMs * 1) / updates) * 0.9;
+    const intervalDuration = timeMs / updates;
+    const total = models.length + hdris.length + textures.length + updates;
 </script>
 
 <script lang="ts">
@@ -42,7 +46,6 @@
     let progress = 0;
     let renderer: THREE.WebGLRenderer;
     let scenes: any[] = [];
-    let progressTimeUpdates = 0;
     let preRendered: boolean = false;
     let elapsed = 0;
 
@@ -95,20 +98,19 @@
                     preRendered = true;
                     resolve();
                 } else {
-                    scenes.forEach((f, i) => {
+                    scenes.forEach((f) => {
                         renderer.render(f, f.userData.camera);
                         renderer.clear();
                     });
 
-                    if (progressTimeUpdates == 0 && elapsed >= timeMs * 0.5) {
-                        progressTimeUpdates++;
-                        progress += time / 2;
-                    } else if (
-                        progressTimeUpdates == 1 &&
-                        elapsed >= timeMs * 0.9
+                    const count = progress - total + updates;
+
+                    if (
+                        elapsed >= breakpoint &&
+                        count < updates &&
+                        elapsed - breakpoint >= count * intervalDuration
                     ) {
-                        progressTimeUpdates++;
-                        progress += time / 2;
+                        progress++;
                     }
 
                     requestAnimationFrame(checkTime);
