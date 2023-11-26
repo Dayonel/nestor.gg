@@ -1,84 +1,130 @@
 <script lang="ts">
-    // @ts-ignore
-    import { gsap } from "gsap/dist/gsap.js";
-    // @ts-ignore
-    import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
-    import Background from "$lib/Background.svelte";
-    import DirectionalLight from "$lib/DirectionalLight.svelte";
-    import Fog from "$lib/Fog.svelte";
-    import PointLight from "$lib/PointLight.svelte";
-    import SpotLight from "$lib/SpotLight.svelte";
-    import { createEventDispatcher, onMount } from "svelte";
     import * as THREE from "three";
     import { Vector3 } from "three";
+    import Sphere from "$lib/Sphere.svelte";
+    import { createEventDispatcher, onMount } from "svelte";
+    import Background from "$lib/Background.svelte";
+    import SpotLight from "$lib/SpotLight.svelte";
+    import * as CANNON from "cannon-es";
+    import data from "../../data/spheres.json";
 
-    export let models: any[] = [];
-    export let textures: any[] = [];
-    export let hdris: any[] = [];
     export let renderer: THREE.WebGLRenderer;
-    export let scrollY: number;
+    export let hdris: any[] = [];
     export let enabled: boolean;
 
-    $: enabled, resize();
     $: enabled, loop();
     $: enabled, tone();
+    $: hdris, hdr();
 
-    onMount(() => init());
-    const dispatch = createEventDispatcher();
+    let canvas: any;
     const scene = new THREE.Scene();
-    let mounted = false;
-    const cameraZ = 25;
-    const fovLandscape = 70;
-    const fovPortrait = 105;
     const camera = new THREE.PerspectiveCamera(
-        70,
+        40,
         window.innerWidth / window.innerHeight,
         0.01,
-        30000,
+        1000,
     );
-    camera.position.set(0, 7, cameraZ);
+    camera.position.set(0, 0, 20);
     scene.add(camera);
     scene.userData.camera = camera;
     scene.userData.scene = 2;
 
+    const dispatch = createEventDispatcher();
+    let envMap: any;
+    let spheres: THREE.Object3D[] = [];
+    const world = new CANNON.World();
+    const blueMaterial = new THREE.MeshStandardMaterial({
+        color: new THREE.Color("#3897a9"),
+        emissive: new THREE.Color("#3897a9"),
+        roughness: 1,
+        metalness: 1,
+    });
+
+    const blackMaterial = new THREE.MeshStandardMaterial({
+        color: new THREE.Color("#000000"),
+        emissive: new THREE.Color("#000000"),
+        roughness: 1, // matte appearance
+        metalness: 0,
+    });
+
+    const transparentMaterial = new THREE.MeshPhysicalMaterial({
+        transmission: 1,
+        roughness: 0,
+        reflectivity: 1,
+        ior: 1.2,
+        thickness: 10,
+    });
+
+    let spawnSpheres: any[] = [];
+    let mounted = false;
+    let allowForce = true;
+
+    onMount(() => init());
+
     const init = () => {
-        gsap.registerPlugin(ScrollTrigger);
+        scene.background = new THREE.Color("#ffffff");
 
-        animateOnScroll();
+        data.spheres.forEach((f) => {
+            let material = blueMaterial;
+            if (f.material == 2) material = blackMaterial;
+            else if (f.material == 3) material = transparentMaterial;
 
-        mounted = true;
+            spawnSpheres.push({
+                position: new THREE.Vector3(f.x, f.y, f.z),
+                radius: f.radius,
+                material: material,
+            });
+        });
 
         renderer.compile(scene, camera);
+
+        mounted = true;
 
         dispatch("mount", { scene });
     };
 
-    const animateOnScroll = () => {
-        gsap.timeline({
-            scrollTrigger: {
-                scroller: "#scrolling",
-                trigger: "#scene2",
-                start: "top top",
-                end: "+=" + window.innerHeight / 2,
-                scrub: true,
-            },
-        }).to(camera.position, {
-            x: camera.position.x,
-            y: camera.position.y,
-            z: cameraZ - 10,
-        });
+    const hdr = () => {
+        if (!hdris || hdris.length == 0) return;
+
+        // reflections
+        envMap = hdris[0];
+        envMap.mapping = THREE.EquirectangularReflectionMapping;
+        scene.environment = envMap;
     };
 
-    const resize = () => {
-        if (!enabled) return;
+    // Function to check if an object is inside the camera frustum
+    const isObjectInCameraFrustum = (object: any) => {
+        var frustum = new THREE.Frustum();
+        var cameraViewProjectionMatrix = new THREE.Matrix4();
 
-        if (window.innerHeight > window.innerWidth) {
-            camera.fov = fovPortrait;
-        } else {
-            camera.fov = fovLandscape;
-        }
+        // Update the camera's matrixWorldInverse and matrixWorld
+        camera.updateMatrixWorld();
+        camera.matrixWorld.invert();
 
-        renderer.domElement.resize(renderer, camera);
+        // Combine the camera's projection and view matrix
+        cameraViewProjectionMatrix.multiplyMatrices(
+            camera.projectionMatrix,
+            camera.matrixWorldInverse,
+        );
+
+        // Set the frustum's matrix to the combined matrix
+        frustum.setFromProjectionMatrix(cameraViewProjectionMatrix);
+
+        // Check if the object is inside the frustum
+        return frustum.intersectsObject(object);
+    };
+
+    const applyForce = () => {
+        if (!allowForce) return;
+
+        allowForce = false;
+        spheres.forEach((f: THREE.Object3D) => {
+            const s = f.userData.body;
+            s.force.set(s.position.x, s.position.y, 0).normalize();
+            s.velocity = s.force.scale(Math.random() * 10);
+        });
+
+        setTimeout(() => (allowForce = true), 1000);
     };
 
     const tone = () => {
@@ -87,10 +133,50 @@
         renderer.toneMappingExposure = 1;
     };
 
+    const resize = () => {
+        if (!enabled) return;
+
+        renderer.domElement.resize(renderer, camera);
+    };
+
     const loop = () => {
         if (!enabled) return;
 
         requestAnimationFrame(loop);
+
+        world.fixedStep();
+
+        const date = Date.now();
+
+        const ROTATE_TIME = 10; // Time in seconds for a full rotation
+        const xAxis = new THREE.Vector3(1, 0, 0);
+        const yAxis = new THREE.Vector3(0, 1, 0);
+        const rotateX = (date / ROTATE_TIME) * Math.PI * 2;
+        const rotateY = (date / ROTATE_TIME) * Math.PI * 2;
+
+        for (let index = 0; index < spheres.length; index++) {
+            const f = spheres[index];
+
+            // rotate
+            f.rotateOnWorldAxis(xAxis, rotateX);
+            f.rotateOnWorldAxis(yAxis, rotateY);
+
+            // physics
+            f.userData.body.position.x += f.userData.velocity.x;
+            f.userData.body.position.y += f.userData.velocity.y;
+            f.userData.body.position.z += f.userData.velocity.z;
+
+            // Copy coordinates from Cannon to Three.js
+            f.position.copy(f.userData.body.position);
+            f.quaternion.copy(f.userData.body.quaternion);
+
+            // boundaries
+            if (!isObjectInCameraFrustum(f)) {
+                f.userData.gravity = true;
+            } else if (isObjectInCameraFrustum(f)) {
+                f.userData.gravity = false;
+            }
+        }
     };
 </script>
 
@@ -99,43 +185,38 @@
     on:orientationchange={() => resize()}
 />
 
-<Background {scene} color={0xc22fca} position={new Vector3(0, 0, -5)} />
-
-<!-- Static lights -->
-<PointLight
-    {scene}
-    color={0xff0000}
-    intensity={50}
-    position={new Vector3(-10, 10, 10)}
-/>
-
-<PointLight
-    {scene}
-    color={0x0000ff}
-    intensity={50}
-    position={new Vector3(0, 10, 10)}
-/>
-
-<PointLight
-    {scene}
-    color={0xff0000}
-    intensity={50}
-    position={new Vector3(10, 10, 10)}
-/>
+<Background {scene} color={0x88d0e3} position={new Vector3(0, 0, -25)} />
 
 <SpotLight
     {scene}
     color={0xffffff}
-    intensity={2000}
-    position={new Vector3(0, 50, -1)}
+    intensity={100}
+    distance={100}
+    angle={1}
+    decay={2}
+    position={new Vector3(-6, 0, 0)}
 />
 
-<DirectionalLight
-    {scene}
-    color={0xf2f2f2}
-    intensity={0.12}
-    position={new Vector3(-1, 1.75, 1)}
-    scale={30}
-/>
+{#each spawnSpheres as spawn}
+    <Sphere
+        {scene}
+        {envMap}
+        position={spawn.position}
+        radius={spawn.radius}
+        material={spawn.material}
+        on:mount={(e) => {
+            spheres.push(e.detail.ref);
+            world.addBody(e.detail.ref.userData.body);
+            world.addEventListener("postStep", () => {
+                if (!e.detail.ref.userData.gravity) return;
 
-<Fog {scene} color={0x000000} near={cameraZ - 5} far={cameraZ} />
+                // pull sphere back to scene
+                const s = e.detail.ref.userData.body;
+                const v = new CANNON.Vec3();
+                v.set(-s.position.x, -s.position.y, -s.position.z).normalize();
+                v.scale(0.1, s.force);
+                s.applyLocalForce(v);
+            });
+        }}
+    />
+{/each}
