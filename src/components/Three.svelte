@@ -6,6 +6,7 @@
     import Scene1 from "./scenes/Scene1.svelte";
     import Scene2 from "./scenes/Scene2.svelte";
     import Scene3 from "./scenes/Scene3.svelte";
+    import Scene4 from "./scenes/Scene4.svelte";
 
     export let models: any[] = [];
     export let hdris: any[] = [];
@@ -115,6 +116,13 @@
         {camera}
         {scrollY}
         enabled={scene == 3}
+        {textures}
+        on:mount={(e) => scenes.push(e.detail.scene)}
+    />
+    <Scene4
+        {renderer}
+        {hdris}
+        enabled={scene == 4}
         {textures}
         on:mount={(e) => scenes.push(e.detail.scene)}
     />
