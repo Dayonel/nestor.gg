@@ -4,6 +4,7 @@
     import { createEventDispatcher, onMount } from "svelte";
     import Simulator from "../moving-curl/Simulator.svelte";
     import Particles from "../moving-curl/Particles.svelte";
+    import { Settings } from "../moving-curl/Settings";
 
     export let models: any[] = [];
     export let renderer: THREE.WebGLRenderer;
@@ -26,17 +27,21 @@
     let mounted = false;
     let pointsMaterial: any;
     let clock = new THREE.Clock();
+    let pointLight: any;
+    let shadowDarkness = 0.45;
 
     onMount(async () => await init());
 
     const init = async () => {
         lights();
 
-        renderer.compile(scene, camera);
+        // renderer.compile(scene, camera); // TODO
 
         mounted = true;
 
         dispatch("mount", { scene });
+
+        loop();
     };
 
     const lights = () => {
@@ -46,7 +51,7 @@
         var ambient = new THREE.AmbientLight(0x333333);
         mesh.add(ambient);
 
-        const pointLight = new THREE.PointLight(0xffffff, 1, 700);
+        pointLight = new THREE.PointLight(0xffffff, 1, 700);
         pointLight.castShadow = true;
         pointLight.shadow.camera.near = 10;
         pointLight.shadow.camera.far = 700;
@@ -83,9 +88,8 @@
 
         const time = clock.getDelta();
 
-        if (pointsMaterial && pointsMaterial.uniforms) {
-            pointsMaterial.uniforms.uTime.value = time;
-        }
+        pointLight.shadowDarkness = shadowDarkness +=
+            (Settings.SHADOW_DARKNESS - shadowDarkness) * 0.1;
     };
 </script>
 

@@ -21,6 +21,15 @@
     let tmpColor: any;
     let container: any;
 
+    // Define shadow map uniforms (not existent in current threejs version)
+    const shadowMapUniforms = {
+        shadowMap: { type: "tv", value: [] },
+        shadowMapSize: { type: "v2v", value: [] },
+        shadowBias: { type: "fv1", value: [] },
+        shadowDarkness: { type: "fv1", value: [] },
+        shadowMatrix: { type: "m4v", value: [] },
+    };
+
     onMount(() => {
         init();
         console.log("particles mounted");
@@ -62,7 +71,7 @@
         );
 
         const u1 = THREE.UniformsUtils.merge([
-            THREE.UniformsLib.shadowmap, // TODO
+            shadowMapUniforms,
             {
                 texturePosition: { type: "t", value: undefined },
                 flipRatio: { type: "f", value: 0 },
@@ -86,13 +95,11 @@
 
         var mesh = new THREE.Points(geometry, material);
 
-        const u2 = {
-            lightPos: { type: "v3", value: new THREE.Vector3(0, 0, 0) },
-            texturePosition: { type: "t", value: undefined },
-        };
-
         mesh.customDistanceMaterial = new THREE.ShaderMaterial({
-            uniforms: u2,
+            uniforms: {
+                lightPos: { value: new THREE.Vector3(0, 0, 0) },
+                texturePosition: { value: undefined },
+            },
             vertexShader:
                 document.getElementById("curl-particles-distance-vs")
                     ?.textContent ?? "",
@@ -187,19 +194,17 @@
         );
         geometry.setAttribute("fboUV", new THREE.BufferAttribute(fboUV, 2));
 
-        const u2 = THREE.UniformsUtils.merge([
-            THREE.UniformsLib.shadowmap, // TODO
-            {
-                texturePosition: { type: "t", value: undefined },
-                flipRatio: { type: "f", value: 0 },
-                color1: { type: "c", value: undefined },
-                color2: { type: "c", value: undefined },
-                cameraMatrix: { type: "m4", value: undefined },
-            },
-        ]);
-
         var material = new THREE.ShaderMaterial({
-            uniforms: u2,
+            uniforms: THREE.UniformsUtils.merge([
+                shadowMapUniforms,
+                {
+                    texturePosition: { value: undefined },
+                    flipRatio: { value: 0 },
+                    color1: { value: undefined },
+                    color2: { value: undefined },
+                    cameraMatrix: { value: undefined },
+                },
+            ]),
             vertexShader:
                 document.getElementById("curl-triangles-vs")?.textContent ?? "",
             fragmentShader:
@@ -213,14 +218,12 @@
 
         var mesh = new THREE.Mesh(geometry, material);
 
-        const u3 = {
-            lightPos: { type: "v3", value: new THREE.Vector3(0, 0, 0) },
-            texturePosition: { type: "t", value: undefined },
-            flipRatio: { type: "f", value: 0 },
-        };
-
         mesh.customDistanceMaterial = new THREE.ShaderMaterial({
-            uniforms: u3,
+            uniforms: {
+                lightPos: { value: new THREE.Vector3(0, 0, 0) },
+                texturePosition: { value: undefined },
+                flipRatio: { value: 0 },
+            },
             vertexShader:
                 document.getElementById("curl-triangles-distance-vs")
                     ?.textContent ?? "",
@@ -247,7 +250,7 @@
         particleMesh.visible = !Settings.USE_TRIANGLE_PARTICLES;
 
         tmpColor.setStyle(Settings.COLOR1);
-        color1.lerp(tmpColor, 0.05);
+        color1.lerp(tmpColor, 0.05); // TODO this lerp works?
 
         tmpColor.setStyle(Settings.COLOR2);
         color2.lerp(tmpColor, 0.05);
@@ -259,7 +262,7 @@
                 positionRenderTarget;
             if (mesh.material.uniforms.flipRatio) {
                 mesh.material.uniforms.flipRatio.value ^= 1;
-                mesh.customDistanceMaterial.uniforms.flipRatio.value ^= 1;
+                // mesh.customDistanceMaterial.uniforms.flipRatio.value ^= 1; // TODO
             }
         }
     };

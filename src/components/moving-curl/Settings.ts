@@ -12,4 +12,5 @@ export class Settings {
     static ATTRACTION = 1;
     static INIT_ANIMATION = 0;
     static USE_TRIANGLE_PARTICLES = true;
+    static SHADOW_DARKNESS = 0.45;
 }
