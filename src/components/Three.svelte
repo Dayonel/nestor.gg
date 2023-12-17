@@ -105,7 +105,6 @@
     />
     <Scene2
         {models}
-        {textures}
         {renderer}
         enabled={scene == 2}
         on:mount={(e) => scenes.push(e.detail.scene)}
