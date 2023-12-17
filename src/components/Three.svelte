@@ -104,10 +104,10 @@
         on:mount={(e) => scenes.push(e.detail.scene)}
     />
     <Scene2
-        {renderer}
-        {hdris}
-        enabled={scene == 2}
+        {models}
         {textures}
+        {renderer}
+        enabled={scene == 2}
         on:mount={(e) => scenes.push(e.detail.scene)}
     />
     <Scene3

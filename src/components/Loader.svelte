@@ -19,6 +19,7 @@
         "models/amsterdam2.glb",
         "models/amsterdam3.glb",
         "models/amsterdam4.glb",
+        "models/github.glb",
     ];
 
     const time: number = 1;
