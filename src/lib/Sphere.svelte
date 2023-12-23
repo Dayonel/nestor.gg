@@ -7,6 +7,8 @@
     export let position: THREE.Vector3 = new THREE.Vector3(0, 0, 0);
     export let scale: number = 1;
     export let material: any = new THREE.MeshStandardMaterial();
+    export let color: THREE.ColorRepresentation | undefined = undefined;
+    export let secondColor: THREE.ColorRepresentation | undefined = undefined;
     export let ref: any = undefined;
     export let radius = 1;
     export let envMap: any = undefined;
@@ -21,10 +23,18 @@
             material.envMapIntensity = 1.5;
         }
 
-        ref = new THREE.Mesh(geometry, material);
+        const mat = material.clone();
+        // if (color) {
+        //     mat.uniforms.diffuse.value = new THREE.Color(color);
+        // }
+        // if (secondColor) {
+        //     mat.uniforms.secondColor.value = new THREE.Color(secondColor);
+        // }
+
+        ref = new THREE.Mesh(geometry, mat);
         ref.position.copy(position);
         ref.scale.setScalar(scale);
-        ref.receiveShadow = true;
+        // ref.receiveShadow = true;
         scene.add(ref);
 
         ref.userData.radius = radius;
