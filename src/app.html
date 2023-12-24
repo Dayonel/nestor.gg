@@ -20,328 +20,6 @@
 </head>
 
 <body data-sveltekit-preload-data="hover">
-	<!-- Cloud -->
-	<script id="cloud-vs" type="x-shader/x-vertex">
-		// Original work by Liam Egan on CodePen: https://codepen.io/shubniggurath/pen/pVaxML/license
-		void main() {
-			gl_Position = vec4( position, 1.0 );
-		}
-	</script>
-
-	<script id="cloud-fs" type="x-shader/x-fragment">
-	  // Original work by Liam Egan on CodePen: https://codepen.io/shubniggurath/pen/pVaxML/license
-	  uniform vec2 u_resolution;
-	  uniform vec2 u_mouse;
-	  uniform float u_time;
-	  uniform sampler2D u_noise;
-	
-	  vec3 hash33(vec3 p){ 
-		return texture2D(u_noise, p.xy * p.z * 256.).rgb;
-		
-	  }
-	
-	  float pn( in vec3 p ) {
-		vec3 i = floor(p); p -= i; p *= p*(3. - 2.*p);
-		p.xy = texture2D(u_noise, (p.xy + i.xy + vec2(37, 17)*i.z + .5)/256., -100.).yx;
-		return mix(p.x, p.y, p.z);
-	  }
-	  
-	  // Thanks to Shane for this one.
-	  // Basic low quality noise consisting of three layers of rotated, mutated 
-	  // trigonometric functions. Needs work, but sufficient for this example.
-	  float trigNoise3D(in vec3 p) {
-		float res = 0.0;
-
-		// Precompute constants
-		vec3 pScaled = p * 1.5;
-		float halfSqrt3 = 0.5 * sqrt(3.0);
-		float sinCoeff = 0.7071 / 1.7071;
-
-		// Calculate noise value using a single call to pn()
-		float n = pn(pScaled * 8.0 + u_time * 0.5);
-
-		vec3 t = sin(pScaled.yzx * 3.14159265) * 0.5 + 0.5;
-		res += dot(t, vec3(0.333));
-		pScaled = pScaled * 1.5 + (t - 1.5);
-
-		// Combine results
-		return res * 0.85 + n * 0.15;
-	}
-	
-	  float world(vec3 p) {
-		float n = trigNoise3D(p*0.2);
-		float t = sin(u_time*.0001)*.5+.5;
-		float c = cos(p.z*.2*t+n);
-		float s = sin(p.z*.05+n*.5);
-		p.xy *= mat2(c, -s, s, c);
-		p -= n*1.5;
-		p.y = mod(p.y, 4.0 + p.y * .5) - 2. - p.y * .25;
-		return abs(p.y) - .1;
-	  }
-	
-	  void main() {
-		  
-		  // Setting up our screen coordinates.
-		  vec2 aspect = vec2(u_resolution.x/u_resolution.y, 1.0); //
-		  vec2 uv = (2.0*gl_FragCoord.xy/u_resolution.xy - 1.0)*aspect;
-		// vec3 rd = normalize(vec3(gl_FragCoord.xy - u_resolution.xy*.5, u_resolution.y*.5)); 
-		
-		float modtime = u_time * .1;
-		
-		  // The sin in here is to make it look like a walk.
-		  vec3 lookAt = vec3(sin(modtime)*2. + u_mouse.x*2., u_mouse.y*2., 2. + u_time*2.);  // This is the point you look towards, or at, if you prefer.
-		  vec3 camera_position = vec3(sin(modtime)*3., 0, u_time*2.); // This is the point you look from, or camera you look at the scene through. Whichever way you wish to look at it.
-		
-		  
-		  vec3 forward = normalize(lookAt-camera_position); // Forward vector.
-		  vec3 right = normalize(vec3(forward.z, 0., -forward.x )); // Right vector... or is it left? Either way, so long as the correct-facing up-vector is produced.
-		  vec3 up = normalize(cross(forward,right)); // Cross product the two vectors above to get the up vector.
-	
-		  // FOV - Field of view.
-		  float FOV = 1.1;
-	
-		  // ro - Ray origin.
-		  vec3 ro = camera_position; 
-		  // rd - Ray direction.
-		  vec3 rd = normalize(forward + FOV*uv.x*right + FOV*uv.y*up);
-		  // rd += hash33(rd)*.002;
-	
-		// Camera
-		// vec3 ro = vec3(sin(modtime)*3., 0, u_time*2.);
-	
-		vec3 lp = vec3( -3, 2, -1.5);
-		lp += ro;
-	
-		ro.x += u_mouse.x;
-		ro.y += u_mouse.y;
-	
-		float local_density = 0.;
-		float density = 0.;
-		float weighting = 0.;
-	
-		float dist = 1.;
-		float travelled = 0.;
-	
-		const float distanceThreshold = .1;
-	
-	
-		// Initializing the scene color to black, and declaring the surface position vector.
-		vec3 col = vec3(0.1); // increased brightness
-		vec3 sp;
-	
-		vec3 sn = normalize(-rd); // surface normal
-	
-		// Raymarching loop.
-		for (int i = 0; i < 32; i++) {
-			sp = ro + rd * travelled;
-			dist = world(sp);
-
-			if (dist < 0.2) dist = 0.35;
-
-			local_density = max(distanceThreshold - dist, 0.0);
-			weighting = (1.0 - density) * local_density;
-
-			density += weighting * (1.0 - distanceThreshold) / max(dist, 0.001);
-
-			vec3 ld = lp - sp;
-			float lDist = max(length(ld), 0.001);
-			ld /= lDist;
-
-			float atten = 1.0 / (1.0 + lDist * 0.125 + lDist * lDist * 0.55);
-
-			float diff = max(dot(sn, ld), 0.0);
-			float spec = pow(max(dot(reflect(-ld, sn), -rd), 0.0), 4.0);
-
-			col += weighting * atten * 10.25;
-
-			travelled += max(dist * 0.4, 0.02);
-		}
-	
-		col = max(col, 0.);
-	
-		col = mix(vec3(.0, .1, .3), vec3(2.), col);
-		// col = mix(col, vec3(4.), density*.01);
-		col = mix(col, vec3(2.), travelled*.01);
-	
-		col = mix(col.zyx, col, dot(rd, col.xyz)+.5*travelled*.05);
-		
-		col *= col*col*col*1.15;
-	
-		gl_FragColor = vec4(sqrt(col), 1.0);
-	  }
-	</script>
-
-	<!-- Sparkles -->
-	<script type="x-shader/x-vertex" id="sparkles-vs">
-		// work by Louis Hoebregts https://codepen.io/Mamboleoo/pen/yLbxYdx/license
-		attribute float size;
-		attribute vec3 color;
-		attribute float fade;
-	  
-		varying vec3 vColor;
-	  
-		void main() {
-		  vColor = color;
-		  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-		  gl_PointSize = size;
-		  gl_Position = projectionMatrix * mvPosition;
-		}
-	</script>
-
-	<script type="x-shader/x-fragment" id="sparkles-fs">
-		// work by Louis Hoebregts https://codepen.io/Mamboleoo/pen/yLbxYdx/license
-		uniform sampler2D pointTexture;
-		varying vec3 vColor;
-		void main() {
-			gl_FragColor = vec4(vColor, 1.0);
-			gl_FragColor = gl_FragColor * texture2D(pointTexture, gl_PointCoord);
-		}
-	</script>
-
-	<!-- Noise -->
-	<script type="x-shader/x-vertex" id="noise-vs">
-		#include <fog_pars_vertex>
-		varying vec3 vPos;
-
-		void main() {
-			#include <begin_vertex>
-			#include <project_vertex>
-			#include <fog_vertex>
-			vPos = position;
-			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-		}
-	</script>
-
-	<script type="x-shader/x-fragment" id="noise-fs">
-		#include <fog_pars_fragment>
-		// Description : Array and textureless GLSL 2D/3D/4D simplex
-		//               noise functions.
-		//      Author : Ian McEwan, Ashima Arts.
-		//  Maintainer : stegu
-		//     Lastmod : 20110822 (ijm)
-		//     License : Copyright (C) 2011 Ashima Arts. All rights reserved.
-		//               Distributed under the MIT License. See LICENSE file.
-		//               https://github.com/ashima/webgl-noise
-		//               https://github.com/stegu/webgl-noise
-		//
-
-		vec3 mod289(vec3 x) {
-			return x - floor(x * (1.0 / 289.0)) * 289.0;
-		}
-
-		vec4 mod289(vec4 x) {
-			return x - floor(x * (1.0 / 289.0)) * 289.0;
-		}
-
-		vec4 permute(vec4 x) {
-			return mod289(((x * 34.0) + 1.0) * x);
-		}
-
-		vec4 taylorInvSqrt(vec4 r) {
-			return 1.79284291400159 - 0.85373472095314 * r;
-		}
-
-		float snoise(vec3 v) {
-			const vec2 C = vec2(1.0 / 6.0, 1.0 / 3.0);
-			const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
-
-			// First corner
-			vec3 i = floor(v + dot(v, C.yyy));
-			vec3 x0 = v - i + dot(i, C.xxx);
-
-			// Other corners
-			vec3 g = step(x0.yzx, x0.xyz);
-			vec3 l = 1.0 - g;
-			vec3 i1 = min(g.xyz, l.zxy);
-			vec3 i2 = max(g.xyz, l.zxy);
-
-			//   x0 = x0 - 0.0 + 0.0 * C.xxx;
-			//   x1 = x0 - i1  + 1.0 * C.xxx;
-			//   x2 = x0 - i2  + 2.0 * C.xxx;
-			//   x3 = x0 - 1.0 + 3.0 * C.xxx;
-			vec3 x1 = x0 - i1 + C.xxx;
-			vec3 x2 = x0 - i2 + C.yyy; // 2.0*C.x = 1/3 = C.y
-			vec3 x3 = x0 - D.yyy; // -1.0+3.0*C.x = -0.5 = -D.y
-
-			// Permutations
-			i = mod289(i);
-			vec4 p = permute(permute(permute(
-							i.z + vec4(0.0, i1.z, i2.z, 1.0))
-						+ i.y + vec4(0.0, i1.y, i2.y, 1.0))
-					+ i.x + vec4(0.0, i1.x, i2.x, 1.0));
-
-			// Gradients: 7x7 points over a square, mapped onto an octahedron.
-			// The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)
-			float n_ = 0.142857142857; // 1.0/7.0
-			vec3 ns = n_ * D.wyz - D.xzx;
-
-			vec4 j = p - 49.0 * floor(p * ns.z * ns.z); //  mod(p,7*7)
-
-			vec4 x_ = floor(j * ns.z);
-			vec4 y_ = floor(j - 7.0 * x_); // mod(j,N)
-
-			vec4 x = x_ * ns.x + ns.yyyy;
-			vec4 y = y_ * ns.x + ns.yyyy;
-			vec4 h = 1.0 - abs(x) - abs(y);
-
-			vec4 b0 = vec4(x.xy, y.xy);
-			vec4 b1 = vec4(x.zw, y.zw);
-
-			//vec4 s0 = vec4(lessThan(b0,0.0))*2.0 - 1.0;
-			//vec4 s1 = vec4(lessThan(b1,0.0))*2.0 - 1.0;
-			vec4 s0 = floor(b0) * 2.0 + 1.0;
-			vec4 s1 = floor(b1) * 2.0 + 1.0;
-			vec4 sh = -step(h, vec4(0.0));
-
-			vec4 a0 = b0.xzyw + s0.xzyw * sh.xxyy;
-			vec4 a1 = b1.xzyw + s1.xzyw * sh.zzww;
-
-			vec3 p0 = vec3(a0.xy, h.x);
-			vec3 p1 = vec3(a0.zw, h.y);
-			vec3 p2 = vec3(a1.xy, h.z);
-			vec3 p3 = vec3(a1.zw, h.w);
-
-			//Normalise gradients
-			vec4 norm = taylorInvSqrt(vec4(dot(p0, p0), dot(p1, p1), dot(p2, p2), dot(p3, p3)));
-			p0 *= norm.x;
-			p1 *= norm.y;
-			p2 *= norm.z;
-			p3 *= norm.w;
-
-			// Mix final noise value
-			vec4 m = max(0.6 - vec4(dot(x0, x0), dot(x1, x1), dot(x2, x2), dot(x3, x3)), 0.0);
-			m = m * m;
-			return 42.0 * dot(m * m, vec4(dot(p0, x0), dot(p1, x1),
-					dot(p2, x2), dot(p3, x3)));
-		}
-
-		uniform float time;
-		uniform vec3 diffuse;
-		uniform vec3 secondColor;
-		uniform float opacity;
-    	varying vec3 vPos;
-
-		void main() {
-			vec3 tPos = vPos * 0.5;
-			tPos -= vec3(0, time, 0);
-
-			float n1 = snoise(vec3(tPos));
-			n1 = (n1 + 1.0) * 0.5;
-
-			float n2 = snoise(vec3(n1 * 10.0, 1.0, 1.0));
-			n2 = (n2 + 1.0) * 0.5;
-			
-			float effect = smoothstep(0.1, 0.125, n1) * (1. - smoothstep(0.375, 0.4, n2));
-			float coef = sin(n2 * 3.141526 * 0.5) * 0.125;
-			float e = effect - abs(coef);
-			e = n1 > 0.25 && n1 < 0.75? e * e : pow(e, 2.);
-
-			vec4 diffuseColor = vec4(mix(diffuse.rgb, secondColor.rgb, e), opacity);
-        	gl_FragColor = diffuseColor;
-			#include <fog_fragment>
-		}
-	</script>
-
 	<!-- Particles -->
 	<script type="x-shader/x-vertex" id="particles-vs">
 		//
@@ -523,12 +201,13 @@
 	<!-- Particle animation ideas video by Yuri Artiukh 
 		https://www.youtube.com/watch?v=oLH00MXTqNg
  	-->
-	<script type="x-shader/x-vertex" id="morph-vs">
+	 <script type="x-shader/x-vertex" id="morph-vs">
 		uniform float time;
 		uniform float progress;
 		varying vec2 vUv;
 		varying vec3 vPosition;
 		uniform sampler2D texture;
+		uniform float pointSize; // New parameter for point size
 		float PI = 3.141592653589793238462643383279;
 
 		//
@@ -647,17 +326,18 @@
 		void main() {
 			vUv = uv;
 
-			vec3 t = position
-				+ curl(
-					2. * position.x,
-					2. * position.y,
-					2. * position.z) * 10. * progress;
+			vec3 t = position + curl(2. * position.x, 2. * position.y, 2. * position.z) * 10. * progress;
 			float d = length(position - t) / 2.;
+
+			// Adjust density based on progress
+			float density = mix(10.0, 100.0, progress);
+
+			// Use distanceDensity in the mix function
 			vec3 np = mix(position, t, pow(d, 5.));
 
 			vec4 mvPosition = modelViewMatrix * vec4(np, 1.);
 
-			gl_PointSize = 7.;
+			gl_PointSize = pointSize;
 			gl_Position = projectionMatrix * mvPosition;
 		}
 

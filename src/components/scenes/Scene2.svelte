@@ -6,13 +6,6 @@
     import * as THREE from "three";
     import { Vector3 } from "three";
     import { createEventDispatcher, onMount } from "svelte";
-    import Sphere from "$lib/Sphere.svelte";
-    import Fog from "$lib/Fog.svelte";
-    import * as CANNON from "cannon-es";
-    import Background from "$lib/Background.svelte";
-    import DirectionalLight from "$lib/DirectionalLight.svelte";
-    import SpotLight from "$lib/SpotLight.svelte";
-    import PointLight from "$lib/PointLight.svelte";
 
     export let models: any[] = [];
     export let renderer: THREE.WebGLRenderer;
@@ -22,10 +15,13 @@
     $: enabled, tone();
     $: enabled, resize();
     $: enabled, gsapAnimate();
+    $: models, loadModel();
 
+    const fovLandscape = 80;
+    const fovPortrait = 105;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
-        70,
+        fovLandscape,
         window.innerWidth / window.innerHeight,
         0.001,
         1000,
@@ -39,19 +35,16 @@
 
     let mounted = false;
     let progress = 1;
-    let clock = new THREE.Clock();
-    let uniforms: any;
+    let mesh: any;
     let material: any;
-    let sphere1: any, sphere2: any;
-    let previousTime: number;
-    let fillLight: any;
+    let time = 0;
+    let pointSize = 1;
+    let objectLoaded = false;
 
     onMount(async () => await init());
 
     const init = async () => {
         gsap.registerPlugin(ScrollTrigger);
-
-        setupLighting();
 
         renderer.compile(scene, camera);
 
@@ -62,43 +55,40 @@
         loop();
     };
 
-    const loadMaterial = () => {
-        uniforms = THREE.UniformsUtils.merge([THREE.UniformsLib["fog"]]);
-        uniforms.time = { type: "f", value: 1 };
-        uniforms.diffuse = { type: "c", value: new THREE.Color(0x00ccff) };
-        uniforms.secondColor = { type: "c", value: new THREE.Color(0xffffff) };
-        uniforms.opacity = { type: "f", value: 1.0 };
+    const loadModel = () => {
+        if (!models || models.length < 5) return;
+        if (objectLoaded) return;
 
-        // material = new THREE.ShaderMaterial({
-        //     uniforms: uniforms,
-        //     vertexShader:
-        //         document.getElementById("noise-vs")?.textContent ?? "",
-        //     fragmentShader:
-        //         document.getElementById("noise-fs")?.textContent ?? "",
-        //     fog: true,
-        // });
+        const model = models[4];
 
-        material = new THREE.MeshPhongMaterial({
-            emissive: new THREE.Color("#1a1a1a"),
-            shininess: 0,
-            reflectivity: 1,
+        material = new THREE.ShaderMaterial({
+            extensions: {
+                derivatives: true,
+            },
+            side: THREE.DoubleSide,
+            uniforms: {
+                time: { value: 1.0 },
+                progress: { value: 0.0 },
+                pointSize: { value: 2 },
+            },
+            transparent: true,
+            vertexShader:
+                document.getElementById("morph-vs")?.textContent ?? "",
+            fragmentShader:
+                document.getElementById("morph-fs")?.textContent ?? "",
+            depthTest: false,
+            depthWrite: false,
         });
-    };
 
-    const setupLighting = () => {
-        const sunLight = new THREE.DirectionalLight(0x435c72, 0.08);
-        sunLight.position.set(-100, 0, -100);
-        scene.add(sunLight);
+        model.traverse((obj: any) => {
+            if (obj.isMesh) {
+                mesh = new THREE.Points(obj.geometry, material);
+                mesh.position.set(0, -0.3, 0);
+                scene.add(mesh);
+            }
+        });
 
-        fillLight = new THREE.PointLight(0xffffff, 0.1, 0, 2);
-        const sphereSize = 1;
-        const pointLightHelper = new THREE.PointLightHelper(
-            fillLight,
-            sphereSize,
-        );
-        scene.add(pointLightHelper);
-        fillLight.position.set(0, 0, -5);
-        scene.add(fillLight);
+        objectLoaded = true;
     };
 
     const gsapAnimate = () => {
@@ -107,48 +97,32 @@
         ScrollTrigger.create({
             scroller: "#scrolling",
             start: "top top",
-            end: "+=" + window.innerHeight,
+            end: "+=" + window.innerHeight / 2,
             scrub: true,
             trigger: "#scene2",
             onUpdate: (self: any) => {
                 // Update the progress variable during the animation
                 progress = 1 - self.progress;
-                console.log(progress);
             },
         });
     };
 
     const tone = () => {
         if (!enabled) return;
-
-        // renderer.toneMapping = THREE.NoToneMapping;
-        // renderer.toneMappingExposure = 1;
     };
 
     const resize = () => {
         if (!enabled) return;
 
+        if (window.innerHeight > window.innerWidth) {
+            camera.fov = fovPortrait;
+            pointSize = 2 + window.devicePixelRatio / 2;
+        } else {
+            camera.fov = fovLandscape;
+            pointSize = 2;
+        }
+
         renderer.domElement.resize(renderer, camera);
-    };
-
-    const pointerMove = (e: PointerEvent) => {
-        const cursor = { x: 0, y: 0 };
-        cursor.x = (e.clientX / window.innerWidth) * 2 - 1;
-        cursor.y = -(e.clientY / window.innerHeight) * 2 + 1;
-
-        followMouse(cursor);
-    };
-
-    const followMouse = (cursor: { x: number; y: number }) => {
-        var vector = new THREE.Vector3(cursor.x, cursor.y, 0);
-        vector.unproject(camera);
-        var dir = vector.sub(camera.position).normalize();
-        var distance = -camera.position.z - 5 / dir.z;
-        const lightPos = camera.position
-            .clone()
-            .add(dir.multiplyScalar(distance));
-
-        fillLight.position.copy(lightPos);
     };
 
     const loop = () => {
@@ -156,78 +130,19 @@
 
         requestAnimationFrame(loop);
 
-        const elapsedTime = clock.getElapsedTime();
-        const deltaTime = elapsedTime - previousTime;
-        previousTime = elapsedTime;
+        time += 0.0001;
 
-        const time = clock.getElapsedTime() * 0.01;
+        material.uniforms.time.value = time;
+        material.uniforms.progress.value = progress;
+        material.uniforms.pointSize.value = pointSize;
 
-        if (mounted) {
-            // Copy coordinates from Cannon to Three.js
-            // f.position.copy(f.userData.body.position);
-            // f.quaternion.copy(f.userData.body.quaternion);
-
-            // sphere1.material.uniforms.time.value = -time;
-            sphere1.rotation.x = Math.sin(time * 0.7) * 200;
-            sphere1.rotation.y = Math.sin(time * 0.3) * 200;
-
-            // sphere2.material.uniforms.time.value = time;
-            sphere2.rotation.x = Math.sin(time * 0.8) * 200;
-            sphere2.rotation.y = Math.sin(time * 0.2) * 200;
+        if (mesh) {
+            mesh.rotation.y = time * 2;
         }
     };
-
-    loadMaterial();
 </script>
 
 <svelte:window
     on:resize={() => resize()}
     on:orientationchange={() => resize()}
-    on:pointermove={(e) => pointerMove(e)}
 />
-
-<!-- <Background {scene} color={0x1a1a1a} position={new Vector3(0, 0, -5)} /> -->
-
-<Sphere
-    bind:ref={sphere1}
-    {scene}
-    color={0x1a1a1a}
-    secondColor={0xc20707}
-    position={new Vector3(-2, 0, -5)}
-    scale={1}
-    {material}
-/>
-
-<Sphere
-    bind:ref={sphere2}
-    {scene}
-    color={0x1a1a1a}
-    secondColor={0xc20707}
-    position={new Vector3(1, -1, -5)}
-    scale={1}
-    {material}
-/>
-
-<!-- <DirectionalLight
-    {scene}
-    color={0xfffffff}
-    intensity={1}
-    position={new Vector3(-1, 1.75, 1)}
-    scale={30}
-/> -->
-<!-- 
-<SpotLight
-    {scene}
-    color={0xffffff}
-    intensity={20000}
-    position={new Vector3(5, 10, 160)}
-/>
-
-<PointLight
-    {scene}
-    color={0xffffff}
-    intensity={1}
-    position={new Vector3(0, 0, 10)}
-/> -->
-
-<Fog {scene} color={0x1a1a1a} near={5} far={10} />

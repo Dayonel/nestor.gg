@@ -7,10 +7,12 @@
     import Scene2 from "./scenes/Scene2.svelte";
     import Scene3 from "./scenes/Scene3.svelte";
     import Scene4 from "./scenes/Scene4.svelte";
+    import Scene5 from "./scenes/Scene5.svelte";
 
     export let models: any[] = [];
     export let hdris: any[] = [];
     export let textures: any[] = [];
+    export let animations: any[] = [];
     export let scrollPercent = 0;
     export let scrollY = 0;
     export let scene: number = 1;
@@ -122,7 +124,13 @@
         {renderer}
         {hdris}
         enabled={scene == 4}
-        {textures}
+        on:mount={(e) => scenes.push(e.detail.scene)}
+    />
+    <Scene5
+        {models}
+        {animations}
+        {renderer}
+        enabled={scene == 5}
         on:mount={(e) => scenes.push(e.detail.scene)}
     />
 {/if}

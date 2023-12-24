@@ -173,26 +173,18 @@
             </section>
 
             <section id="scene3">
-                <p>I love</p>
-                <p>videogames</p>
+                <p>I enjoy</p>
+                <p>playing videogames</p>
             </section>
 
             <section id="scene4">
-                <p>I love</p>
-                <p>videogames</p>
+                <p>I'm obsessed</p>
+                <p>with canvas</p>
             </section>
 
             <section id="scene5">
-                <h2>Changing Camera Position</h2>
-                <p>The camera position is now changing</p>
-            </section>
-
-            <section id="scene6">
-                <h2>You are at the bottom</h2>
-                <p>The cube will now be auto rotating</p>
-                <p>
-                    Now you can scroll back to the top to reverse the animation
-                </p>
+                <h2>I'm a big fan of</h2>
+                <p>Lineage 2</p>
             </section>
         </div>
     {/if}

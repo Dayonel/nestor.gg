@@ -11,6 +11,10 @@
     export let renderer: THREE.WebGLRenderer;
     export let sparklesGeometry: THREE.BufferGeometry;
     export let sparklesMaterial: THREE.ShaderMaterial;
+    export let enabled: boolean;
+
+    $: enabled, init();
+    $: enabled, loop();
 
     let pixelRatio = 2;
     const colors = [
@@ -30,20 +34,24 @@
     const galaxyGeometrySizes: any[] = [];
     let galaxyPoints: THREE.Points;
     let starsGeometry: THREE.BufferGeometry;
+    let mounted = false;
 
-    onMount(() => {
+    const init = () => {
+        if (!enabled) return;
+        if (mounted) return;
+
         const renderScene = new RenderPass(scene, camera);
-        const strength = 1.75;
-        const radius = 0.5;
-        const threshold = 0;
+        const strength = 1;
+        const radius = 1;
+        const threshold = 0.5;
         bloomPass = new UnrealBloomPass(
             new THREE.Vector2(
                 window.innerWidth * window.devicePixelRatio,
-                window.innerHeight * window.devicePixelRatio
+                window.innerHeight * window.devicePixelRatio,
             ),
             strength,
             radius,
-            threshold
+            threshold,
         );
 
         composer = new EffectComposer(renderer);
@@ -58,7 +66,13 @@
         group.add(points);
 
         createStars();
-    });
+
+        loop();
+
+        mounted = true;
+
+        console.log("stars mounted");
+    };
 
     const createStars = () => {
         for (let i = 0; i < 1500; i++) {
@@ -78,22 +92,28 @@
         starsGeometry = new THREE.BufferGeometry();
         starsGeometry.setAttribute(
             "size",
-            new THREE.Float32BufferAttribute(galaxyGeometrySizes, 1)
+            new THREE.Float32BufferAttribute(galaxyGeometrySizes, 1),
         );
         starsGeometry.setAttribute(
             "color",
-            new THREE.Float32BufferAttribute(galaxyGeometryColors, 3)
+            new THREE.Float32BufferAttribute(galaxyGeometryColors, 3),
         );
         galaxyPoints = new THREE.Points(starsGeometry, sparklesMaterial);
         scene.add(galaxyPoints);
     };
 
     export const onResize = () => {
+        if (!enabled) return;
+
         composer.setSize(window.innerWidth, window.innerHeight);
         bloomPass.setSize(window.innerWidth, window.innerHeight);
     };
 
-    export const loop = () => {
+    const loop = () => {
+        if (!enabled) return;
+
+        requestAnimationFrame(loop);
+
         galaxyPoints.rotation.y += 0.0005;
 
         let tempStarsArray: any[] = [];
@@ -104,7 +124,7 @@
 
         starsGeometry.setAttribute(
             "position",
-            new THREE.Float32BufferAttribute(tempStarsArray, 3)
+            new THREE.Float32BufferAttribute(tempStarsArray, 3),
         );
 
         composer.render();

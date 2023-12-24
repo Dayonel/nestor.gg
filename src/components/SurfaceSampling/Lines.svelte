@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { enhance } from "$app/forms";
     import { Path } from "./Path";
     import { onMount } from "svelte";
     import * as THREE from "three";
@@ -6,6 +7,11 @@
 
     export let scene: THREE.Scene;
     export let object: any;
+    export let mounted = false;
+    export let enabled: boolean;
+
+    $: object, init();
+    $: enabled, init();
 
     const pathCount = 700;
     let sampler: any = null;
@@ -34,12 +40,17 @@
         }),
     ];
 
-    onMount(() => {
+    const init = () => {
+        if (!enabled) return;
+        if (!object) return;
+        if (mounted) return;
+
         group = new THREE.Group();
         scene.add(group);
         loadSampler();
         requestAnimationFrame(loop);
-    });
+        mounted = true;
+    };
 
     const loadSampler = () => {
         sampler = new MeshSurfaceSampler(object).build();
@@ -53,6 +64,8 @@
     };
 
     const loop = () => {
+        if (!enabled) return;
+
         requestAnimationFrame(loop);
 
         paths.forEach((path) => {
