@@ -7,8 +7,6 @@
     export let position: THREE.Vector3 = new THREE.Vector3(0, 0, 0);
     export let scale: number = 1;
     export let material: any = new THREE.MeshStandardMaterial();
-    export let color: THREE.ColorRepresentation | undefined = undefined;
-    export let secondColor: THREE.ColorRepresentation | undefined = undefined;
     export let ref: any = undefined;
     export let radius = 1;
     export let envMap: any = undefined;
@@ -24,12 +22,6 @@
         }
 
         const mat = material.clone();
-        // if (color) {
-        //     mat.uniforms.diffuse.value = new THREE.Color(color);
-        // }
-        // if (secondColor) {
-        //     mat.uniforms.secondColor.value = new THREE.Color(secondColor);
-        // }
 
         ref = new THREE.Mesh(geometry, mat);
         ref.position.copy(position);
@@ -54,7 +46,9 @@
         body.angularFactor = new CANNON.Vec3(1, 1, 0); // lock x and y axis
         ref.userData.body = body;
 
-        ref.userData.velocity = new THREE.Vector3(random(), random(), 0);
+        const velocityX = random() * window.devicePixelRatio;
+        const velocityY = random() * window.devicePixelRatio;
+        ref.userData.velocity = new THREE.Vector3(velocityX, velocityY, 0);
 
         dispatch("mount", { ref });
     });

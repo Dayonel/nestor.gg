@@ -20,18 +20,13 @@
         "models/amsterdam3.glb",
         "models/amsterdam4.glb",
         "models/github.glb",
-        "models/baium/attack2.gltf",
-        "models/baium/wait.gltf",
     ];
 
     const time: number = 1;
     const timeMs = time * 1000;
     const hdris: any[] = ["hdris/empty_warehouse_01_1k.hdr"];
     const textures: any[] = ["textures/lineage2.png"];
-    const animations: any[] = [
-        "attack2|C4D Animation Take|Layer0",
-        "wait|C4D Animation Take|Layer0",
-    ];
+    const animations: any[] = [];
 
     const updates = 2;
     const breakpoint = ((timeMs * 1) / updates) * 0.9;

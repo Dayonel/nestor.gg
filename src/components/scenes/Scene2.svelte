@@ -97,7 +97,7 @@
         ScrollTrigger.create({
             scroller: "#scrolling",
             start: "top top",
-            end: "+=" + window.innerHeight / 2,
+            end: "+=" + window.innerHeight * 0.9,
             scrub: true,
             trigger: "#scene2",
             onUpdate: (self: any) => {
@@ -137,7 +137,11 @@
         material.uniforms.pointSize.value = pointSize;
 
         if (mesh) {
-            mesh.rotation.y = time * 2;
+            if (window.innerHeight > window.innerWidth) {
+                mesh.rotation.y = time * 10 * window.devicePixelRatio;
+            } else {
+                mesh.rotation.y = time * 3;
+            }
         }
     };
 </script>

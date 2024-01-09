@@ -1,130 +1,69 @@
 <script lang="ts">
-    import * as THREE from "three";
-    import { Vector3 } from "three";
-    import Sphere from "$lib/Sphere.svelte";
     import { createEventDispatcher, onMount } from "svelte";
-    import Background from "$lib/Background.svelte";
-    import SpotLight from "$lib/SpotLight.svelte";
-    import * as CANNON from "cannon-es";
-    import data from "../../data/spheres.json";
+    import * as THREE from "three";
+    // @ts-ignore
+    import { gsap } from "gsap/dist/gsap.js";
+    // @ts-ignore
+    import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
 
+    export let models: any[] = [];
+    export let textures: any[] = [];
     export let renderer: THREE.WebGLRenderer;
-    export let hdris: any[] = [];
+    export let camera: THREE.PerspectiveCamera;
+    export let scrollY: number;
     export let enabled: boolean;
-
     $: enabled, loop();
+    $: enabled, resize();
     $: enabled, tone();
-    $: hdris, hdr();
-
-    let canvas: any;
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-        40,
-        window.innerWidth / window.innerHeight,
-        0.01,
-        1000,
-    );
-    camera.position.set(0, 0, 20);
-    scene.add(camera);
-    scene.userData.camera = camera;
-    scene.userData.scene = 4;
+    $: enabled, show();
+    $: textures, setupParticles();
 
     const dispatch = createEventDispatcher();
-    let envMap: any;
-    let spheres: THREE.Object3D[] = [];
-    const world = new CANNON.World();
-    const blueMaterial = new THREE.MeshStandardMaterial({
-        color: new THREE.Color("#3897a9"),
-        emissive: new THREE.Color("#3897a9"),
-        roughness: 1,
-        metalness: 1,
-    });
-
-    const blackMaterial = new THREE.MeshStandardMaterial({
-        color: new THREE.Color("#000000"),
-        emissive: new THREE.Color("#000000"),
-        roughness: 1, // matte appearance
-        metalness: 0,
-    });
-
-    const transparentMaterial = new THREE.MeshPhysicalMaterial({
-        transmission: 1,
-        roughness: 0,
-        reflectivity: 1,
-        ior: 1.2,
-        thickness: 10,
-    });
-
-    let spawnSpheres: any[] = [];
+    const scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(
+        70,
+        window.innerWidth / window.innerHeight,
+        1,
+        10000,
+    );
+    camera.position.set(0, 0, 250);
+    scene.userData.camera = camera;
+    scene.userData.scene = 4;
     let mounted = false;
-    let allowForce = true;
+    let clock = new THREE.Clock();
+    let particles: any;
+    let texture: any;
+
+    const group = new THREE.Group();
 
     onMount(() => init());
 
     const init = () => {
-        scene.background = new THREE.Color("#ffffff");
+        gsap.registerPlugin(ScrollTrigger);
 
-        data.spheres.forEach((f) => {
-            let material = blueMaterial;
-            if (f.material == 2) material = blackMaterial;
-            else if (f.material == 3) material = transparentMaterial;
-
-            spawnSpheres.push({
-                position: new THREE.Vector3(f.x, f.y, f.z),
-                radius: f.radius,
-                material: material,
-            });
-        });
-
-        renderer.compile(scene, camera);
+        scene.add(group);
 
         mounted = true;
+
+        renderer.compile(scene, camera);
 
         dispatch("mount", { scene });
     };
 
-    const hdr = () => {
-        if (!hdris || hdris.length == 0) return;
+    const resize = () => {
+        if (!enabled) return;
+        if (!texture) return;
 
-        // reflections
-        envMap = hdris[0];
-        envMap.mapping = THREE.EquirectangularReflectionMapping;
-        scene.environment = envMap;
-    };
+        if (particles) {
+            const fovHeight =
+                2 *
+                Math.tan((camera.fov * Math.PI) / 180 / 2) *
+                camera.position.z;
+            const scale = fovHeight / texture.image.height;
+            particles.scale.set(scale, scale, 1);
+        }
 
-    // Function to check if an object is inside the camera frustum
-    const isObjectInCameraFrustum = (object: any) => {
-        var frustum = new THREE.Frustum();
-        var cameraViewProjectionMatrix = new THREE.Matrix4();
-
-        // Update the camera's matrixWorldInverse and matrixWorld
-        camera.updateMatrixWorld();
-        camera.matrixWorld.invert();
-
-        // Combine the camera's projection and view matrix
-        cameraViewProjectionMatrix.multiplyMatrices(
-            camera.projectionMatrix,
-            camera.matrixWorldInverse,
-        );
-
-        // Set the frustum's matrix to the combined matrix
-        frustum.setFromProjectionMatrix(cameraViewProjectionMatrix);
-
-        // Check if the object is inside the frustum
-        return frustum.intersectsObject(object);
-    };
-
-    const applyForce = () => {
-        if (!allowForce) return;
-
-        allowForce = false;
-        spheres.forEach((f: THREE.Object3D) => {
-            const s = f.userData.body;
-            s.force.set(s.position.x, s.position.y, 0).normalize();
-            s.velocity = s.force.scale(Math.random() * 10);
-        });
-
-        setTimeout(() => (allowForce = true), 1000);
+        renderer.domElement.resize(renderer, camera);
     };
 
     const tone = () => {
@@ -133,10 +72,144 @@
         renderer.toneMappingExposure = 1;
     };
 
-    const resize = () => {
+    const setupParticles = () => {
+        if (!textures || textures.length == 0) return;
+        texture = textures[0];
+
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.format = THREE.RGBAFormat;
+
+        const numPoints = texture.image.width * texture.image.height;
+
+        let numVisible = numPoints;
+        let threshold = 0;
+        let originalColors;
+
+        // discard pixels darker than threshold #22
+        numVisible = 0;
+        threshold = 34;
+
+        const img = texture.image;
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = texture.image.width;
+        canvas.height = texture.image.height;
+        ctx?.scale(1, -1);
+        ctx?.drawImage(
+            img,
+            0,
+            0,
+            texture.image.width,
+            texture.image.height * -1,
+        );
+
+        const imgData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
+        if (!imgData) return;
+        originalColors = Float32Array.from(imgData.data);
+
+        for (let i = 0; i < numPoints; i++) {
+            if (originalColors[i * 4 + 0] > threshold) numVisible++;
+        }
+
+        const uniforms = {
+            uTime: { value: 0 },
+            uRandom: { value: 1.0 },
+            uDepth: { value: 2.0 },
+            uSize: { value: 0.0 },
+            uTextureSize: {
+                value: new THREE.Vector2(
+                    texture.image.width,
+                    texture.image.height,
+                ),
+            },
+            uTexture: { value: texture },
+            uTouch: { value: null },
+        };
+
+        const material = new THREE.RawShaderMaterial({
+            uniforms,
+            vertexShader:
+                document.getElementById("particles-vs")?.textContent ?? "",
+            fragmentShader:
+                document.getElementById("particles-fs")?.textContent ?? "",
+            depthTest: false,
+            transparent: true,
+        });
+
+        const geometry = new THREE.InstancedBufferGeometry();
+
+        // positions
+        const positions = new THREE.BufferAttribute(new Float32Array(4 * 3), 3);
+        positions.setXYZ(0, -0.5, 0.5, 0.0);
+        positions.setXYZ(1, 0.5, 0.5, 0.0);
+        positions.setXYZ(2, -0.5, -0.5, 0.0);
+        positions.setXYZ(3, 0.5, -0.5, 0.0);
+        geometry.setAttribute("position", positions);
+
+        // uvs
+        const uvs = new THREE.BufferAttribute(new Float32Array(4 * 2), 2);
+        uvs.setXYZ(0, 0.0, 0.0, 0.0);
+        uvs.setXYZ(1, 1.0, 0.0, 0.0);
+        uvs.setXYZ(2, 0.0, 1.0, 0.0);
+        uvs.setXYZ(3, 1.0, 1.0, 0.0);
+        geometry.setAttribute("uv", uvs);
+
+        // index
+        geometry.setIndex(
+            new THREE.BufferAttribute(new Uint16Array([0, 2, 1, 2, 3, 1]), 1),
+        );
+
+        const indices = new Uint16Array(numPoints);
+        const offsets = new Float32Array(numPoints * 3);
+        const angles = new Float32Array(numPoints);
+
+        for (let i = 0; i < numPoints; i++) {
+            offsets[i * 3 + 0] = i % texture.image.width;
+            offsets[i * 3 + 1] = Math.floor(i / texture.image.width);
+
+            indices[i] = i;
+
+            angles[i] = Math.random() * Math.PI;
+        }
+
+        geometry.setAttribute(
+            "pindex",
+            new THREE.InstancedBufferAttribute(indices, 1, false),
+        );
+        geometry.setAttribute(
+            "offset",
+            new THREE.InstancedBufferAttribute(offsets, 3, false),
+        );
+        geometry.setAttribute(
+            "angle",
+            new THREE.InstancedBufferAttribute(angles, 1, false),
+        );
+
+        particles = new THREE.Mesh(geometry, material);
+        scene.add(particles);
+    };
+
+    const show = () => {
         if (!enabled) return;
 
-        renderer.domElement.resize(renderer, camera);
+        const time = 1;
+        gsap.fromTo(
+            particles.material.uniforms.uSize,
+            time,
+            { value: 0.5 },
+            { value: 1.5 },
+        );
+        gsap.to(particles.material.uniforms.uRandom, time, {
+            value: 2.0,
+        });
+        gsap.fromTo(
+            particles.material.uniforms.uDepth,
+            time * 1,
+            { value: 40.0 },
+            { value: 4.0 },
+        );
     };
 
     const loop = () => {
@@ -144,38 +217,10 @@
 
         requestAnimationFrame(loop);
 
-        world.fixedStep();
+        const time = clock.getDelta();
 
-        const date = Date.now();
-
-        const ROTATE_TIME = 10; // Time in seconds for a full rotation
-        const xAxis = new THREE.Vector3(1, 0, 0);
-        const yAxis = new THREE.Vector3(0, 1, 0);
-        const rotateX = (date / ROTATE_TIME) * Math.PI * 2;
-        const rotateY = (date / ROTATE_TIME) * Math.PI * 2;
-
-        for (let index = 0; index < spheres.length; index++) {
-            const f = spheres[index];
-
-            // rotate
-            f.rotateOnWorldAxis(xAxis, rotateX);
-            f.rotateOnWorldAxis(yAxis, rotateY);
-
-            // physics
-            f.userData.body.position.x += f.userData.velocity.x;
-            f.userData.body.position.y += f.userData.velocity.y;
-            f.userData.body.position.z += f.userData.velocity.z;
-
-            // Copy coordinates from Cannon to Three.js
-            f.position.copy(f.userData.body.position);
-            f.quaternion.copy(f.userData.body.quaternion);
-
-            // boundaries
-            if (!isObjectInCameraFrustum(f)) {
-                f.userData.gravity = true;
-            } else if (isObjectInCameraFrustum(f)) {
-                f.userData.gravity = false;
-            }
+        if (mounted) {
+            particles.material.uniforms.uTime.value += time;
         }
     };
 </script>
@@ -184,39 +229,3 @@
     on:resize={() => resize()}
     on:orientationchange={() => resize()}
 />
-
-<Background {scene} color={0x88d0e3} position={new Vector3(0, 0, -25)} />
-
-<SpotLight
-    {scene}
-    color={0xffffff}
-    intensity={100}
-    distance={100}
-    angle={1}
-    decay={2}
-    position={new Vector3(-6, 0, 0)}
-/>
-
-{#each spawnSpheres as spawn}
-    <Sphere
-        {scene}
-        {envMap}
-        position={spawn.position}
-        radius={spawn.radius}
-        material={spawn.material}
-        on:mount={(e) => {
-            spheres.push(e.detail.ref);
-            world.addBody(e.detail.ref.userData.body);
-            world.addEventListener("postStep", () => {
-                if (!e.detail.ref.userData.gravity) return;
-
-                // pull sphere back to scene
-                const s = e.detail.ref.userData.body;
-                const v = new CANNON.Vec3();
-                v.set(-s.position.x, -s.position.y, -s.position.z).normalize();
-                v.scale(0.1, s.force);
-                s.applyLocalForce(v);
-            });
-        }}
-    />
-{/each}

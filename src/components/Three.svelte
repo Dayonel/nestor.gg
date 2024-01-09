@@ -7,7 +7,6 @@
     import Scene2 from "./scenes/Scene2.svelte";
     import Scene3 from "./scenes/Scene3.svelte";
     import Scene4 from "./scenes/Scene4.svelte";
-    import Scene5 from "./scenes/Scene5.svelte";
 
     export let models: any[] = [];
     export let hdris: any[] = [];
@@ -61,6 +60,7 @@
         );
 
         canvas = document.body.appendChild(renderer.domElement);
+        renderer.domElement.id = "threejs";
 
         console.log("three has mounted");
     };
@@ -70,7 +70,7 @@
 
         // stats
         stats = new Stats();
-        document.body.appendChild(stats.dom);
+        // document.body.appendChild(stats.dom);
         loop();
         intro = true;
     };
@@ -112,25 +112,18 @@
         on:mount={(e) => scenes.push(e.detail.scene)}
     />
     <Scene3
+        {renderer}
+        {hdris}
+        enabled={scene == 3}
+        on:mount={(e) => scenes.push(e.detail.scene)}
+    />
+    <Scene4
         {models}
         {renderer}
         {camera}
         {scrollY}
-        enabled={scene == 3}
-        {textures}
-        on:mount={(e) => scenes.push(e.detail.scene)}
-    />
-    <Scene4
-        {renderer}
-        {hdris}
         enabled={scene == 4}
-        on:mount={(e) => scenes.push(e.detail.scene)}
-    />
-    <Scene5
-        {models}
-        {animations}
-        {renderer}
-        enabled={scene == 5}
+        {textures}
         on:mount={(e) => scenes.push(e.detail.scene)}
     />
 {/if}

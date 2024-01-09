@@ -5,6 +5,7 @@
     import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
     import Loader from "../components/Loader.svelte";
     import { onMount, tick } from "svelte";
+    import Scene5 from "../components/scenes/Scene5.svelte";
 
     let loading = true;
     let scrollPercent: number = 0;
@@ -13,22 +14,21 @@
     let scrolling: any;
     let sections: NodeListOf<HTMLElement>;
     let scene: number = 1;
-    let section2AnimComplete = false;
 
     onMount(() => {
         gsap.registerPlugin(ScrollTrigger);
     });
 
     const loaded = async (e: CustomEvent<any>) => {
-        // textReveal();
-
         loading = false;
 
         await tick(); // wait for DOM updates to be applied
 
         sections = document.querySelectorAll("section");
 
-        // gsapSection2();
+        gsapSection4();
+
+        gsapSection5();
     };
 
     const onScroll = () => {
@@ -80,54 +80,66 @@
         );
     };
 
-    const textReveal = () => {
-        const tl = gsap.timeline();
+    const gsapSection4 = () => {
+        gsap.to("#scene4", {
+            opacity: 0,
+            scrollTrigger: {
+                scroller: "#scrolling",
+                trigger: "#scene4",
+                start: "top top",
+                end: "+=50%",
+                pin: "#scene4",
+                pinType: "fixed",
+                pinSpacing: false,
+                scrub: true,
+            },
+        });
 
-        tl.from(".hero-text", 1.8, {
-            y: 100,
-            ease: "power4.out",
-            delay: 1,
-            skewY: 7,
-            stagger: {
-                amount: 0.3,
+        gsap.to("#threejs", {
+            opacity: 0,
+            scrollTrigger: {
+                scroller: "#scrolling",
+                trigger: "#scene4",
+                start: "top top",
+                end: "+=50%",
+                scrub: true,
             },
         });
     };
 
-    const gsapSection2 = () => {
-        gsap.timeline({
+    const gsapSection5 = () => {
+        gsap.to(".scene5-text", {
+            opacity: 1,
             scrollTrigger: {
-                pin: "#scene2",
-                pinType: "fixed",
-                end: "+=200%",
                 scroller: "#scrolling",
-            },
-        });
-
-        const t2 = gsap.timeline({
-            scrollTrigger: {
-                trigger: "#scene2",
-                start: "top top",
-                end: "+=50%",
-                scroller: "#scrolling",
+                trigger: "#scene5",
+                start: "top 50%",
+                end: "+=100%",
                 scrub: true,
-                onUpdate: (self: any) => {
-                    if (window.innerWidth < 1600) return;
-
-                    const backwards = self.direction === -1;
-                    if (backwards) section2AnimComplete = false;
-                },
             },
         });
 
-        let mm = gsap.matchMedia();
-        mm.add("(min-width: 1600px)", () => {
-            t2.to(".scene2-text", {
-                x: "-50%",
-                onComplete: () => {
-                    section2AnimComplete = true;
-                },
-            });
+        gsap.to(".section5-wrap", {
+            backgroundSize: "200%",
+            scrollTrigger: {
+                scroller: "#scrolling",
+                trigger: "#scene5",
+                start: "top 50%",
+                end: "+=100%",
+                scrub: true,
+            },
+        });
+
+        gsap.to("#scene5", {
+            scrollTrigger: {
+                scroller: "#scrolling",
+                trigger: "#scene5",
+                start: "top top",
+                pin: "#scene5",
+                pinType: "fixed",
+                end: "+=100%",
+                scrub: true,
+            },
         });
     };
 </script>
@@ -172,19 +184,21 @@
                 <p>web development</p>
             </section>
 
+            <!-- Section 3 -->
             <section id="scene3">
-                <p>I enjoy</p>
-                <p>playing videogames</p>
-            </section>
-
-            <section id="scene4">
                 <p>I'm obsessed</p>
                 <p>with canvas</p>
             </section>
 
+            <!-- Section 4 -->
+            <section id="scene4">
+                <p>I love</p>
+                <p>videogames</p>
+            </section>
+
+            <!-- Section 5 -->
             <section id="scene5">
-                <h2>I'm a big fan of</h2>
-                <p>Lineage 2</p>
+                <Scene5></Scene5>
             </section>
         </div>
     {/if}

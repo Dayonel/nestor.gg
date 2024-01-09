@@ -6,7 +6,6 @@
     import * as THREE from "three";
     import GLTF from "$lib/GLTF.svelte";
     import { createEventDispatcher, onMount } from "svelte";
-    import Water from "../Water.svelte";
     import { Vector3 } from "three";
     import TWEEN from "@tweenjs/tween.js";
     import { MaterialDTO } from "../../core/dto/MaterialDTO";
@@ -230,7 +229,6 @@
         {group}
     />
 {/if}
-<!-- <Water {scene} /> -->
 
 <!-- Moving lights -->
 <PointLight bind:ref={light1} {scene} color={0xff0040} intensity={50} />
