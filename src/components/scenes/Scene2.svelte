@@ -116,10 +116,10 @@
 
         if (window.innerHeight > window.innerWidth) {
             camera.fov = fovPortrait;
-            pointSize = 2 + window.devicePixelRatio / 2;
+            pointSize = 2 + window.devicePixelRatio;
         } else {
             camera.fov = fovLandscape;
-            pointSize = 2;
+            pointSize = 3;
         }
 
         renderer.domElement.resize(renderer, camera);

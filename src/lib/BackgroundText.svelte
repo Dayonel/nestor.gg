@@ -21,7 +21,7 @@
         font-size: 300px;
         font-weight: 900;
         color: transparent;
-        -webkit-text-stroke: 10px #ff5252;
+        -webkit-text-stroke: 15px #ff5252;
         text-transform: uppercase;
     }
 

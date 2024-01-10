@@ -21,12 +21,12 @@
     const dispatch = createEventDispatcher();
     const scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(
-        70,
+        90,
         window.innerWidth / window.innerHeight,
         1,
         10000,
     );
-    camera.position.set(0, 0, 250);
+    camera.position.set(0, 0, 50);
     scene.userData.camera = camera;
     scene.userData.scene = 4;
     let mounted = false;
