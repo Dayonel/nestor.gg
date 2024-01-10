@@ -81,30 +81,30 @@
     };
 
     const gsapSection4 = () => {
-        gsap.to("#scene4", {
-            opacity: 0,
+        gsap.timeline({
             scrollTrigger: {
                 scroller: "#scrolling",
                 trigger: "#scene4",
                 start: "top top",
-                end: "+=50%",
+                end: "+=100%",
+                scrub: true,
                 pin: "#scene4",
                 pinType: "fixed",
                 pinSpacing: false,
-                scrub: true,
             },
-        });
-
-        gsap.to("#threejs", {
-            opacity: 0,
-            scrollTrigger: {
-                scroller: "#scrolling",
-                trigger: "#scene4",
-                start: "top top",
-                end: "+=50%",
-                scrub: true,
-            },
-        });
+        })
+            .to("#threejs", {
+                opacity: 1,
+            })
+            .to("#threejs", {
+                opacity: 1,
+            })
+            .to("#threejs", {
+                opacity: 0,
+            })
+            .to("#scene4", {
+                opacity: 0,
+            });
     };
 
     const gsapSection5 = () => {
@@ -113,18 +113,7 @@
             scrollTrigger: {
                 scroller: "#scrolling",
                 trigger: "#scene5",
-                start: "top 50%",
-                end: "+=100%",
-                scrub: true,
-            },
-        });
-
-        gsap.to(".section5-wrap", {
-            backgroundSize: "200%",
-            scrollTrigger: {
-                scroller: "#scrolling",
-                trigger: "#scene5",
-                start: "top 50%",
+                start: "top top",
                 end: "+=100%",
                 scrub: true,
             },

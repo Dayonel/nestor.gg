@@ -97,7 +97,7 @@
         ScrollTrigger.create({
             scroller: "#scrolling",
             start: "top top",
-            end: "+=" + window.innerHeight * 0.9,
+            end: "+=" + (window.innerHeight * 2) / 3,
             scrub: true,
             trigger: "#scene2",
             onUpdate: (self: any) => {
