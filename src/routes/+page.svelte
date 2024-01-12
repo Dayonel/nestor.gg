@@ -5,6 +5,9 @@
     import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
     import Loader from "../components/Loader.svelte";
     import { onMount, tick } from "svelte";
+    import GitHub from "$lib/GitHub.svelte";
+    import Linkedin from "$lib/Linkedin.svelte";
+    import Link from "$lib/Link.svelte";
     import Scene5 from "../components/scenes/Scene5.svelte";
 
     let loading = true;
@@ -28,7 +31,7 @@
 
         gsapSection4();
 
-        gsapSection5();
+        gsapSection6();
     };
 
     const onScroll = () => {
@@ -107,28 +110,41 @@
             });
     };
 
-    const gsapSection5 = () => {
-        gsap.to(".scene5-text", {
-            opacity: 1,
+    const gsapSection6 = () => {
+        gsap.timeline({
             scrollTrigger: {
                 scroller: "#scrolling",
-                trigger: "#scene5",
+                trigger: "#scene6",
                 start: "top top",
                 end: "+=100%",
                 scrub: true,
             },
-        });
+        })
+            .to(
+                "#threejs",
+                {
+                    opacity: 1,
+                },
+                "#scene6", // at the same time
+            )
+            .to(
+                ".socials",
+                {
+                    opacity: 1,
+                },
+                "#scene6", // at the same time
+            );
 
-        gsap.to("#scene5", {
+        gsap.timeline({
             scrollTrigger: {
                 scroller: "#scrolling",
-                trigger: "#scene5",
+                trigger: "#scene6",
                 start: "top top",
-                pin: "#scene5",
-                pinType: "fixed",
                 end: "+=100%",
                 scrub: true,
             },
+        }).to(".scene6-footer", {
+            opacity: 1,
         });
     };
 </script>
@@ -159,12 +175,14 @@
                     <h2 class="position hero-text">I live in Amsterdam</h2>
                 </div>
 
-                <div class="block scroll-dots">
-                    <span class="dot dot3" />
-                    <span class="dot dot2" />
-                    <span class="dot dot1" />
-                    <span>Scroll down</span>
-                </div>
+                {#if scene == 1}
+                    <div class="block scroll-dots">
+                        <span class="dot dot3" />
+                        <span class="dot dot2" />
+                        <span class="dot dot1" />
+                        <span>Scroll down</span>
+                    </div>
+                {/if}
             </section>
 
             <!-- Section 2 -->
@@ -187,7 +205,28 @@
 
             <!-- Section 5 -->
             <section id="scene5">
-                <Scene5></Scene5>
+                <Scene5 enabled={scene == 5}></Scene5>
+            </section>
+
+            <!-- Section 6 -->
+            <section id="scene6">
+                <div class="scene6-footer">
+                    <p>Socials</p>
+                    <div class="socials">
+                        <Link
+                            href="https://github.com/Dayonel"
+                            text="Grab the code for this project and explore my other contributions by searching for the username Dayonel on GitHub."
+                        >
+                            <GitHub></GitHub>
+                        </Link>
+                        <Link
+                            href="https://www.linkedin.com/in/nestor-plysyuk"
+                            text="Connect with me on LinkedIn by searching for my profile, nestor-plysyuk."
+                        >
+                            <Linkedin></Linkedin>
+                        </Link>
+                    </div>
+                </div>
             </section>
         </div>
     {/if}
@@ -292,5 +331,32 @@
         100% {
             opacity: 0;
         }
+    }
+
+    .socials {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        opacity: 0;
+    }
+
+    #scene5,
+    #scene6 {
+        height: 200dvh;
+    }
+
+    .scene6-footer {
+        font-family: "Handjet";
+        font-weight: 700;
+        opacity: 0;
+        position: fixed;
+        display: flex;
+        bottom: 2rem;
+        width: 100%;
+        align-items: center;
+        text-transform: uppercase;
+        justify-content: space-between;
+        max-width: 66.66%;
     }
 </style>

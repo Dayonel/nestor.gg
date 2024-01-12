@@ -4,7 +4,6 @@
     // @ts-ignore
     import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
     import * as THREE from "three";
-    import { Vector3 } from "three";
     import { createEventDispatcher, onMount } from "svelte";
 
     export let models: any[] = [];
@@ -41,9 +40,9 @@
     let pointSize = 1;
     let objectLoaded = false;
 
-    onMount(async () => await init());
+    onMount(() => init());
 
-    const init = async () => {
+    const init = () => {
         gsap.registerPlugin(ScrollTrigger);
 
         renderer.compile(scene, camera);
@@ -51,8 +50,6 @@
         mounted = true;
 
         dispatch("mount", { scene });
-
-        loop();
     };
 
     const loadModel = () => {

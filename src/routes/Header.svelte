@@ -33,4 +33,8 @@
     .logo :global(path) {
         fill: white;
     }
+
+    a:hover :global(path) {
+        fill: rgb(224, 204, 250);
+    }
 </style>
