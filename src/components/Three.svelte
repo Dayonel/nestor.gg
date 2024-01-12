@@ -12,8 +12,6 @@
     export let models: any[] = [];
     export let hdris: any[] = [];
     export let textures: any[] = [];
-    export let animations: any[] = [];
-    export let scrollPercent = 0;
     export let scrollY = 0;
     export let scene: number = 1;
     export let renderer: THREE.WebGLRenderer;
@@ -85,14 +83,12 @@
             }
         });
 
-        stats.update();
+        // stats.update();
     };
 
     // this happens prior to chilren onMount()
     init();
 </script>
-
-<span class="scroll">Scroll progress: {scrollPercent?.toFixed(2)}%</span>
 
 {#if !weblAvailable}
     <p class="message">{WebGL.getWebGLErrorMessage()}</p>
@@ -119,10 +115,8 @@
         on:mount={(e) => scenes.push(e.detail.scene)}
     />
     <Scene4
-        {models}
         {renderer}
         {camera}
-        {scrollY}
         enabled={scene == 4}
         {textures}
         on:mount={(e) => scenes.push(e.detail.scene)}
@@ -142,12 +136,5 @@
         left: 50%;
         transform: translate(-50%, -50%);
         font-weight: 300;
-    }
-
-    .scroll {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        z-index: 1;
     }
 </style>

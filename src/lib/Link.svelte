@@ -22,8 +22,8 @@
     }
 
     .link :global(svg) {
-        width: 48px;
-        height: 48px;
+        width: 40px;
+        height: 40px;
         fill: white;
     }
 

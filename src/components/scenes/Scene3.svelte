@@ -113,19 +113,6 @@
         return frustum.intersectsObject(object);
     };
 
-    const applyForce = () => {
-        if (!allowForce) return;
-
-        allowForce = false;
-        spheres.forEach((f: THREE.Object3D) => {
-            const s = f.userData.body;
-            s.force.set(s.position.x, s.position.y, 0).normalize();
-            s.velocity = s.force.scale(Math.random() * 10);
-        });
-
-        setTimeout(() => (allowForce = true), 1000);
-    };
-
     const tone = () => {
         if (!enabled) return;
 

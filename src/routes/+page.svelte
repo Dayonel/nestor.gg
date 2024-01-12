@@ -8,10 +8,10 @@
     import GitHub from "$lib/GitHub.svelte";
     import Linkedin from "$lib/Linkedin.svelte";
     import Link from "$lib/Link.svelte";
+    import Steam from "$lib/Steam.svelte";
     import Scene5 from "../components/scenes/Scene5.svelte";
 
     let loading = true;
-    let scrollPercent: number = 0;
     let scrollY: number = 0;
     let scrollHidden: boolean = true;
     let scrolling: any;
@@ -45,7 +45,7 @@
             }
         });
 
-        scrollPercent =
+        const scrollPercent =
             (scrolling.scrollTop /
                 (scrolling.scrollHeight - scrolling.clientHeight)) *
             100;
@@ -53,6 +53,13 @@
         scrollY = scrolling.scrollTop;
         if (scrollPercent > 1) toggleScroll(true);
         else toggleScroll(false);
+
+        // dispatch
+        var event = new CustomEvent("scroll-percent", {
+            detail: scrollPercent,
+        });
+
+        document.dispatchEvent(event);
     };
 
     const isInViewport = (element: HTMLElement) => {
@@ -159,12 +166,7 @@
 </svelte:head>
 
 <div bind:this={scrolling} id="scrolling" on:scroll={() => onScroll()}>
-    <Loader
-        on:load={async (e) => await loaded(e)}
-        {scrollPercent}
-        {scrollY}
-        {scene}
-    />
+    <Loader on:load={async (e) => await loaded(e)} {scrollY} {scene} />
 
     {#if !loading}
         <div id="three">
@@ -224,6 +226,14 @@
                             text="Connect with me on LinkedIn by searching for my profile, nestor-plysyuk."
                         >
                             <Linkedin></Linkedin>
+                        </Link>
+                        <Link
+                            href="https://steamcommunity.com/id/dayonel"
+                            text="Add me as friend on Steam so we can play games together."
+                        >
+                            <div class="steam">
+                                <Steam></Steam>
+                            </div>
                         </Link>
                     </div>
                 </div>
@@ -337,7 +347,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 1rem;
+        gap: 0.5rem;
         opacity: 0;
     }
 
@@ -357,6 +367,17 @@
         align-items: center;
         text-transform: uppercase;
         justify-content: space-between;
-        max-width: 66.66%;
+        padding: 0 2rem;
+    }
+
+    @media (min-width: 768px) {
+        .scene6-footer {
+            max-width: 66.66%;
+        }
+    }
+
+    .steam :global(svg) {
+        width: 36px;
+        height: 36px;
     }
 </style>

@@ -26,7 +26,6 @@
     const timeMs = time * 1000;
     const hdris: any[] = ["hdris/empty_warehouse_01_1k.hdr"];
     const textures: any[] = ["textures/lineage2.png"];
-    const animations: any[] = [];
 
     const updates = 2;
     const breakpoint = ((timeMs * 1) / updates) * 0.9;
@@ -37,7 +36,6 @@
 <script lang="ts">
     import Loading from "./Loading.svelte";
 
-    export let scrollPercent: number = 0;
     export let scrollY: number = 0;
     export let scene: number = 1;
 
@@ -45,7 +43,6 @@
     let models_loaded: any[] = [];
     let hdris_loaded: any[] = [];
     let textures_loaded: any[] = [];
-    let animations_loaded: any[] = [];
     let progress = 0;
     let renderer: THREE.WebGLRenderer;
     let scenes: any[] = [];
@@ -76,9 +73,6 @@
             progress++;
             const curr = await gltfLoader.loadAsync(model);
             models_loaded = [...models_loaded, curr.scene];
-            if (animations && animations.length > 0) {
-                animations.forEach((f) => addAnimation(curr, f));
-            }
         }
     };
 
@@ -90,18 +84,6 @@
                 await textureLoader.loadAsync(model),
             ];
         }
-    };
-
-    const addAnimation = (gltf: any, name: string) => {
-        const clips = gltf.animations;
-        if (!clips || clips.length == 0) return;
-
-        const clip = THREE.AnimationClip.findByName(clips, name);
-        if (!clip) return;
-
-        if (animations_loaded.some((s) => s.name == name)) return; // duplicates
-
-        animations_loaded = [...animations_loaded, clip];
     };
 
     const preRender = (): Promise<void> => {
@@ -141,12 +123,10 @@
 <Three
     bind:renderer
     bind:scenes
-    {scrollPercent}
     {scrollY}
     models={models_loaded}
     hdris={hdris_loaded}
     textures={textures_loaded}
-    animations={animations_loaded}
     {scene}
     {preRendered}
 />

@@ -23,7 +23,6 @@
     let mounted = false;
     var uniforms: any;
     var clock = new THREE.Clock();
-    let marqueeInitialized = false;
 
     onMount(() => init());
 

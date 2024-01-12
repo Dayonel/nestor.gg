@@ -26,7 +26,6 @@
         ref = new THREE.Mesh(geometry, mat);
         ref.position.copy(position);
         ref.scale.setScalar(scale);
-        // ref.receiveShadow = true;
         scene.add(ref);
 
         ref.userData.radius = radius;
