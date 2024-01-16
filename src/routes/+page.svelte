@@ -160,7 +160,7 @@
     <title>Nestor Orest Plysyuk Hladunko - Full stack developer</title>
     <meta
         name="description"
-        property="og:description"
+        property="description"
         content="Portfolio of Nestor Orest Plysyuk Hladunko - Full stack developer"
     />
 </svelte:head>
