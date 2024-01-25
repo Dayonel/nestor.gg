@@ -29,6 +29,8 @@
 
         sections = document.querySelectorAll("section");
 
+        toggleScroll();
+
         gsapSection4();
 
         gsapSection6();
@@ -51,8 +53,6 @@
             100;
 
         scrollY = scrolling.scrollTop;
-        if (scrollPercent > 1) toggleScroll(true);
-        else toggleScroll(false);
 
         // dispatch
         var event = new CustomEvent("scroll-percent", {
@@ -71,23 +71,18 @@
         return verticalInView && horizontalInView;
     };
 
-    const toggleScroll = (hide: boolean) => {
-        if (hide == scrollHidden) return;
-
-        scrollHidden = hide;
-        gsap.fromTo(
-            ".scroll-dots",
-            {
-                opacity: hide ? 1 : 0,
-                duration: 0.2,
-                ease: "power1.out",
+    const toggleScroll = () => {
+        gsap.timeline({
+            scrollTrigger: {
+                scroller: "#scrolling",
+                trigger: "#scene1",
+                start: "top top",
+                end: "+=10%",
+                scrub: true,
             },
-            {
-                opacity: hide ? 0 : 1,
-                duration: 0.2,
-                ease: "power1.out",
-            },
-        );
+        }).to(".scroll-dots", {
+            opacity: 0,
+        });
     };
 
     const gsapSection4 = () => {
@@ -177,14 +172,14 @@
                     <h2 class="position hero-text">I live in Amsterdam</h2>
                 </div>
 
-                {#if scene == 1}
-                    <div class="block scroll-dots">
+                <div class="block scroll-dots">
+                    {#if scene == 1}
                         <span class="dot dot3" />
                         <span class="dot dot2" />
                         <span class="dot dot1" />
                         <span>Scroll down</span>
-                    </div>
-                {/if}
+                    {/if}
+                </div>
             </section>
 
             <!-- Section 2 -->
@@ -215,26 +210,28 @@
                 <div class="scene6-footer">
                     <p>Socials</p>
                     <div class="socials">
-                        <Link
-                            href="https://github.com/Dayonel"
-                            text="Grab the code for this project and explore my other contributions by searching for the username Dayonel on GitHub."
-                        >
-                            <GitHub></GitHub>
-                        </Link>
-                        <Link
-                            href="https://www.linkedin.com/in/nestor-plysyuk"
-                            text="Connect with me on LinkedIn by searching for my profile, nestor-plysyuk."
-                        >
-                            <Linkedin></Linkedin>
-                        </Link>
-                        <Link
-                            href="https://steamcommunity.com/id/dayonel"
-                            text="Add me as friend on Steam so we can play games together."
-                        >
-                            <div class="steam">
-                                <Steam></Steam>
-                            </div>
-                        </Link>
+                        {#if scene == 6}
+                            <Link
+                                href="https://github.com/Dayonel"
+                                text="Grab the code for this project and explore my other contributions by searching for the username Dayonel on GitHub."
+                            >
+                                <GitHub></GitHub>
+                            </Link>
+                            <Link
+                                href="https://www.linkedin.com/in/nestor-plysyuk"
+                                text="Connect with me on LinkedIn by searching for my profile, nestor-plysyuk."
+                            >
+                                <Linkedin></Linkedin>
+                            </Link>
+                            <Link
+                                href="https://steamcommunity.com/id/dayonel"
+                                text="Add me as friend on Steam so we can play games together."
+                            >
+                                <div class="steam">
+                                    <Steam></Steam>
+                                </div>
+                            </Link>
+                        {/if}
                     </div>
                 </div>
             </section>
