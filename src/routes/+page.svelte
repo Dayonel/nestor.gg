@@ -8,8 +8,8 @@
     import GitHub from "$lib/GitHub.svelte";
     import Linkedin from "$lib/Linkedin.svelte";
     import Link from "$lib/Link.svelte";
-    import Steam from "$lib/Steam.svelte";
     import Scene5 from "../components/scenes/Scene5.svelte";
+    import Twitter from "$lib/Twitter.svelte";
 
     let loading = true;
     let scrollY: number = 0;
@@ -218,18 +218,18 @@
                                 <GitHub></GitHub>
                             </Link>
                             <Link
+                                href="https://twitter.com/nestordotgg"
+                                text="Follow @nestordotgg on twitter."
+                            >
+                                <div class="steam">
+                                    <Twitter></Twitter>
+                                </div>
+                            </Link>
+                            <Link
                                 href="https://www.linkedin.com/in/nestor-plysyuk"
                                 text="Connect with me on LinkedIn by searching for my profile, nestor-plysyuk."
                             >
                                 <Linkedin></Linkedin>
-                            </Link>
-                            <Link
-                                href="https://steamcommunity.com/id/dayonel"
-                                text="Add me as friend on Steam so we can play games together."
-                            >
-                                <div class="steam">
-                                    <Steam></Steam>
-                                </div>
                             </Link>
                         {/if}
                     </div>
@@ -373,8 +373,7 @@
         }
     }
 
-    .steam :global(svg) {
-        width: 36px;
-        height: 36px;
+    .scene6-footer > p {
+        font-size: 36px;
     }
 </style>

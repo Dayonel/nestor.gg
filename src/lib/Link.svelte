@@ -22,12 +22,12 @@
     }
 
     .link :global(svg) {
-        width: 40px;
-        height: 40px;
-        fill: white;
+        width: 36px;
+        height: 36px;
+        stroke: white;
     }
 
     a:hover :global(svg) {
-        fill: rgb(224, 204, 250);
+        stroke: rgb(224, 204, 250);
     }
 </style>
