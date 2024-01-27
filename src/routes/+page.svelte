@@ -56,10 +56,7 @@
     <Loader on:load={async (e) => await loaded(e)} {scrollY} {scene} />
 
     {#if !loading}
-        <div
-            id="three"
-            class="text-6xl font-bold text-4xl lg:text-6xl relative w-full"
-        >
+        <div id="three" class="font-bold text-4xl lg:text-6xl relative w-full">
             <section class="gsap-scene1">
                 <h1>Hi, I'm Nestor</h1>
                 <h2>I live in Amsterdam</h2>

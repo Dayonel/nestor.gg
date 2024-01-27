@@ -56,7 +56,6 @@
 
     let spawnSpheres: any[] = [];
     let mounted = false;
-    let allowForce = true;
 
     onMount(() => init());
 
