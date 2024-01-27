@@ -11,7 +11,6 @@
     export let enabled: boolean;
 
     $: enabled, loop();
-    $: enabled, tone();
     $: enabled, resize();
     $: enabled, gsapAnimate();
     $: models, loadModel();
@@ -96,16 +95,12 @@
             start: "top top",
             end: "+=" + (window.innerHeight * 2) / 3,
             scrub: true,
-            trigger: "#scene2",
+            trigger: ".gsap-scene2",
             onUpdate: (self: any) => {
                 // Update the progress variable during the animation
                 progress = 1 - self.progress;
             },
         });
-    };
-
-    const tone = () => {
-        if (!enabled) return;
     };
 
     const resize = () => {

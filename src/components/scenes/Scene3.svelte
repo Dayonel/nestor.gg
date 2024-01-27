@@ -1,10 +1,10 @@
 <script lang="ts">
     import * as THREE from "three";
     import { Vector3 } from "three";
-    import Sphere from "$lib/Sphere.svelte";
+    import Sphere from "$lib/three/Sphere.svelte";
     import { createEventDispatcher, onMount } from "svelte";
-    import Background from "$lib/Background.svelte";
-    import SpotLight from "$lib/SpotLight.svelte";
+    import Background from "$lib/three/Background.svelte";
+    import SpotLight from "$lib/three/SpotLight.svelte";
     import * as CANNON from "cannon-es";
     import data from "../../data/spheres.json";
 

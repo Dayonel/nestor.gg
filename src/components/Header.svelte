@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Logo from "$lib/logo.svelte";
+    import Logo from "$lib/icons/Logo.svelte";
     import { onMount } from "svelte";
 
     let scrollPercent: number = 0;
@@ -58,7 +58,7 @@
     }
 
     a:hover :global(path) {
-        fill: rgb(224, 204, 250);
+        fill: var(--link-hover);
     }
 
     .scroll {

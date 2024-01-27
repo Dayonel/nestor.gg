@@ -60,8 +60,6 @@
 
         canvas = document.body.appendChild(renderer.domElement);
         renderer.domElement.id = "threejs";
-
-        console.log("three has mounted");
     };
 
     const start = () => {

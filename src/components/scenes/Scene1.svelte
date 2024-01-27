@@ -4,16 +4,16 @@
     // @ts-ignore
     import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
     import * as THREE from "three";
-    import GLTF from "$lib/GLTF.svelte";
+    import GLTF from "$lib/three/GLTF.svelte";
     import { createEventDispatcher, onMount } from "svelte";
     import { Vector3 } from "three";
     import TWEEN from "@tweenjs/tween.js";
     import { MaterialDTO } from "../../core/dto/MaterialDTO";
-    import PointLight from "$lib/PointLight.svelte";
-    import SpotLight from "$lib/SpotLight.svelte";
-    import DirectionalLight from "$lib/DirectionalLight.svelte";
-    import Fog from "$lib/Fog.svelte";
-    import Background from "$lib/Background.svelte";
+    import PointLight from "$lib/three/PointLight.svelte";
+    import SpotLight from "$lib/three/SpotLight.svelte";
+    import DirectionalLight from "$lib/three/DirectionalLight.svelte";
+    import Fog from "$lib/three/Fog.svelte";
+    import Background from "$lib/three/Background.svelte";
 
     export let models: any[] = [];
     export let renderer: THREE.WebGLRenderer;
@@ -85,7 +85,6 @@
         renderer.compile(scene, camera);
 
         dispatch("mount", { scene });
-        console.log("scene1 has mounted");
     };
 
     const introAnimation = () => {

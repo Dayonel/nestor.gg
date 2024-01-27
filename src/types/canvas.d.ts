@@ -2,6 +2,10 @@ declare global {
     interface HTMLCanvasElement {
         resize(renderer: THREE.WebGLRenderer, camera: PerspectiveCamera): void;
     }
+
+    interface HTMLElement {
+        inViewport(): boolean;
+    }
 }
 
 HTMLCanvasElement.prototype.resize = function (renderer: THREE.WebGLRenderer, camera: PerspectiveCamera): void {

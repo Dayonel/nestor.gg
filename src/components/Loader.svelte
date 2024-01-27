@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-    import { createEventDispatcher, tick } from "svelte";
+    import { createEventDispatcher } from "svelte";
     import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
     import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
     import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";

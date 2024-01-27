@@ -28,6 +28,6 @@
     }
 
     a:hover :global(svg) {
-        stroke: rgb(224, 204, 250);
+        stroke: var(--link-hover);
     }
 </style>

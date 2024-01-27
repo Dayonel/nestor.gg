@@ -2,7 +2,7 @@
     export let text: string;
 </script>
 
-<div class="marquee-content">
+<div class="flex gap-20 h-96">
     <span class="text">{text}</span>
     <span class="text">{text}</span>
     <span class="text">{text}</span>
@@ -19,11 +19,5 @@
         color: transparent;
         -webkit-text-stroke: 5px #ff5252;
         text-transform: uppercase;
-    }
-
-    .marquee-content {
-        display: flex;
-        gap: 5rem;
-        white-space: nowrap;
     }
 </style>

@@ -1,6 +1,6 @@
 <script lang="ts">
     import * as THREE from "three";
-    import type { MaterialDTO } from "../core/dto/MaterialDTO";
+    import type { MaterialDTO } from "../../core/dto/MaterialDTO";
     import { onMount } from "svelte";
 
     export let scene: THREE.Scene;
