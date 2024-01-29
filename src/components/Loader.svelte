@@ -14,6 +14,11 @@
     const rgbeLoader = new RGBELoader();
     const textureLoader = new THREE.TextureLoader();
 
+    // Four Canal Houses by Winslow is licensed under the Creative Commons - Attribution license.
+    // https://www.thingiverse.com/thing:4878834
+
+    // Free Github Logo Logo 3D Logo by IconScout Store.
+    // https://iconscout.com/free-3d-illustration/github-5562375
     const models = [
         "models/amsterdam1.glb",
         "models/amsterdam2.glb",

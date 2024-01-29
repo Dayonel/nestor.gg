@@ -21,7 +21,9 @@
 </head>
 
 <body data-sveltekit-preload-data="hover">
-	<!-- Particles -->
+	<!-- Interactive particles by Bruno Imbrizi
+		https://github.com/brunoimbrizi/interactive-particles
+	-->
 	<script type="x-shader/x-vertex" id="particles-vs">
 		//
 		// Description : Array and textureless GLSL 2D simplex noise function.
@@ -199,7 +201,7 @@
 		}
 	</script>
 
-	<!-- Particle animation ideas video by Yuri Artiukh 
+	<!-- FBO particles by Yuri Artiukh 
 		https://www.youtube.com/watch?v=oLH00MXTqNg
  	-->
 	<script type="x-shader/x-vertex" id="morph-vs">
@@ -359,7 +361,9 @@
 		}		
 	</script>
 
-	<!-- Noise -->
+	<!-- Noise fluid effect by Paul (@prisoner849)
+		https://codepen.io/prisoner849/pen/vYBgrVQ
+	-->
 	<script type="x-shader/x-vertex" id="noise-vs">
 		varying vec2 vUv;
 
