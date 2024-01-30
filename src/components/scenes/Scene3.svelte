@@ -13,6 +13,7 @@
     export let enabled: boolean;
 
     $: enabled, loop();
+    $: enabled, resize();
     $: enabled, tone();
     $: hdris, hdr();
 
