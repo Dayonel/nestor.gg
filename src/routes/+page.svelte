@@ -43,15 +43,6 @@
     };
 </script>
 
-<svelte:head>
-    <title>Nestor Orest Plysyuk Hladunko - Full stack developer</title>
-    <meta
-        name="description"
-        property="description"
-        content="Portfolio of Nestor Orest Plysyuk Hladunko - Full stack developer"
-    />
-</svelte:head>
-
 <div bind:this={scrolling} id="scrolling" on:scroll={() => onScroll()}>
     <Loader on:load={async (e) => await loaded(e)} {scrollY} {scene} />
 
