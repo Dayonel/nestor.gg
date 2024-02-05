@@ -59,7 +59,7 @@
                 <p>web development</p>
             </section>
 
-            <section>
+            <section class="gsap-scene3">
                 <p>I'm obsessed</p>
                 <p>with canvas</p>
             </section>
@@ -70,7 +70,7 @@
             </section>
 
             <section class="gsap-scene5">
-                <Scene5 enabled={scene == 4 || scene == 5}></Scene5>
+                <Scene5 enabled={scene == 5}></Scene5>
             </section>
 
             <section class="gsap-scene6">
@@ -106,6 +106,6 @@
     }
 
     .gsap-scene6 {
-        height: 125dvh;
+        height: 175dvh;
     }
 </style>

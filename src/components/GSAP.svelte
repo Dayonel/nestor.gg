@@ -9,6 +9,9 @@
         gsap.registerPlugin(ScrollTrigger);
 
         scroll();
+        scene1();
+        scene2();
+        scene3();
         scene4();
         scene5();
         scene6();
@@ -26,6 +29,60 @@
         }).to(".gsap-dots", {
             opacity: 0,
         });
+    };
+
+    const scene1 = () => {
+        gsap.timeline({
+            scrollTrigger: {
+                scroller: "#scrolling",
+                trigger: ".gsap-scene2",
+                start: "top 66%",
+                end: "+=10%",
+                scrub: true,
+            },
+        })
+            .to(".gsap-scene1 h1", {
+                opacity: 0,
+            })
+            .to(".gsap-scene1 h2", {
+                opacity: 0,
+            });
+    };
+
+    const scene2 = () => {
+        gsap.timeline({
+            scrollTrigger: {
+                scroller: "#scrolling",
+                trigger: ".gsap-scene3",
+                start: "top 66%",
+                end: "+=10%",
+                scrub: true,
+            },
+        })
+            .to(".gsap-scene2 p:first-child", {
+                opacity: 0,
+            })
+            .to(".gsap-scene2 p:last-child", {
+                opacity: 0,
+            });
+    };
+
+    const scene3 = () => {
+        gsap.timeline({
+            scrollTrigger: {
+                scroller: "#scrolling",
+                trigger: ".gsap-scene4",
+                start: "top 66%",
+                end: "+=10%",
+                scrub: true,
+            },
+        })
+            .to(".gsap-scene3 p:first-child", {
+                opacity: 0,
+            })
+            .to(".gsap-scene3 p:last-child", {
+                opacity: 0,
+            });
     };
 
     const scene4 = () => {
@@ -46,8 +103,8 @@
             scrollTrigger: {
                 scroller: "#scrolling",
                 trigger: ".gsap-scene5",
-                start: "top 33%",
-                end: "+=10%",
+                start: "top 25%",
+                end: "+=25%",
                 scrub: true,
             },
         })
@@ -72,7 +129,7 @@
             scrollTrigger: {
                 scroller: "#scrolling",
                 trigger: ".gsap-scene5",
-                start: "top 75%",
+                start: "top top",
                 end: "+=500%", // really slow
                 scrub: true,
             },
@@ -89,8 +146,8 @@
             scrollTrigger: {
                 scroller: "#scrolling",
                 trigger: ".gsap-scene5",
-                start: "top 25%",
-                end: "+=100%",
+                start: "top top",
+                end: "+=50%",
                 scrub: true,
             },
         }).to(
@@ -105,13 +162,17 @@
             scrollTrigger: {
                 scroller: "#scrolling",
                 trigger: ".gsap-scene6",
-                start: "top bottom",
-                end: "+=100%",
+                start: "top 50%",
+                end: "+=50%",
                 scrub: true,
             },
-        }).to(".text", {
-            opacity: 0,
-        });
+        })
+            .to(".text", {
+                opacity: 1,
+            })
+            .to(".text", {
+                opacity: 0,
+            });
     };
 
     const scene6 = () => {
