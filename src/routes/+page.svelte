@@ -70,7 +70,7 @@
             </section>
 
             <section class="gsap-scene5">
-                <Scene5 enabled={scene == 5}></Scene5>
+                <Scene5 enabled={scene == 4 || scene == 5}></Scene5>
             </section>
 
             <section class="gsap-scene6">
@@ -105,8 +105,7 @@
         height: 100dvh;
     }
 
-    .gsap-scene5,
     .gsap-scene6 {
-        height: 200dvh;
+        height: 125dvh;
     }
 </style>

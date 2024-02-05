@@ -13,7 +13,7 @@
     $: enabled, loop();
     $: enabled, resize();
     $: enabled, tone();
-    $: enabled, show();
+    $: enabled, gsapAnimate();
     $: textures, setupParticles();
 
     const dispatch = createEventDispatcher();
@@ -112,9 +112,9 @@
         }
 
         const uniforms = {
-            uTime: { value: 0 },
-            uRandom: { value: 1.0 },
-            uDepth: { value: 2.0 },
+            uTime: { value: 0.0 },
+            uRandom: { value: 0.0 },
+            uDepth: { value: 0.0 },
             uSize: { value: 0.0 },
             uTextureSize: {
                 value: new THREE.Vector2(
@@ -189,25 +189,23 @@
         scene.add(particles);
     };
 
-    const show = () => {
+    const gsapAnimate = () => {
         if (!enabled) return;
 
-        const time = 1;
-        gsap.fromTo(
-            particles.material.uniforms.uSize,
-            time,
-            { value: 0.5 },
-            { value: 1.5 },
-        );
-        gsap.to(particles.material.uniforms.uRandom, time, {
-            value: 2.0,
+        ScrollTrigger.create({
+            scroller: "#scrolling",
+            trigger: ".gsap-scene4",
+            start: "top top",
+            end: "+=" + (window.innerHeight * 2) / 3,
+            scrub: true,
+            onUpdate: (self: any) => {
+                const progress = self.progress;
+                particles.material.uniforms.uSize.value = 2 - progress + 0.25;
+                particles.material.uniforms.uRandom.value = progress * 2;
+                particles.material.uniforms.uDepth.value =
+                    40 - progress * 40.0 + 4;
+            },
         });
-        gsap.fromTo(
-            particles.material.uniforms.uDepth,
-            time * 1,
-            { value: 40.0 },
-            { value: 4.0 },
-        );
     };
 
     const loop = () => {
