@@ -59,7 +59,7 @@
                 <p>web development</p>
             </section>
 
-            <section>
+            <section class="gsap-scene3">
                 <p>I'm obsessed</p>
                 <p>with canvas</p>
             </section>
