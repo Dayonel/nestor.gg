@@ -9,8 +9,15 @@
 </div>
 
 <style>
+    @font-face {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 900;
+        src: url('/Roboto-Black.ttf') format('truetype');
+    }
+
     span {
-        font-family: "Roboto";
+        font-family: "Roboto", sans-serif;
     }
 
     .text {
